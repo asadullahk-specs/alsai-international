@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "alsai-international-org",
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/server/server.js"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "/server/server.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "functions": {
+    "server/server.js": {
+      "runtime": "nodejs20.x",
+      "maxDuration": 30
+    }
+  }
+}

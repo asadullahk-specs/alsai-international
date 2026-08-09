@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* System-wide: below 480px every rem-based font size (and spacing, since
+   Tailwind's scale is rem-based too) shrinks together so nothing looks
+   oversized or cramped on very small phones - a single, safe lever instead
+   of hand-tuning every text-* class across hundreds of components. */
+@media (max-width: 480px) {
+  html {
+    font-size: 87.5%;
+  }
+}
+
+body {
+  @apply bg-cream text-ink font-sans;
+}
+
+/* Scrollbars are styled to always sit in visible contrast with their
+   background, at a consistent width, instead of relying on each browser's
+   invisible-on-dark default. Use .scrollbar-dark on dark containers
+   (sidebars, dark dropdowns) and the default rule applies everywhere else. */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #EFE6D8;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #A9662A;
+  border: 2px solid #EFE6D8;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #8A5220;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #A9662A #EFE6D8;
+}
+
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: #1F1B18;
+}
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background-color: #C9A15A;
+  border: 2px solid #1F1B18;
+}
+.scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background-color: #D9BE8B;
+}
+.scrollbar-dark {
+  scrollbar-color: #C9A15A #1F1B18;
+}
+
+/* Used on horizontal mobile sliders (Featured Collections, Best Sellers, New
+   Arrivals) where a visible scrollbar would look like a UI mistake rather
+   than an intentional swipe-to-scroll row. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Used on the mobile/tablet horizontal sliders (Featured Collections, Best
+   Sellers, New Arrivals) so the native scroll-snap track has no visible
+   scrollbar - the slide dots/gesture are the only affordance needed there. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Dual-thumb price range slider (see PriceRangeSlider.jsx). Both <input>s
+   overlap in the same track; only the thumbs themselves need to catch clicks. */
+.price-range-thumb::-webkit-slider-thumb {
+  pointer-events: auto;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #A9662A;
+  border: 2px solid #FAF6F0;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(169, 102, 42, 0.4);
+}
+.price-range-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #A9662A;
+  border: 2px solid #FAF6F0;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(169, 102, 42, 0.4);
+}
+.price-range-thumb::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  background: transparent;
+}
+.price-range-thumb::-moz-range-track {
+  background: transparent;
+}
+
+/* Order bill printing (OrderDetails page). "Print Receipt" calls
+   window.print() directly - these rules hide everything on the page except
+   the receipt itself (#order-receipt-print / .no-print), so what comes out
+   of the printer is just the single-page bill image, not the navbar, footer,
+   tracking timeline, or cancel-order box. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #order-receipt-print,
+  #order-receipt-print * {
+    visibility: visible;
+  }
+  #order-receipt-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

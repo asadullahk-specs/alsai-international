@@ -1,0 +1,256 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  FiSearch,
+  FiHeart,
+  FiUser,
+  FiUserCheck,
+  FiShoppingBag,
+  FiChevronDown,
+  FiHelpCircle,
+  FiMapPin,
+  FiMenu,
+  FiX,
+  FiLogOut,
+} from 'react-icons/fi';
+import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
+import SearchModal from './SearchModal';
+
+const Navbar = ({ collections = [], fragranceFamilies = [], announcementText }) => {
+  const { itemCount } = useCart();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [collectionsOpen, setCollectionsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const closeMenu = () => setMenuOpen(false);
+
+  // Navigate away from whatever page we're on FIRST, then log out. Doing it
+  // in the other order (log out, then navigate) briefly leaves a protected
+  // page (e.g. Profile) mounted with user=null, which makes it redirect to
+  // /login with a "please login to continue" message before the navigate('/')
+  // below ever runs. Going to '/' first sidesteps that race entirely.
+  const handleLogout = async () => {
+    closeMenu();
+    navigate('/');
+    await logout();
+  };
+
+  return (
+    <>
+      <header className="sticky top-0 z-40 bg-cream">
+      {announcementText && (
+        <div className="bg-charcoal text-cream-100">
+          <div className="max-w-7xl mx-auto px-4 flex items-center justify-center sm:justify-between h-9 text-[11px]">
+            <span className="tracking-wide truncate text-center sm:text-left">{announcementText}</span>
+            <div className="hidden sm:flex items-center gap-5 text-cream-200/80 flex-shrink-0">
+              <span className="flex items-center gap-1.5">
+                <FiHelpCircle size={13} /> Help &amp; Support
+              </span>
+              <span className="flex items-center gap-1.5">
+                <FiMapPin size={13} /> Store Locator
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <nav className="border-b border-cream-200">
+        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between gap-4">
+          {/* Desktop nav links - visible from xl (1280px) up only */}
+          <div className="hidden xl:flex items-center gap-8 text-xs tracking-widest text-ink flex-1">
+            <Link to="/shop" className="hover:text-brand transition-colors">
+              SHOP
+            </Link>
+
+            <div
+              className="relative"
+              onMouseEnter={() => setCollectionsOpen(true)}
+              onMouseLeave={() => setCollectionsOpen(false)}
+            >
+              <button type="button" className="flex items-center gap-1 hover:text-brand transition-colors">
+                COLLECTIONS <FiChevronDown size={12} />
+              </button>
+              {collectionsOpen && collections.length > 0 && (
+                <div className="absolute top-full left-0 pt-3">
+                  <div className="flex gap-10 bg-white border border-cream-200 shadow-lg p-6 min-w-[420px]">
+                    {collections.map((col) => (
+                      <div key={col._id}>
+                        <Link
+                          to={`/shop?collection=${col._id}`}
+                          className="font-serif text-sm text-ink hover:text-brand block mb-3 normal-case tracking-normal"
+                        >
+                          {col.name}
+                        </Link>
+                        <ul className="space-y-2">
+                          {fragranceFamilies.map((fam) => (
+                            <li key={fam._id}>
+                              <Link
+                                to={`/shop?collection=${col._id}&fragranceFamily=${fam._id}`}
+                                className="text-xs text-muted hover:text-brand normal-case tracking-normal"
+                              >
+                                {fam.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Link to="/promotions" className="hover:text-brand transition-colors">
+              PROMOTIONS
+            </Link>
+            <Link to="/gift-sets" className="hover:text-brand transition-colors">
+              GIFT SETS
+            </Link>
+          </div>
+
+          {/* Logo: centered at xl+, pinned left below xl */}
+          <Link to="/" className="flex flex-col items-start xl:items-center flex-shrink-0">
+            <span className="font-serif text-xl sm:text-2xl tracking-wide text-ink">AL SA'I</span>
+            <span className="text-[8px] sm:text-[9px] tracking-[0.3em] text-muted">EXTRAIT DE PARFUM</span>
+          </Link>
+
+          {/* Right-side icons - visible from md (768px) up */}
+          <div className="hidden md:flex items-center justify-end gap-5 flex-1 text-ink">
+            <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search" className="flex items-center justify-center hover:text-brand transition-colors">
+              <FiSearch size={18} />
+            </button>
+            <Link to="/wishlist" aria-label="Wishlist" className="flex items-center justify-center hover:text-brand transition-colors">
+              <FiHeart size={18} />
+            </Link>
+
+            {/* Notifications - opens a small dropdown panel right here, never
+                navigates to a page. Logged out: a friendly message inside the
+                panel. Logged in: real order-status notifications with an
+                unread badge. */}
+            <NotificationBell />
+
+            {/* Account - logged out: login page. Logged in: a flat "my orders" page - no panel/dashboard. */}
+            <Link to={user ? '/orders' : '/login'} aria-label="Orders" className="flex items-center justify-center hover:text-brand transition-colors">
+              <FiUser size={18} />
+            </Link>
+
+            {/* Profile - only appears once logged in */}
+            {user && (
+              <Link to="/profile" aria-label="Profile" className="flex items-center justify-center hover:text-brand transition-colors">
+                <FiUserCheck size={18} />
+              </Link>
+            )}
+
+            {user && (
+              <button type="button" onClick={handleLogout} aria-label="Logout" className="flex items-center justify-center hover:text-brand transition-colors">
+                <FiLogOut size={18} />
+              </button>
+            )}
+
+            <Link to="/cart" className="relative flex items-center justify-center hover:text-brand transition-colors" aria-label="Cart">
+              <FiShoppingBag size={18} />
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-brand text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
+          </div>
+
+          {/* Burger trigger - visible below xl (1280px) */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            className="xl:hidden text-ink flex-shrink-0 ml-2"
+          >
+            <FiMenu size={22} />
+          </button>
+        </div>
+      </nav>
+
+      {/* Slide-in mobile/tablet menu, smooth open/close */}
+      <div
+        className={`fixed inset-0 z-50 xl:hidden transition-opacity duration-300 ${
+          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <button
+          type="button"
+          aria-label="Close menu overlay"
+          onClick={closeMenu}
+          className="absolute inset-0 bg-charcoal/40"
+        />
+        <div
+          className={`absolute top-0 left-0 w-full max-h-full bg-cream shadow-xl transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+            menuOpen ? 'translate-y-0' : '-translate-y-full'
+          }`}
+        >
+          <div className="flex items-center justify-between px-5 h-16 border-b border-cream-200">
+            <span className="font-serif text-lg text-ink">Menu</span>
+            <button type="button" onClick={closeMenu} aria-label="Close menu" className="text-ink">
+              <FiX size={22} />
+            </button>
+          </div>
+
+          <nav className="p-5 space-y-1 text-sm text-ink">
+            <Link to="/shop" onClick={closeMenu} className="block py-2.5 tracking-wide">
+              SHOP
+            </Link>
+            <Link to="/shop" onClick={closeMenu} className="block py-2.5 tracking-wide">
+              COLLECTIONS
+            </Link>
+            <Link to="/promotions" onClick={closeMenu} className="block py-2.5 tracking-wide">
+              PROMOTIONS
+            </Link>
+            <Link to="/gift-sets" onClick={closeMenu} className="block py-2.5 tracking-wide">
+              GIFT SETS
+            </Link>
+
+            {/* Below md (768px) these also live here, since the icon row is hidden then */}
+            <div className="md:hidden pt-3 mt-3 border-t border-cream-200 space-y-1">
+              <button
+                type="button"
+                onClick={() => {
+                  closeMenu();
+                  setSearchOpen(true);
+                }}
+                className="flex items-center gap-3 py-2.5 tracking-wide w-full text-left"
+              >
+                <FiSearch size={16} /> SEARCH
+              </button>
+              <Link to="/wishlist" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide">
+                <FiHeart size={16} /> WISHLIST
+              </Link>
+              <NotificationBell variant="row" />
+              <Link to={user ? '/orders' : '/login'} onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide">
+                <FiUser size={16} /> {user ? 'MY ORDERS' : 'ACCOUNT'}
+              </Link>
+              {user && (
+                <Link to="/profile" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide">
+                  <FiUserCheck size={16} /> PROFILE
+                </Link>
+              )}
+              <Link to="/cart" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide">
+                <FiShoppingBag size={16} /> CART {itemCount > 0 && `(${itemCount})`}
+              </Link>
+              {user && (
+                <button type="button" onClick={handleLogout} className="flex items-center gap-3 py-2.5 tracking-wide w-full text-left">
+                  <FiLogOut size={16} /> LOGOUT
+                </button>
+              )}
+            </div>
+          </nav>
+        </div>
+      </div>
+    </header>
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
+  );
+};
+
+export default Navbar;
