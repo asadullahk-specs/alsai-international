@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { getAdminAccessToken, setAdminAccessToken } from './tokenStore';
 
-const BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin`;
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/admin`
+  : '/api/admin';
 
 const adminAxios = axios.create({
   baseURL: BASE_URL,

@@ -18,7 +18,9 @@ const path = require('path');
 // it survives restarts (unlike relying on Google's endpoint being reachable
 // at render time).
 
-const CACHE_DIR = path.join(__dirname, '..', '..', 'uploads', 'drive-cache');
+const CACHE_DIR = process.env.VERCEL
+  ? '/tmp/drive-cache'
+  : path.join(__dirname, '..', '..', 'uploads', 'drive-cache');
 fs.mkdirSync(CACHE_DIR, { recursive: true });
 
 const FETCH_TIMEOUT_MS = 10000;

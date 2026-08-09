@@ -42,7 +42,10 @@ app.get('/api/health', (req, res) => {
 // actual API calls (cart, auth, admin actions, etc).
 //
 // Customer-uploaded review photos, stored directly on this server's disk.
-app.use('/uploads/reviews', express.static(path.join(__dirname, '..', 'uploads', 'reviews')));
+const reviewUploadsDir = process.env.VERCEL
+  ? '/tmp/uploads/reviews'
+  : path.join(__dirname, '..', 'uploads', 'reviews');
+app.use('/uploads/reviews', express.static(reviewUploadsDir));
 
 // Every other image/video across the site is a Google Drive share link
 // entered by the admin. This resolves + caches those links to local disk on

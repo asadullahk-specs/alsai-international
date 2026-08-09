@@ -1,12 +1,20 @@
 {
   "version": 2,
   "name": "alsai-international-org",
-  "buildCommand": "cd client && npm install --include=dev && npm run build",
-  "outputDirectory": "client/dist",
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "server/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
     }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/server/server.js" },
+    { "src": "/uploads/(.*)", "dest": "/server/server.js" },
+    { "src": "/(.*)", "dest": "/client/dist/$1" }
   ]
 }

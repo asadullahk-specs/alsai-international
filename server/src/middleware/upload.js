@@ -7,7 +7,13 @@ const ApiError = require('../utils/ApiError');
 // by the admin, EXCEPT customer review images, which customers upload straight
 // from their own device. This is the only place in the app that touches the
 // server's local disk for media.
-const uploadDir = path.join(__dirname, '..', '..', 'uploads', 'reviews');
+//
+// On Vercel serverless, the writable directory is /tmp. On local dev the path
+// resolves to the project's uploads/reviews folder as before.
+const uploadDir = process.env.VERCEL
+  ? '/tmp/uploads/reviews'
+  : path.join(__dirname, '..', '..', 'uploads', 'reviews');
+
 fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({

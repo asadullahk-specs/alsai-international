@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { getCustomerAccessToken, setCustomerAccessToken } from './tokenStore';
 
-const BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/customer`;
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/customer`
+  : '/api/customer';
 
 const customerAxios = axios.create({
   baseURL: BASE_URL,
