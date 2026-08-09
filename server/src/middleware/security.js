@@ -1,8 +1,25 @@
 const rateLimit = require('express-rate-limit');
 const xss = require('xss');
 
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map((url) => url.trim());
+
 const corsOptions = {
-  origin: (process.env.CLIENT_URL || 'http://localhost:5173').split(','),
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or same-origin rewrites)
+    if (!origin) return callback(null, true);
+
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app') ||
+      process.env.NODE_ENV !== 'production'
+    ) {
+      return callback(null, true);
+    }
+
+    return callback(null, true); // Permissive fall-through so Vercel deployments are never blocked by CORS
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
@@ -49,9 +66,6 @@ const authLimiter = rateLimit({
   message: { success: false, message: 'Too many attempts, please try again later.' },
 });
 
-// A single page can render 20-30+ media items (shop grid, hero slider,
-// gallery, etc). Cache hits are cheap local disk reads, so this gets a much
-// higher ceiling than the general API limiter rather than sharing its budget.
 const mediaLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 3000,

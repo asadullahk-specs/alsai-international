@@ -5,9 +5,13 @@ const connectDB = require('../server/src/config/db');
 let isConnected = false;
 
 module.exports = async (req, res) => {
-  if (!isConnected) {
-    await connectDB();
-    isConnected = true;
+  try {
+    if (!isConnected) {
+      await connectDB();
+      isConnected = true;
+    }
+  } catch (err) {
+    console.error('Vercel serverless DB connection error:', err);
   }
   return app(req, res);
 };

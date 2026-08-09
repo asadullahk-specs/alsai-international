@@ -1,7 +1,6 @@
 {
   "version": 2,
-  "installCommand": "cd server && npm install && cd ../client && npm install --include=dev",
-  "buildCommand": "cd client && npm run build",
+  "buildCommand": "cd client && npm install --include=dev && npm run build",
   "outputDirectory": "client/dist",
   "rewrites": [
     {
