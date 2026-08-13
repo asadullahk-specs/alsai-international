@@ -128,7 +128,7 @@ const FilterSidebar = ({
       {/* Desktop sidebar - its own independently-scrolling column, pinned in
           place (sticky) below the header instead of scrolling away with the
           product grid. */}
-      <aside className="hidden lg:block w-64 flex-shrink-0 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1">
+      <aside className="hidden lg:block w-64 flex-shrink-0 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 scrollbar-none">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xs tracking-widest text-ink">FILTERS</h3>
           <button type="button" onClick={onClearAll} className="text-xs text-brand hover:underline">

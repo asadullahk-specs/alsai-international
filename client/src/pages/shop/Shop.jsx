@@ -134,7 +134,7 @@ const Shop = () => {
             <select
               value={filters.sort || 'newest'}
               onChange={(e) => updateFilter('sort', e.target.value)}
-              className="text-sm border border-cream-200 rounded px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-brand max-480:order-1"
+              className="text-sm border border-cream-200 rounded px-3 py-2 bg-cream text-ink cursor-pointer appearance-none focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors max-480:order-1"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
