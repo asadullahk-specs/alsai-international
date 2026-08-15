@@ -55,7 +55,7 @@ const ReviewsPage = () => {
     <div>
       <h1 className="font-serif text-2xl text-ink mb-6">Reviews</h1>
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
         <StatCard label="Total Reviews" value={counts.total ?? 0} tone="ink" />
         <StatCard label="Pending Reviews" value={counts.pending ?? 0} tone="gold" />
         <StatCard label="Approved Reviews" value={counts.approved ?? 0} tone="brand" />

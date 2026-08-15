@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiArrowUp, FiArrowDown, FiCheck, FiMail } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import { FiPlus, FiEdit2, FiTrash2, FiX, FiArrowUp, FiArrowDown, FiMail } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
 import { driveImg } from '../../../utils/driveImg';
 
@@ -13,8 +14,6 @@ const emptySlide = {
   secondaryButtonUrl: '',
   isActive: true,
 };
-
-const emptyTestimonial = { customerName: '', customerImage: '', reviewImage: '', rating: 5, message: '' };
 
 const HeroSlideForm = ({ initial, onSave, onCancel }) => {
   const [form, setForm] = useState(initial);
@@ -118,97 +117,13 @@ const HeroSlideForm = ({ initial, onSave, onCancel }) => {
   );
 };
 
-const TestimonialForm = ({ initial, onSave, onCancel }) => {
-  const [form, setForm] = useState(initial);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const limit = form.reviewImage ? 100 : 150;
-
-  const submit = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setError('');
-    try {
-      await onSave(form);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Unable to save testimonial.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <form onSubmit={submit} className="bg-white p-6 w-full max-w-md space-y-3 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif text-lg text-ink">Testimonial</h2>
-          <button type="button" onClick={onCancel} className="text-muted hover:text-ink">
-            <FiX size={18} />
-          </button>
-        </div>
-        {error && <p className="text-sm text-charcoal">{error}</p>}
-        <input
-          required
-          placeholder="Customer Name"
-          value={form.customerName}
-          onChange={(e) => setForm({ ...form, customerName: e.target.value })}
-          className="w-full px-4 py-3 border border-cream-200 text-sm"
-        />
-        <input
-          placeholder="Customer Avatar (Google Drive link, optional)"
-          value={form.customerImage}
-          onChange={(e) => setForm({ ...form, customerImage: e.target.value })}
-          className="w-full px-4 py-3 border border-cream-200 text-sm"
-        />
-        <input
-          placeholder="Review Image (Google Drive link, optional)"
-          value={form.reviewImage}
-          onChange={(e) => setForm({ ...form, reviewImage: e.target.value })}
-          className="w-full px-4 py-3 border border-cream-200 text-sm"
-        />
-        <div>
-          <label className="text-xs text-muted block mb-1">Rating</label>
-          <select value={form.rating} onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })} className="w-full px-4 py-3 border border-cream-200 text-sm">
-            {[5, 4, 3, 2, 1].map((r) => (
-              <option key={r} value={r}>{r} Stars</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="text-xs text-muted block mb-1">
-            Message ({form.message.length}/{limit} - {form.reviewImage ? 'limited to 100 with an image' : 'up to 150 without one'})
-          </label>
-          <textarea
-            required
-            rows={3}
-            maxLength={limit}
-            value={form.message}
-            onChange={(e) => setForm({ ...form, message: e.target.value.slice(0, limit) })}
-            className="w-full px-4 py-3 border border-cream-200 text-sm resize-none"
-          />
-        </div>
-        <div className="flex gap-3 pt-2 max-480:flex-col">
-          <button type="button" onClick={onCancel} className="flex-1 border border-ink/20 text-ink text-xs tracking-widest py-3 hover:border-ink">
-            CANCEL
-          </button>
-          <button type="submit" disabled={saving} className="flex-1 bg-brand hover:bg-brand-dark text-white text-xs tracking-widest py-3 disabled:opacity-60">
-            {saving ? 'SAVING...' : 'SAVE'}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-};
-
 const HomepageManager = () => {
   const [content, setContent] = useState(null);
   const [products, setProducts] = useState([]);
   const [featuredCollections, setFeaturedCollections] = useState([]);
-  const [testimonials, setTestimonials] = useState([]);
   const [subscriberCount, setSubscriberCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [slideForm, setSlideForm] = useState(null);
-  const [testimonialForm, setTestimonialForm] = useState(null);
 
   const fetchAll = useCallback(() => {
     setLoading(true);
@@ -216,13 +131,11 @@ const HomepageManager = () => {
       adminAxios.get('homepage'),
       adminAxios.get('products', { params: { limit: 200 } }),
       adminAxios.get('featured-collections'),
-      adminAxios.get('testimonials'),
       adminAxios.get('newsletter', { params: { limit: 1 } }),
-    ]).then(([homepageRes, productsRes, fcRes, testimonialsRes, newsletterRes]) => {
+    ]).then(([homepageRes, productsRes, fcRes, newsletterRes]) => {
       setContent(homepageRes.data.data.content);
       setProducts(productsRes.data.data.products);
       setFeaturedCollections(fcRes.data.data.items);
-      setTestimonials(testimonialsRes.data.data.testimonials);
       setSubscriberCount(newsletterRes.data.data.stats.total);
       setLoading(false);
     });
@@ -258,24 +171,6 @@ const HomepageManager = () => {
     const current = (content[field] || []).map((p) => p._id);
     const next = current.includes(id) ? current.filter((p) => p !== id) : [...current, id];
     await adminAxios.put('homepage/sections', { [field]: next });
-    fetchAll();
-  };
-
-  const saveTestimonial = async (form) => {
-    if (testimonialForm.id) await adminAxios.put(`testimonials/${testimonialForm.id}`, form);
-    else await adminAxios.post('testimonials', form);
-    setTestimonialForm(null);
-    fetchAll();
-  };
-
-  const updateTestimonialStatus = async (id, status) => {
-    await adminAxios.put(`testimonials/${id}`, { status });
-    fetchAll();
-  };
-
-  const deleteTestimonial = async (id) => {
-    if (!window.confirm('Delete this testimonial?')) return;
-    await adminAxios.delete(`testimonials/${id}`);
     fetchAll();
   };
 
@@ -330,59 +225,18 @@ const HomepageManager = () => {
             )}
           </div>
 
-          {/* Testimonials */}
+          {/* Testimonials are now submitted by customers on the homepage
+              (see Sidebar > Customers & Orders > Testimonials for the
+              moderation queue) - this panel used to let admins author them
+              directly, which no longer applies. */}
           <div className="bg-white border border-cream-200 p-5">
-            <div className="flex items-center justify-between max-480:flex-col max-480:items-start max-480:gap-2 mb-4">
-              <p className="text-xs tracking-widest text-muted">5. TESTIMONIALS</p>
-              <button
-                type="button"
-                onClick={() => setTestimonialForm({ ...emptyTestimonial, id: null })}
-                className="flex items-center gap-1.5 bg-brand hover:bg-brand-dark text-white text-xs tracking-widest px-3 py-2 max-480:w-full max-480:justify-center"
-              >
-                <FiPlus size={13} /> ADD TESTIMONIAL
-              </button>
-            </div>
-            <p className="text-xs text-muted mb-3">Only approved testimonials will show on the homepage.</p>
-            {testimonials.length === 0 ? (
-              <p className="text-sm text-muted py-6 text-center">No testimonials yet.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-xs tracking-widest text-muted border-b border-cream-200">
-                      <th className="py-2 font-normal">Customer</th>
-                      <th className="py-2 font-normal">Rating</th>
-                      <th className="py-2 font-normal max-1024:hidden">Message</th>
-                      <th className="py-2 font-normal">Status</th>
-                      <th className="py-2 font-normal text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {testimonials.map((t) => (
-                      <tr key={t._id} className="border-b border-cream-100 last:border-0">
-                        <td className="py-2 text-ink whitespace-nowrap">{t.customerName}</td>
-                        <td className="py-2 text-gold whitespace-nowrap">{'★'.repeat(t.rating)}</td>
-                        <td className="py-2 text-muted max-w-xs truncate max-1024:hidden">{t.message}</td>
-                        <td className="py-2">
-                          <span className={`text-[10px] tracking-wide px-2 py-1 ${t.status === 'approved' ? 'bg-brand/10 text-brand' : t.status === 'rejected' ? 'bg-charcoal/10 text-charcoal' : 'bg-gold/15 text-gold'}`}>
-                            {t.status}
-                          </span>
-                        </td>
-                        <td className="py-2 text-right">
-                          <div className="flex items-center justify-end gap-2 text-muted">
-                            {t.status !== 'approved' && (
-                              <button type="button" onClick={() => updateTestimonialStatus(t._id, 'approved')} className="hover:text-brand"><FiCheck size={14} /></button>
-                            )}
-                            <button type="button" onClick={() => setTestimonialForm({ ...t, id: t._id })} className="hover:text-brand"><FiEdit2 size={14} /></button>
-                            <button type="button" onClick={() => deleteTestimonial(t._id)} className="hover:text-charcoal"><FiTrash2 size={14} /></button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <p className="text-xs tracking-widest text-muted mb-2">5. TESTIMONIALS</p>
+            <p className="text-sm text-muted mb-3">
+              Testimonials are submitted by customers from the homepage and only appear here for approval - admins no longer add them directly.
+            </p>
+            <Link to="/admin/testimonials" className="inline-block bg-brand hover:bg-brand-dark text-white text-xs tracking-widest px-4 py-2.5">
+              GO TO TESTIMONIALS MODERATION
+            </Link>
           </div>
         </div>
 
@@ -462,13 +316,6 @@ const HomepageManager = () => {
           initial={slideForm}
           onCancel={() => setSlideForm(null)}
           onSave={saveSlide}
-        />
-      )}
-      {testimonialForm && (
-        <TestimonialForm
-          initial={testimonialForm}
-          onCancel={() => setTestimonialForm(null)}
-          onSave={saveTestimonial}
         />
       )}
     </div>

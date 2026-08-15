@@ -1,52 +1,38 @@
+import { Link } from 'react-router-dom';
 import { driveImg } from '../../utils/driveImg';
 
-const DEFAULT_PARAGRAPHS = [
-  "AL SA'I is more than a perfume house. It is a journey of passion, craftsmanship, and the pursuit of olfactory perfection.",
-  "Each fragrance is meticulously created using rare, hand-selected ingredients sourced from around the globe to deliver an unmatched scent profile that endures throughout the day.",
-  "Inspired by heritage and elevated by modern artistry, our Extrait de Parfum collection embodies depth, complexity, and refinement for those who appreciate true distinction."
-];
-
+// A short teaser toward the full Our Story page - not the whole story
+// inline. Heading (short, quote-like) on the left, a couple of lines of
+// body copy on the right, with a button under that copy leading to /about.
 const OurStory = ({ story }) => {
   if (!story) return null;
 
-  let storyParagraphs = [];
-  if (story.description) {
-    // Split text by single or multiple line breaks (\n or \n\n)
-    const userParagraphs = story.description.split(/\n+/).map(s => s.trim()).filter(Boolean);
-
-    if (userParagraphs.length > 1) {
-      // If user/admin typed multiple paragraphs, display all of them
-      storyParagraphs = userParagraphs;
-    } else {
-      // If user/admin typed a single paragraph or seed text exists, combine with 2nd and 3rd paragraphs
-      storyParagraphs = [
-        userParagraphs[0] || DEFAULT_PARAGRAPHS[0],
-        DEFAULT_PARAGRAPHS[1],
-        DEFAULT_PARAGRAPHS[2],
-      ];
-    }
-  } else {
-    storyParagraphs = DEFAULT_PARAGRAPHS;
-  }
+  const teaser = story.description
+    ? story.description.split(/\n+/).map((s) => s.trim()).filter(Boolean)[0]
+    : "Imported ingredients. Perfumers we've worked with for years. And a scent profile that ends with us, not a committee.";
 
   return (
-    <section className="bg-cream-100">
-      <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col md:flex-row items-start md:items-center gap-10 lg:gap-14">
-        <div className="flex-1 w-full text-left">
-          {story.tagline && <p className="text-brand text-xs tracking-[0.25em] mb-3 uppercase">{story.tagline}</p>}
-          <h2 className="font-serif text-3xl sm:text-4xl text-ink mb-4">{story.heading || 'Our Story'}</h2>
-          <div className="text-muted text-sm leading-relaxed space-y-4 w-full">
-            {storyParagraphs.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
+    <section className="bg-charcoal text-white">
+      <div className="max-w-6xl mx-auto px-4 py-16 sm:py-20 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+        <div>
+          {story.tagline && <p className="text-gold text-xs tracking-[0.25em] mb-4 uppercase">{story.tagline}</p>}
+          <h2 className="font-serif italic text-2xl sm:text-3xl leading-snug">{story.heading || "\u201cIf I wouldn't wear it, it isn't on this site.\u201d"}</h2>
         </div>
-        {story.image && (
-          <div className="flex-1 w-full">
-            <img src={driveImg(story.image)} alt={story.heading || 'Our Story'} className="w-full h-auto max-h-[380px] object-cover rounded-md mx-auto" />
-          </div>
-        )}
+        <div>
+          <p className="text-cream-200/80 text-sm leading-relaxed mb-6">{teaser}</p>
+          <Link
+            to="/about"
+            className="inline-block border border-cream-200/40 text-cream-100 text-xs tracking-widest px-6 py-3 hover:border-gold hover:text-gold transition-colors"
+          >
+            READ OUR STORY
+          </Link>
+        </div>
       </div>
+      {story.image && (
+        <div className="w-full h-56 sm:h-72 overflow-hidden">
+          <img src={driveImg(story.image)} alt={story.heading || 'Our Story'} className="w-full h-full object-cover opacity-80" />
+        </div>
+      )}
     </section>
   );
 };

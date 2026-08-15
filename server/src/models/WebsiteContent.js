@@ -2,10 +2,35 @@ const mongoose = require('mongoose');
 
 const websiteContentSchema = new mongoose.Schema(
   {
+    // "Our Story" / About page - kept as one richly structured block so an
+    // admin can manage every piece of text and media that renders there,
+    // rather than a single heading/description/image.
     aboutPage: {
-      image: { type: String, default: '' },
+      eyebrow: { type: String, default: 'THE ESSENCE OF LUXURY' },
       heading: { type: String, default: '' },
       description: { type: String, default: '' },
+      image: { type: String, default: '' },
+      video: { type: String, default: '' },
+      storyHeading: { type: String, default: 'Our Story' },
+      storyBody: { type: String, default: '' },
+      storyImage: { type: String, default: '' },
+      storyVideo: { type: String, default: '' },
+      values: [
+        {
+          title: { type: String, default: '' },
+          description: { type: String, default: '' },
+        },
+      ],
+      milestones: [
+        {
+          year: { type: String, default: '' },
+          title: { type: String, default: '' },
+          description: { type: String, default: '' },
+        },
+      ],
+      quoteText: { type: String, default: '' },
+      quoteAuthor: { type: String, default: '' },
+      closingImage: { type: String, default: '' },
     },
     shopPage: {
       allBannerImage: { type: String, default: '' },
@@ -20,6 +45,11 @@ const websiteContentSchema = new mongoose.Schema(
       email: { type: String, default: '' },
       whatsapp: { type: String, default: '' },
       workingHours: { type: String, default: '' },
+      // A Google Maps share link for the store's location (admin searches the
+      // store on Google Maps, taps Share, and pastes the link here). The
+      // header's "Store Locator" link opens this directly instead of an
+      // embedded map, so there's nothing to keep in sync beyond the link.
+      storeMapUrl: { type: String, default: '' },
     },
     footer: {
       description: { type: String, default: '' },

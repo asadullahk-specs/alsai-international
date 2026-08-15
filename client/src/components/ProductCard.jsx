@@ -7,7 +7,7 @@ import customerAxios from '../api/customerAxios';
 import { formatPrice } from '../utils/formatPrice';
 import { driveImg } from '../utils/driveImg';
 
-const ProductCard = ({ product, mediaMode = 'image' }) => {
+const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false }) => {
   const { addItem } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -20,7 +20,19 @@ const ProductCard = ({ product, mediaMode = 'image' }) => {
   if (!selectedSize) return null;
 
   const discount = selectedSize.salePrice ? Math.round((1 - selectedSize.salePrice / selectedSize.price) * 100) : 0;
-  const badge = product.isBestSeller ? 'BEST SELLER' : product.isNewArrival ? 'NEW' : discount > 0 ? `${discount}% OFF` : null;
+  // On pages that specifically surface discounted items (Promotions), a
+  // product's sale badge should win out over Best Seller/New so shoppers
+  // immediately see the offer they came for, rather than a generic tag.
+  const badge =
+    forceDiscountBadge && discount > 0
+      ? `${discount}% OFF`
+      : product.isBestSeller
+        ? 'BEST SELLER'
+        : product.isNewArrival
+          ? 'NEW'
+          : discount > 0
+            ? `${discount}% OFF`
+            : null;
   const outOfStock = selectedSize.stock === 0;
 
   const handleAddToCart = () => {
@@ -45,7 +57,7 @@ const ProductCard = ({ product, mediaMode = 'image' }) => {
 
   return (
     <div className="group" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-      <div className="relative aspect-[3/4] bg-cream-100 overflow-hidden mb-3">
+      <div className="relative aspect-square bg-cream-100 overflow-hidden mb-3">
         <Link to={productHref} className="absolute inset-0 block">
           {mediaMode === 'video' && product.video ? (
             <video src={driveImg(product.video)} className="w-full h-full object-cover" autoPlay muted loop playsInline />
@@ -87,7 +99,40 @@ const ProductCard = ({ product, mediaMode = 'image' }) => {
         >
           <FiHeart size={14} className={wishlisted ? 'fill-brand text-brand' : ''} />
         </button>
+
+        {/* Size (e.g. "50ml") lives on the image itself, bottom-right, rather
+            than as a text row in the details block below. */}
+        <span className="absolute bottom-3 right-3 z-10 bg-white/90 text-ink text-[10px] tracking-wide px-2 py-1 rounded">
+          {selectedSize.size}
+        </span>
+
+        {/* Desktop (>=1024px, Tailwind's lg): Add to Cart is a hover-revealed
+            overlay so the image stays clean until the shopper engages with
+            the card. Hidden entirely below lg - see the static button
+            beneath the image for that. */}
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          disabled={outOfStock}
+          className={`hidden lg:block absolute bottom-0 left-0 right-0 z-10 bg-brand text-white text-xs tracking-wide py-2.5 transition-all duration-300 hover:bg-brand-dark disabled:opacity-40 disabled:cursor-not-allowed opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 ${
+            outOfStock ? 'bg-charcoal/70' : ''
+          }`}
+        >
+          {outOfStock ? 'OUT OF STOCK' : justAdded ? 'ADDED ✓' : 'ADD TO CART'}
+        </button>
       </div>
+
+      {/* Below 1024px there's no hover, so Add to Cart stays visible as a
+          normal button under the image instead of overlaying it (which
+          would otherwise collide with the size badge on the image). */}
+      <button
+        type="button"
+        onClick={handleAddToCart}
+        disabled={outOfStock}
+        className="lg:hidden w-full border border-brand text-brand text-xs tracking-wide py-2 rounded-md hover:bg-brand hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed mb-3"
+      >
+        {outOfStock ? 'OUT OF STOCK' : justAdded ? 'ADDED ✓' : 'ADD TO CART'}
+      </button>
 
       <Link to={productHref} className="block">
         <h3 className="font-serif text-ink text-base mb-0.5 truncate">{product.name}</h3>
@@ -102,26 +147,10 @@ const ProductCard = ({ product, mediaMode = 'image' }) => {
         </div>
       )}
 
-      <div className="flex items-center gap-2 mb-2 max-480:flex-col max-480:items-start max-480:gap-0.5">
-        <span className="text-sm font-medium text-ink max-480:order-1">
-          {formatPrice(selectedSize.salePrice || selectedSize.price)}
-        </span>
-        {selectedSize.salePrice ? (
-          <span className="text-xs text-muted line-through max-480:order-2">{formatPrice(selectedSize.price)}</span>
-        ) : (
-          <span className="hidden max-480:block max-480:order-2 text-xs leading-4">&nbsp;</span>
-        )}
-        <span className="text-xs text-muted max-480:order-3">{selectedSize.size}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-ink">{formatPrice(selectedSize.salePrice || selectedSize.price)}</span>
+        {selectedSize.salePrice && <span className="text-xs text-muted line-through">{formatPrice(selectedSize.price)}</span>}
       </div>
-
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        disabled={outOfStock}
-        className="w-full border border-brand text-brand text-xs tracking-wide py-2 rounded-md hover:bg-brand hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-brand"
-      >
-        {outOfStock ? 'OUT OF STOCK' : justAdded ? 'ADDED ✓' : 'ADD TO CART'}
-      </button>
     </div>
   );
 };

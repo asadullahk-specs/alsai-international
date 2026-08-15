@@ -5,6 +5,10 @@ const fragranceFamilySchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true, trim: true },
     slug: { type: String, unique: true, lowercase: true, trim: true },
+    // Which Collection (Perfumes / Attars) this family belongs to, so the
+    // navbar "Collections" dropdown and Shop filters can show a different
+    // family list under each one instead of sharing a single list.
+    collection: { type: mongoose.Schema.Types.ObjectId, ref: 'Collection', required: true },
     isActive: { type: Boolean, default: true },
     displayOrder: { type: Number, default: 0 },
   },

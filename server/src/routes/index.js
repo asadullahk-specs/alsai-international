@@ -7,6 +7,7 @@ const productRoutes = require('./productRoutes');
 const giftSetRoutes = require('./giftSetRoutes');
 const seasonalCollectionRoutes = require('./seasonalCollectionRoutes');
 const reviewRoutes = require('./reviewRoutes');
+const testimonialRoutes = require('./testimonialRoutes');
 const newsletterRoutes = require('./newsletterRoutes');
 const orderRoutes = require('./orderRoutes');
 const addressRoutes = require('./addressRoutes');
@@ -37,6 +38,11 @@ const adminEmailTemplateRoutes = require('./adminEmailTemplateRoutes');
 const adminRoleRoutes = require('./adminRoleRoutes');
 const adminActivityLogRoutes = require('./adminActivityLogRoutes');
 const adminBackupRoutes = require('./adminBackupRoutes');
+const adminSupplierRoutes = require('./adminSupplierRoutes');
+const adminPurchaseRoutes = require('./adminPurchaseRoutes');
+const adminPaymentRoutes = require('./adminPaymentRoutes');
+const adminExpenseRoutes = require('./adminExpenseRoutes');
+const adminReturnRoutes = require('./adminReturnRoutes');
 
 const router = express.Router();
 
@@ -48,6 +54,7 @@ router.use('/products', productRoutes);
 router.use('/gift-sets', giftSetRoutes);
 router.use('/seasonal-collections', seasonalCollectionRoutes);
 router.use('/reviews', reviewRoutes);
+router.use('/testimonials', testimonialRoutes);
 router.use('/newsletter', newsletterRoutes);
 router.use('/customer/orders', orderRoutes);
 router.use('/customer/addresses', addressRoutes);
@@ -78,5 +85,10 @@ router.use('/admin/email-templates', adminEmailTemplateRoutes);
 router.use('/admin/users', adminRoleRoutes);
 router.use('/admin/activity-logs', adminActivityLogRoutes);
 router.use('/admin/backup', adminBackupRoutes);
+router.use('/admin/suppliers', adminSupplierRoutes);
+router.use('/admin/purchases', adminPurchaseRoutes);
+router.use('/admin/payments', adminPaymentRoutes);
+router.use('/admin/expenses', adminExpenseRoutes);
+router.use('/admin/returns', adminReturnRoutes);
 
 module.exports = router;

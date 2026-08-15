@@ -3,25 +3,42 @@ import publicAxios from '../api/publicAxios';
 import { formatPrice } from '../utils/formatPrice';
 import { driveImg } from '../utils/driveImg';
 import { Link } from 'react-router-dom';
+import usePageTitle from '../hooks/usePageTitle';
 
 const GiftSets = () => {
+  usePageTitle('GiftSets');
   const [giftSets, setGiftSets] = useState([]);
+  const [bannerImage, setBannerImage] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    publicAxios
-      .get('/gift-sets?limit=50')
-      .then(({ data }) => setGiftSets(data.data.giftSets))
+    Promise.all([publicAxios.get('/gift-sets?limit=50'), publicAxios.get('/layout')])
+      .then(([giftSetsRes, layoutRes]) => {
+        setGiftSets(giftSetsRes.data.data.giftSets);
+        setBannerImage(layoutRes.data.data.websiteContent?.giftSetPage?.bannerImage || '');
+      })
       .finally(() => setLoading(false));
   }, []);
 
   return (
     <div className="bg-cream min-h-screen">
-      <div className="bg-cream-100 py-10">
-        <div className="max-w-7xl mx-auto px-4">
-          <p className="text-xs tracking-widest text-brand mb-1">CURATED SETS</p>
-          <h1 className="font-serif text-3xl max-480:text-2xl text-ink">Gift Sets</h1>
-          <p className="text-sm text-muted mt-1 max-w-lg">
+      {/* Same fixed-height frame convention used across the site's other top
+          banners (Shop, Promotions, About), with items vertically centered
+          so the heading/breadcrumb never sits underneath the fixed navbar. */}
+      <div className="bg-cream-100 relative overflow-hidden h-[532px] sm:h-[616px] md:h-[672px] flex items-center">
+        {bannerImage && (
+          <img src={driveImg(bannerImage)} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        )}
+        {/* Dark shade over the banner image - matches the homepage hero, and
+            keeps the transparent navbar's white text/icons legible. */}
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="max-w-7xl mx-auto px-4 relative w-full">
+          <p className="text-xs text-cream-100/80 mb-3">
+            <Link to="/" className="hover:text-gold">Home</Link> / Gift Sets
+          </p>
+          <p className="text-xs tracking-widest text-gold mb-1">CURATED SETS</p>
+          <h1 className="font-serif text-3xl sm:text-4xl max-480:text-2xl text-white">Gift Sets</h1>
+          <p className="text-sm text-cream-100/90 mt-2 max-w-lg">
             Thoughtfully paired fragrances, presented in signature AL SA&apos;I packaging - the perfect gift for every occasion.
           </p>
         </div>

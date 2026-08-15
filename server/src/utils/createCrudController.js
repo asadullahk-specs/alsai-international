@@ -3,7 +3,7 @@ const ApiResponse = require('./ApiResponse');
 const asyncHandler = require('./asyncHandler');
 
 const createCrudController = (Model, options = {}) => {
-  const { sortField = 'displayOrder', searchFields = ['name'] } = options;
+  const { sortField = 'displayOrder', searchFields = ['name'], populate } = options;
 
   return {
     list: asyncHandler(async (req, res) => {
@@ -16,13 +16,13 @@ const createCrudController = (Model, options = {}) => {
       const pageNum = Math.max(Number(page), 1);
       const limitNum = Math.min(Math.max(Number(limit), 1), 200);
 
-      const [items, total] = await Promise.all([
-        Model.find(filter)
-          .sort({ [sortField]: 1, createdAt: -1 })
-          .skip((pageNum - 1) * limitNum)
-          .limit(limitNum),
-        Model.countDocuments(filter),
-      ]);
+      let query = Model.find(filter)
+        .sort({ [sortField]: 1, createdAt: -1 })
+        .skip((pageNum - 1) * limitNum)
+        .limit(limitNum);
+      if (populate) query = query.populate(populate);
+
+      const [items, total] = await Promise.all([query, Model.countDocuments(filter)]);
 
       res.status(200).json(
         new ApiResponse(200, {
@@ -33,7 +33,9 @@ const createCrudController = (Model, options = {}) => {
     }),
 
     getOne: asyncHandler(async (req, res) => {
-      const item = await Model.findById(req.params.id);
+      let query = Model.findById(req.params.id);
+      if (populate) query = query.populate(populate);
+      const item = await query;
       if (!item) throw new ApiError(404, 'Not found');
       res.status(200).json(new ApiResponse(200, { item }));
     }),

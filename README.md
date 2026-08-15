@@ -403,3 +403,186 @@ works before saving.
   homepage's rotating discount banner's link, and the footer's seeded nav
   link. The underlying `SeasonalCollection` model/API paths were left as an
   internal implementation detail and were not renamed.
+
+## Changelog - round 4
+
+**Admin sidebar reorganized + five new Business modules**
+- The sidebar's Products-related tabs (Products, Collections, Featured
+  Collections, Categories, Fragrance Families, Gift Sets) were collapsed into
+  a single expandable **Products** dropdown - none of those pages, their
+  routes, or their data changed; only their entry point in navigation did.
+- Full sidebar order is now: **Overview** (Dashboard) → **Products** dropdown
+  → **Customers & Orders** (Orders, Customers, Reviews, Messages, Newsletter,
+  Returns & Refunds) → **Business** (Purchases, Suppliers, Inventory,
+  Payments, Expenses) → **Website** → **Promotions** → **Shipping**
+  (deep-links into Settings' existing Shipping tab via `?tab=Shipping`) →
+  **Analytics** (Reports, Notifications) → **System** (Settings, Users &
+  Roles, Activity Logs, Backup & Restore).
+- **Purchases** (`Purchase` model) - multi-item purchase orders from
+  suppliers with a Draft → Ordered → Partially Received → Received →
+  Cancelled lifecycle. Marking a purchase Received increases stock on the
+  matching product/size and writes a `StockHistory` entry, guarded so it can
+  only apply once per purchase.
+- **Suppliers** (`Supplier` model) - contact + status records with a details
+  page showing computed purchase history, payment history, products
+  supplied, and outstanding balance (derived live from Purchases/Payments,
+  not stored redundantly).
+- **Payments** (`Payment` model) - actual transaction records (Customer
+  Payment, Supplier Payment, Expense Payment, Refund, Other), distinct from
+  Settings → Payment (which only configures accepted methods). A payment can
+  link to an Order, Purchase, or Expense and keeps that record's paid
+  status/amount in sync.
+- **Expenses** (`Expense` model) - categorized business spending (Packaging,
+  Rent, Salaries, etc.), feeding into the Reports numbers below.
+- **Returns & Refunds** (`Return` model) - a top-level tab (the admin's
+  current navigation doesn't support nesting under Orders) with the full
+  requested → under review → approved/rejected → in transit → received →
+  refund pending → refunded/exchanged → closed workflow. Marking an item
+  received asks for its condition; only "sellable" condition adds it back to
+  inventory, so damaged returns never silently restock. Processing a refund
+  creates a `Payment` record and updates the original order.
+- Reports' Revenue view now also surfaces `totalPurchases`, `totalExpenses`,
+  and a true `netProfit` (gross profit minus expenses) for the selected
+  month, and a new `/admin/reports/business` endpoint breaks purchases and
+  expenses down by status/category with a top-suppliers list.
+- New module names (`purchases`, `suppliers`, `payments`, `expenses`,
+  `returns`) were added to the Users & Roles permission list so access to
+  each can be granted per role.
+
+**A "Staff" tab was added, then removed at the client's request**
+- The client confirmed they have no staff to track, so the `Staff` model,
+  controller, routes, and admin page were deleted entirely, along with its
+  sidebar entry and its module in Users & Roles. Nothing else in the Business
+  section depended on it.
+
+**Perfumes vs. Attars now get separate Collections dropdowns**
+- `FragranceFamily` gained a required `collection` reference (Perfumes or
+  Attars). The admin's Fragrance Families page now asks which collection
+  each family belongs to, and the public navbar's Collections dropdown
+  filters each collection's family list independently instead of showing the
+  same shared list under both.
+
+**Promotions page: discount badge takes priority**
+- On the Promotions page specifically, `ProductCard` now shows a product's
+  discount percentage ahead of its Best Seller/New badge (via a new
+  `forceDiscountBadge` prop), since a shopper landing on a discounts page
+  should see the offer first. Every other page keeps the previous priority
+  (Best Seller → New → Discount).
+
+**About page rebuilt into a full "Our Story" section, fully admin-managed**
+- `websiteContent.aboutPage` expanded from a single heading/description/image
+  into a structured set of fields the admin can edit end-to-end: intro
+  banner (eyebrow, heading, description, image/video), an Our Story
+  narrative (heading, body, its own image/video), a repeatable Brand Values
+  list, a repeatable Milestones/timeline list, and a closing quote with an
+  optional full-bleed image.
+- The public `/about` page was rebuilt to render all of it as distinct,
+  purposefully laid-out sections (banner → story → values grid → timeline →
+  closing quote) instead of one generic two-column block, and gracefully
+  omits any section the admin leaves empty.
+
+**Shop filter sidebar: scrollbar hidden, not the sidebar itself**
+- Both the desktop filter column and the mobile filter drawer in
+  `FilterSidebar.jsx` keep scrolling exactly as before; only the visible
+  scrollbar track/thumb was hidden (existing `.scrollbar-none` utility),
+  since the earlier styling made it look like a layout bug rather than an
+  intentional scroll area.
+
+## Changelog - round 5
+
+**Bug fixes (admin panel)**
+- Dashboard: the notification bell was a dead `<button>` with no handler at
+  all - built a real dropdown (unread badge, latest notifications, mark-read
+  on click, "View All") off the notification API that already existed but
+  was never wired to any UI. The search bar was similarly decorative - it
+  now does a quick order-number-or-product search and routes to the right
+  filtered list.
+- Product thumbnails not rendering (Products, Collections/Featured
+  Collections/Categories/Gift Sets tables, Order line items, Return proof
+  images): root cause was raw Google Drive links used directly as `<img
+  src>` instead of through the site's `driveImg()` proxy. Fixed everywhere
+  it occurred.
+- Print Receipt producing a blank page: the print stylesheet only ever
+  targeted `#order-receipt-print`, an element that existed on the
+  customer-facing order pages but never on the admin order page - so
+  printing there hid the whole page and printed nothing. Wired in the
+  existing shared `OrderReceipt` component with the correct id, and fixed
+  the Orders list row's print button (previously calling `window.print()` on
+  the list page itself, not the order) to open that order and auto-print.
+- Removed the Collections tab (duplicated Featured Collections), the
+  standalone Shipping sidebar section (redundant with Settings > Shipping),
+  the sidebar's Payments entry, and the duplicate User Roles/Audit Logs tabs
+  inside Settings (both already live in the sidebar).
+- Investigated Customers/Purchases/Suppliers/Inventory "not working" reports
+  by reading the full request path on both ends; found no code defect in any
+  of them - all four return the correct shape and apply filters/writes
+  correctly. These were empty-database symptoms, addressed by the seed
+  script below. The Orders status-filter/search report was reviewed the same
+  way with the same result (backend query logic is correct); if it persists
+  after this update, it needs a live repro to pin down further.
+
+**`server/src/seed/seedBusinessData.js` (new)**
+- A standalone, idempotent script (safe to re-run - every insert is guarded
+  against duplicates) that adds real demo data: two suppliers, a Received
+  purchase (which pushes real stock through Inventory the same way the
+  admin UI does) plus a still-open one, a matching supplier payment, four
+  expenses across different categories, sample customers if none exist,
+  approved + pending reviews, two contact messages, and sets one product to
+  low stock and another to zero stock so the Dashboard's Low Stock Alerts
+  and Inventory's Out of Stock tab both have something real to show. Run
+  with `node src/seed/seedBusinessData.js` from `server/`.
+
+**Reviews and Testimonials are now genuinely user-submitted**
+- The product-review backend (moderation queue, image upload, admin
+  notifications) already existed but the product page only ever *displayed*
+  reviews with a "be the first" message - there was no way to actually
+  submit one. Built the missing submission form (star rating, text, optional
+  photo), gated to logged-in customers.
+- Testimonials were previously admin-authored only, with no admin UI to even
+  do that. Added a public submission endpoint tied to the customer's real
+  account (`POST /api/testimonials`), a "Share Your Experience" form on the
+  homepage testimonials section, and a proper admin moderation page
+  (`/admin/testimonials` - approve/reject/delete) since submissions default
+  to `pending` and need a queue to review them from. `HomepageManager.jsx`'s
+  old admin-authored testimonial panel was removed and replaced with a link
+  to the new moderation page.
+
+**Website/UX pass**
+- Navbar is now overlaid transparently on every page with a full-bleed hero
+  banner (Home, Shop, Gift Sets, Promotions, About) and smoothly turns solid
+  once the page scrolls past ~60px, with the announcement bar collapsing out
+  first. Every other page (product detail, cart, checkout, account, etc.)
+  keeps a normal solid header, since there's no hero image behind it.
+- Removed the hero slider's dot indicators.
+- Hero sections on Shop/Gift Sets/Promotions expanded, and each now shows a
+  `Home / Page` breadcrumb plus an eyebrow/heading/subtext, matching the
+  pattern already used on the Shop page. The About page picked up the same
+  breadcrumb.
+- Homepage "Our Story" rebuilt into a short teaser (quote-style heading on
+  the left, a couple of lines on the right, a "Read Our Story" button
+  beneath that leads to the full `/about` page) instead of showing the
+  entire story inline.
+- Header: removed "Help & Support" (it linked nowhere); "Store Locator" now
+  opens a real Google Maps link, set from Website Content > Contact Details
+  (`contactInfo.storeMapUrl` - admin searches the store on Google Maps, taps
+  Share, pastes the link).
+- Product cards: square image instead of portrait, the size badge (e.g.
+  "50ml") moved onto the image itself (bottom-right) instead of the details
+  row below, and Add to Cart is now hover-revealed on desktop (>=1024px)
+  instead of a permanently visible button, while staying visible as normal
+  below 1024px where there's no hover to reveal it.
+- Cart icon now opens a quick preview (items, quantities, subtotal, "Go to
+  Cart" button) instead of jumping straight to the Cart page.
+- Browser tab titles are now dynamic per page (`AL SA'I | Products |
+  <name>`, `AL SA'I | GiftSets | <name>`, `AL SA'I | Shop`, etc.) via a new
+  `usePageTitle` hook, applied to Product, Gift Set, Shop, Promotions, and
+  About pages.
+- Nav links (Shop, Promotions, Gift Sets) now draw a left-to-right underline
+  on hover and hold it, in the brand color, for whichever page is active.
+
+**Not yet done**
+- Notification/Collections dropdown fine alignment - this was downstream of
+  the navbar overlay work above; worth re-checking now that the header is
+  fixed/overlaid rather than sticky, but not independently re-verified yet.
+- The About page's paragraph-with-side-image mid-page section has not been
+  re-matched against the specific reference layout provided this round.

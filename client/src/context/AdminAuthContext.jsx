@@ -2,12 +2,14 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import adminAxios from '../api/adminAxios';
 import { setAdminAccessToken } from '../api/tokenStore';
 import useSessionGuard from '../hooks/useSessionGuard';
+import { useAuthTransition } from './AuthTransitionContext';
 
 const AdminAuthContext = createContext(null);
 
 export const AdminAuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { runWithAuthLoader } = useAuthTransition() || {};
 
   useEffect(() => {
     // Security: unlike the customer site, the admin panel does NOT restore a
@@ -26,19 +28,25 @@ export const AdminAuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password, rememberMe) => {
-    const { data } = await adminAxios.post('/auth/login', { email, password, rememberMe });
-    setAdminAccessToken(data.data.accessToken);
-    setAdmin(data.data.admin);
-    return data;
+    const runner = runWithAuthLoader || ((fn) => fn());
+    return runner(async () => {
+      const { data } = await adminAxios.post('/auth/login', { email, password, rememberMe });
+      setAdminAccessToken(data.data.accessToken);
+      setAdmin(data.data.admin);
+      return data;
+    });
   };
 
   const logout = async () => {
-    try {
-      await adminAxios.post('/auth/logout');
-    } finally {
-      setAdminAccessToken(null);
-      setAdmin(null);
-    }
+    const runner = runWithAuthLoader || ((fn) => fn());
+    return runner(async () => {
+      try {
+        await adminAxios.post('/auth/logout');
+      } finally {
+        setAdminAccessToken(null);
+        setAdmin(null);
+      }
+    });
   };
 
   const forgotPassword = async (email) => {

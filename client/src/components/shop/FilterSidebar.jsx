@@ -151,7 +151,7 @@ const FilterSidebar = ({
           className="absolute inset-0 bg-charcoal/40"
         />
         <div
-          className={`absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-cream shadow-xl transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+          className={`absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-cream shadow-xl transform transition-transform duration-300 ease-in-out overflow-y-auto scrollbar-none ${
             mobileOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >

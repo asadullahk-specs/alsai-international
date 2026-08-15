@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { FiSettings, FiTag, FiCreditCard, FiMail, FiFileText, FiShield, FiUsers, FiClipboard } from 'react-icons/fi';
+import { useSearchParams } from 'react-router-dom';
+import { FiSettings, FiTag, FiCreditCard, FiMail, FiFileText, FiShield } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
 import EmailTemplatesPanel from './EmailTemplatesPanel';
-import UsersRolesPage from '../UsersRoles/UsersRolesPage';
-import ActivityLogsPage from '../ActivityLogs/ActivityLogsPage';
 
 const NAV = [
   { key: 'General', icon: FiSettings },
@@ -13,8 +12,6 @@ const NAV = [
   { key: 'Email', icon: FiMail },
   { key: 'Templates', icon: FiFileText },
   { key: 'Security', icon: FiShield },
-  { key: 'User Roles', icon: FiUsers },
-  { key: 'Audit Logs', icon: FiClipboard },
 ];
 const inputClass = 'w-full px-4 py-2.5 border border-cream-200 text-sm focus:outline-none focus:ring-1 focus:ring-brand';
 const labelClass = 'text-xs text-muted block mb-1';
@@ -33,7 +30,9 @@ const Toggle = ({ checked, onChange, label }) => (
 );
 
 const SettingsPage = () => {
-  const [tab, setTab] = useState('General');
+  const [searchParams] = useSearchParams();
+  const initialTab = NAV.find((n) => n.key === searchParams.get('tab'))?.key || 'General';
+  const [tab, setTab] = useState(initialTab);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -123,8 +122,6 @@ const SettingsPage = () => {
 
         <div className="flex-1 min-w-0">
           {tab === 'Templates' && <EmailTemplatesPanel />}
-          {tab === 'User Roles' && <UsersRolesPage embedded />}
-          {tab === 'Audit Logs' && <ActivityLogsPage embedded />}
 
           {tab === 'Pricing' && (
             <div className="bg-white border border-cream-200 p-5 max-w-2xl space-y-4">

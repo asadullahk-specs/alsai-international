@@ -22,10 +22,10 @@ const Login = () => {
     setSubmitting(true);
     try {
       await login(form.email, form.password);
-      const redirectTo = location.state?.from || '/orders';
+      const redirectTo = location.state?.from || '/';
       navigate(redirectTo, { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || 'Unable to sign in. Please try again.');
+      setError(err.response?.data?.message || 'Invalid Credentials');
     } finally {
       setSubmitting(false);
     }

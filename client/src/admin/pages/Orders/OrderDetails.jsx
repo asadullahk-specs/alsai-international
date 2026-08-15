@@ -1,15 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { FiPrinter, FiArrowLeft, FiX } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
 import StatusBadge from '../../components/common/StatusBadge';
 import { formatPrice } from '../../../utils/formatPrice';
+import { driveImg } from '../../../utils/driveImg';
+import OrderReceipt from '../../../components/account/OrderReceipt';
 
 const ORDER_FLOW = ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'delivered'];
 const PAYMENT_STATUSES = ['pending', 'paid', 'failed', 'refunded'];
 
 const OrderDetails = () => {
   const { id } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [order, setOrder] = useState(null);
   const [customerTotalOrders, setCustomerTotalOrders] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -27,6 +30,20 @@ const OrderDetails = () => {
   useEffect(() => {
     fetchOrder();
   }, [fetchOrder]);
+
+  useEffect(() => {
+    if (!loading && order && searchParams.get('print') === '1') {
+      // Wait a tick so the receipt block has actually painted before
+      // the browser's print dialog captures the page.
+      const timer = setTimeout(() => {
+        window.print();
+        searchParams.delete('print');
+        setSearchParams(searchParams, { replace: true });
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [loading, order, searchParams, setSearchParams]);
 
   const handleStatusChange = async (orderStatus) => {
     setSaving(true);
@@ -86,6 +103,13 @@ const OrderDetails = () => {
 
   return (
     <div>
+      {/* Everything below is the admin's working view - hidden entirely when
+          printing. The actual receipt lives in the hidden block further
+          down and is the only thing visibility:visible targets (see the
+          #order-receipt-print print rules in index.css), which is what was
+          missing here before: this page never rendered anything with that
+          id, so "Print Receipt" produced a blank page. */}
+      <div className="no-print">
       <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
         <div>
           <Link to="/admin/orders" className="text-xs text-muted hover:text-brand flex items-center gap-1 mb-2">
@@ -172,7 +196,7 @@ const OrderDetails = () => {
           <div className="space-y-3 mb-4">
             {order.items.map((item, i) => (
               <div key={i} className="flex items-center gap-3 pb-3 border-b border-cream-100 last:border-0">
-                {item.image && <img src={item.image} alt={item.name} className="w-12 h-12 object-cover bg-cream-100 flex-shrink-0" />}
+                {item.image && <img src={driveImg(item.image)} alt={item.name} className="w-12 h-12 object-cover bg-cream-100 flex-shrink-0" />}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-ink truncate">{item.name}</p>
                   <p className="text-xs text-muted">
@@ -272,6 +296,11 @@ const OrderDetails = () => {
             </div>
           )}
         </div>
+      </div>
+      </div>
+
+      <div id="order-receipt-print" className="hidden print:block">
+        <OrderReceipt order={order} />
       </div>
     </div>
   );

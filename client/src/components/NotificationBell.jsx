@@ -44,7 +44,7 @@ const NotificationBell = ({ variant = 'icon' }) => {
   const isRow = variant === 'row';
 
   return (
-    <div className={isRow ? 'relative' : 'relative flex items-center'} ref={wrapperRef}>
+    <div className={isRow ? 'relative' : 'relative h-full flex items-center'} ref={wrapperRef}>
       <button
         type="button"
         onClick={handleToggle}
@@ -72,8 +72,8 @@ const NotificationBell = ({ variant = 'icon' }) => {
 
       {open && (
         <div
-          className={`${isRow ? 'relative mt-2 w-full' : 'absolute right-0 top-full mt-3 w-80 max-w-[90vw]'
-            } max-w-[90vw] bg-white border border-cream-200 rounded-md shadow-xl z-50 overflow-hidden`}
+          className={`${isRow ? 'relative mt-2 w-full' : 'absolute right-0 top-full'
+            } max-w-[90vw] bg-white border border-cream-200 rounded-md shadow-xl z-50 overflow-hidden ${isRow ? '' : 'w-80'}`}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-cream-200">
             <span className="text-sm font-medium text-ink">Notifications</span>

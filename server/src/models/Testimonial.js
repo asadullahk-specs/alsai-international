@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const testimonialSchema = new mongoose.Schema(
   {
+    // The account that submitted this testimonial. Optional only because a
+    // handful of pre-existing testimonials may have been entered directly
+    // in the database before this became customer-submitted-only.
+    customer: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },
     customerName: { type: String, required: true, trim: true },
     customerImage: { type: String, default: '' },
     // A separate, fixed-size slot for a photo of the actual product/order,

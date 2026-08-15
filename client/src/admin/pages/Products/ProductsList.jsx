@@ -1,16 +1,26 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { FiPlus, FiEye, FiEdit2, FiTrash2, FiSearch } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
 import { formatPrice } from '../../../utils/formatPrice';
+import { driveImg } from '../../../utils/driveImg';
 
 const ProductsList = () => {
+  const [urlParams, setUrlParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, total: 0, totalPages: 1 });
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(urlParams.get('search') || '');
   const [collections, setCollections] = useState([]);
   const [collectionFilter, setCollectionFilter] = useState('');
   const [loading, setLoading] = useState(true);
+
+  // Keeps this tab's own search box in sync with the header search bar - the
+  // header only ever updates the URL for whichever tab is currently open, so
+  // this effect is what actually applies that query to this page's data.
+  useEffect(() => {
+    const fromUrl = urlParams.get('search') || '';
+    setSearch((current) => (current === fromUrl ? current : fromUrl));
+  }, [urlParams]);
 
   useEffect(() => {
     adminAxios.get('collections').then(({ data }) => setCollections(data.data.collections || data.data.items || []));
@@ -27,14 +37,22 @@ const ProductsList = () => {
       .finally(() => setLoading(false));
   };
 
+  // Catches search as the admin types - no need to press Enter. Re-fetches
+  // (from page 1) whenever the query changes, same pattern as every other
+  // admin list page's own search box.
   useEffect(() => {
-    fetchProducts(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
     fetchProducts(1, search, collectionFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    setUrlParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (value) next.set('search', value);
+      else next.delete('search');
+      return next;
+    }, { replace: true });
   };
 
   const handleCollectionChange = (value) => {
@@ -62,15 +80,15 @@ const ProductsList = () => {
       <p className="text-sm text-muted mb-6">Total Products: {pagination.total}</p>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <form onSubmit={handleSearchSubmit} className="relative max-w-sm flex-1">
+        <div className="relative max-w-sm flex-1">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={15} />
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search products..."
             className="w-full pl-9 pr-3 py-2.5 border border-cream-200 bg-white text-sm focus:outline-none focus:ring-1 focus:ring-brand"
           />
-        </form>
+        </div>
 
         <select
           value={collectionFilter}
@@ -110,7 +128,7 @@ const ProductsList = () => {
                   <tr key={p._id} className="border-b border-cream-100 last:border-0">
                     <td className="p-4 hidden sm:table-cell">
                       <div className="w-10 h-10 rounded-md bg-cream-100 overflow-hidden">
-                        {p.mainImage && <img src={p.mainImage} alt={p.name} className="w-full h-full object-cover" />}
+                        {p.mainImage && <img src={driveImg(p.mainImage)} alt={p.name} className="w-full h-full object-cover" />}
                       </div>
                     </td>
                     <td className="p-4">
@@ -125,8 +143,8 @@ const ProductsList = () => {
                           p.totalStock === 0
                             ? 'text-charcoal'
                             : p.totalStock <= p.lowStockThreshold
-                            ? 'text-gold'
-                            : 'text-brand'
+                              ? 'text-gold'
+                              : 'text-brand'
                         }
                       >
                         {p.totalStock}
@@ -134,9 +152,8 @@ const ProductsList = () => {
                     </td>
                     <td className="p-4 hidden sm:table-cell">
                       <span
-                        className={`text-[10px] tracking-wide px-2 py-1 rounded-full ${
-                          p.isActive && !p.isHidden ? 'bg-brand/10 text-brand' : 'bg-cream-200 text-muted'
-                        }`}
+                        className={`text-[10px] tracking-wide px-2 py-1 rounded-full ${p.isActive && !p.isHidden ? 'bg-brand/10 text-brand' : 'bg-cream-200 text-muted'
+                          }`}
                       >
                         {p.isActive && !p.isHidden ? 'Active' : 'Hidden'}
                       </span>

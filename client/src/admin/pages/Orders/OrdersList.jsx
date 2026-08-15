@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { FiDownload, FiEye, FiPrinter, FiMail, FiRefreshCw, FiBox } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
 import StatCard from '../../components/common/StatCard';
@@ -21,10 +21,19 @@ const TABS = [
 ];
 
 const OrdersList = () => {
+  const navigate = useNavigate();
+  const [urlParams, setUrlParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
   const [counts, setCounts] = useState({});
   const [status, setStatus] = useState('all');
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(urlParams.get('search') || '');
+  // Keeps this tab's own search box in sync with the header search bar - the
+  // header only ever updates the URL for whichever tab is currently open, so
+  // this effect is what actually applies that query to this page's data.
+  useEffect(() => {
+    const fromUrl = urlParams.get('search') || '';
+    setSearch((current) => (current === fromUrl ? current : fromUrl));
+  }, [urlParams]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -81,7 +90,7 @@ const OrdersList = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-4 max-480:grid-cols-1 min-1471:grid-cols-7 gap-3 mb-6">
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 min-1471:grid-cols-7 gap-3 mb-6">
         <StatCard icon={FiBox} label="All Orders" value={counts.all ?? 0} tone="ink" />
         <StatCard label="Pending" value={counts.pending ?? 0} tone="gold" />
         <StatCard label="Confirmed" value={counts.confirmed ?? 0} tone="green" />
@@ -100,6 +109,12 @@ const OrdersList = () => {
             onChange={(e) => {
               setSearch(e.target.value);
               setPage(1);
+              setUrlParams((prev) => {
+                const next = new URLSearchParams(prev);
+                if (e.target.value) next.set('search', e.target.value);
+                else next.delete('search');
+                return next;
+              }, { replace: true });
             }}
             placeholder="Search order #, customer name, or phone..."
             className="w-full sm:max-w-xs px-4 py-2.5 rounded-md border border-cream-200 text-sm focus:outline-none focus:ring-1 focus:ring-brand"
@@ -131,7 +146,7 @@ const OrdersList = () => {
                 <Link to={`/admin/orders/${o._id}`} className="hover:text-brand" title="View">
                   <FiEye size={15} />
                 </Link>
-                <button type="button" onClick={() => window.print()} className="hover:text-brand" title="Print">
+                <button type="button" onClick={() => navigate(`/admin/orders/${o._id}?print=1`)} className="hover:text-brand" title="Print">
                   <FiPrinter size={15} />
                 </button>
                 <a href={`mailto:${o.customer?.email || ''}`} className="hover:text-brand" title="Email customer">

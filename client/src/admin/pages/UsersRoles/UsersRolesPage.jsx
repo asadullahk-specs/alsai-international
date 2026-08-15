@@ -3,7 +3,26 @@ import { FiPlus, FiTrash2, FiShield, FiUser } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
 import StackTable from '../../components/common/StackTable';
 
-const MODULES = ['dashboard', 'products', 'orders', 'customers', 'reviews', 'newsletter', 'content', 'marketing', 'inventory', 'reports', 'settings', 'users', 'backup'];
+const MODULES = [
+  'dashboard',
+  'products',
+  'orders',
+  'customers',
+  'reviews',
+  'newsletter',
+  'content',
+  'marketing',
+  'purchases',
+  'suppliers',
+  'inventory',
+  'payments',
+  'expenses',
+  'returns',
+  'reports',
+  'settings',
+  'users',
+  'backup',
+];
 const ACTIONS = ['view', 'create', 'edit', 'delete', 'approve'];
 
 const emptyRoleForm = { name: '', description: '', permissions: [] };

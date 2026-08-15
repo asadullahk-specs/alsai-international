@@ -5,6 +5,7 @@ import publicAxios from '../../api/publicAxios';
 import ProductCard from '../../components/ProductCard';
 import FilterSidebar from '../../components/shop/FilterSidebar';
 import { driveImg } from '../../utils/driveImg';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' },
@@ -15,6 +16,7 @@ const SORT_OPTIONS = [
 ];
 
 const Shop = () => {
+  usePageTitle('Shop');
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 12, totalPages: 1, total: 0 });
@@ -95,14 +97,21 @@ const Shop = () => {
 
   return (
     <div>
-      <div className="bg-cream-100 relative overflow-hidden h-[220px] sm:h-[280px] md:h-[320px] flex items-center">
+      <div className="bg-cream-100 relative overflow-hidden h-[532px] sm:h-[616px] md:h-[672px] flex items-center">
         {bannerImage && (
-          <img src={driveImg(bannerImage)} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+          <img src={driveImg(bannerImage)} alt="" className="absolute inset-0 w-full h-full object-cover" />
         )}
+        {/* Dark shade over the banner image - matches the homepage hero, and
+            keeps the transparent navbar's white text/icons legible on top of
+            whatever image the admin has set here. */}
+        <div className="absolute inset-0 bg-black/40" />
         <div className="max-w-7xl mx-auto px-4 relative w-full">
-          <p className="text-xs tracking-widest text-muted mb-2">{bannerEyebrow}</p>
-          <h1 className="font-serif text-3xl text-ink">{bannerTitle}</h1>
-          <p className="text-sm text-muted mt-1 max-w-lg">{bannerText}</p>
+          <p className="text-xs text-cream-100/80 mb-3">
+            <Link to="/" className="hover:text-gold">Home</Link> / Shop
+          </p>
+          <p className="text-xs tracking-widest text-cream-100/90 mb-2">{bannerEyebrow}</p>
+          <h1 className="font-serif text-3xl sm:text-4xl text-white">{bannerTitle}</h1>
+          <p className="text-sm text-cream-100/90 mt-2 max-w-lg">{bannerText}</p>
         </div>
       </div>
 
@@ -134,7 +143,7 @@ const Shop = () => {
             <select
               value={filters.sort || 'newest'}
               onChange={(e) => updateFilter('sort', e.target.value)}
-              className="text-sm border border-cream-200 rounded px-3 py-2 bg-cream text-ink cursor-pointer appearance-none focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors max-480:order-1"
+              className="text-sm border border-cream-200 rounded px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-brand max-480:order-1"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -173,9 +182,8 @@ const Shop = () => {
                   type="button"
                   key={n}
                   onClick={() => goToPage(n)}
-                  className={`w-8 h-8 rounded text-sm ${
-                    pagination.page === n ? 'bg-brand text-white' : 'border border-cream-200 text-ink'
-                  }`}
+                  className={`w-8 h-8 rounded text-sm ${pagination.page === n ? 'bg-brand text-white' : 'border border-cream-200 text-ink'
+                    }`}
                 >
                   {n}
                 </button>

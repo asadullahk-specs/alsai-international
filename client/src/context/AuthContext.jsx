@@ -2,12 +2,14 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import customerAxios from '../api/customerAxios';
 import { setCustomerAccessToken } from '../api/tokenStore';
 import useSessionGuard from '../hooks/useSessionGuard';
+import { useAuthTransition } from './AuthTransitionContext';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { runWithAuthLoader } = useAuthTransition() || {};
 
   const fetchMe = useCallback(async () => {
     try {
@@ -25,26 +27,35 @@ export const AuthProvider = ({ children }) => {
   }, [fetchMe]);
 
   const login = async (email, password) => {
-    const { data } = await customerAxios.post('/auth/login', { email, password });
-    setCustomerAccessToken(data.data.accessToken);
-    setUser(data.data.customer);
-    return data;
+    const runner = runWithAuthLoader || ((fn) => fn());
+    return runner(async () => {
+      const { data } = await customerAxios.post('/auth/login', { email, password });
+      setCustomerAccessToken(data.data.accessToken);
+      setUser(data.data.customer);
+      return data;
+    });
   };
 
   const register = async (payload) => {
-    const { data } = await customerAxios.post('/auth/register', payload);
-    setCustomerAccessToken(data.data.accessToken);
-    setUser(data.data.customer);
-    return data;
+    const runner = runWithAuthLoader || ((fn) => fn());
+    return runner(async () => {
+      const { data } = await customerAxios.post('/auth/register', payload);
+      setCustomerAccessToken(data.data.accessToken);
+      setUser(data.data.customer);
+      return data;
+    });
   };
 
   const logout = async () => {
-    try {
-      await customerAxios.post('/auth/logout');
-    } finally {
-      setCustomerAccessToken(null);
-      setUser(null);
-    }
+    const runner = runWithAuthLoader || ((fn) => fn());
+    return runner(async () => {
+      try {
+        await customerAxios.post('/auth/logout');
+      } finally {
+        setCustomerAccessToken(null);
+        setUser(null);
+      }
+    });
   };
 
   const forgotPassword = async (email) => {

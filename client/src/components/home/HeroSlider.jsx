@@ -6,7 +6,7 @@ import { driveImg } from '../../utils/driveImg';
 // own image's native dimensions. Text sits in a flex column with room
 // reserved below the heading so a 2-line heading never gets clipped by the
 // frame, and shrinks on small screens so it never overflows there either.
-const FRAME_HEIGHT = 'h-[380px] sm:h-[440px] md:h-[480px]';
+const FRAME_HEIGHT = 'h-[532px] sm:h-[616px] md:h-[672px]';
 
 const HeroSlider = ({ slides = [] }) => {
   const [current, setCurrent] = useState(0);
@@ -73,19 +73,6 @@ const HeroSlider = ({ slides = [] }) => {
         </div>
       </div>
 
-      {slides.length > 1 && (
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
-          {slides.map((s, i) => (
-            <button
-              key={s._id || i}
-              type="button"
-              onClick={() => setCurrent(i)}
-              className={`w-2 h-2 rounded-full transition-colors ${i === current ? 'bg-gold' : 'bg-white/40'}`}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
-      )}
     </section>
   );
 };

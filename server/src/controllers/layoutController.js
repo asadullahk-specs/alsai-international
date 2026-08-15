@@ -7,7 +7,7 @@ const asyncHandler = require('../utils/asyncHandler');
 exports.getLayout = asyncHandler(async (req, res) => {
   const [collections, fragranceFamilies, websiteContent] = await Promise.all([
     Collection.find({ isActive: true }).sort({ displayOrder: 1 }),
-    FragranceFamily.find({ isActive: true }).sort({ displayOrder: 1 }),
+    FragranceFamily.find({ isActive: true }).sort({ displayOrder: 1 }).populate('collection', 'name'),
     WebsiteContent.findOne(),
   ]);
 

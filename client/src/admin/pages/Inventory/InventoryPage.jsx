@@ -137,7 +137,7 @@ const InventoryPage = () => {
     <div>
       <h1 className="font-serif text-2xl text-ink mb-6">Inventory Management</h1>
 
-      <div className="grid grid-cols-1 min-641:grid-cols-2 min-1281:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-1 xs:grid-cols-2 min-1281:grid-cols-4 gap-3 mb-6">
         <StatCard icon={FiPackage} label="Total Stock Units" value={stats.totalStockUnits ?? 0} tone="ink" />
         <StatCard icon={FiAlertTriangle} label="Low Stock Items" value={stats.lowStockCount ?? 0} tone="gold" />
         <StatCard icon={FiXCircle} label="Out of Stock Items" value={stats.outOfStockCount ?? 0} tone="ink" />

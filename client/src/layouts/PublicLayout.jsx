@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import publicAxios from '../api/publicAxios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
+// Same hero-route list as Navbar.jsx - those pages start with a full-bleed
+// banner at y=0 so the transparent header can overlay it; every other page
+// needs top padding to clear the now fixed (not sticky) header.
+const HERO_ROUTES = ['/', '/shop', '/gift-sets', '/promotions', '/about'];
+
 const PublicLayout = () => {
   const [layout, setLayout] = useState(null);
+  const location = useLocation();
+  const isHeroRoute = HERO_ROUTES.includes(location.pathname);
+  const hasAnnouncement = Boolean(layout?.websiteContent?.announcementBar?.isActive);
 
   useEffect(() => {
     publicAxios
@@ -19,9 +27,10 @@ const PublicLayout = () => {
       <Navbar
         collections={layout?.collections || []}
         fragranceFamilies={layout?.fragranceFamilies || []}
-        announcementText={layout?.websiteContent?.announcementBar?.isActive ? layout.websiteContent.announcementBar.text : null}
+        announcementText={hasAnnouncement ? layout.websiteContent.announcementBar.text : null}
+        storeMapUrl={layout?.websiteContent?.contactInfo?.storeMapUrl}
       />
-      <main className="flex-1">
+      <main className={`flex-1 ${isHeroRoute ? '' : hasAnnouncement ? 'pt-[116px]' : 'pt-20'}`}>
         <Outlet />
       </main>
       <Footer websiteContent={layout?.websiteContent} />

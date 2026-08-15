@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
-import HomeProductCard from './HomeProductCard';
+import ProductCard from '../ProductCard';
 
+// Best Sellers / New Arrivals now use the exact same product card as the
+// Shop page (add-to-cart, discount badge, size badge, etc.) instead of the
+// old stripped-down homepage-only card, so the product grid looks and
+// behaves identically everywhere it appears on the site.
 const ProductRow = ({ title, products = [], viewAllLink, mediaMode = 'image' }) => {
   if (products.length === 0) return null;
 
@@ -16,8 +20,8 @@ const ProductRow = ({ title, products = [], viewAllLink, mediaMode = 'image' }) 
       </div>
       <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-5 md:overflow-visible scrollbar-none">
         {products.map((p) => (
-          <div key={p._id} className="flex-shrink-0 w-36 sm:w-44 md:w-auto snap-start">
-            <HomeProductCard product={p} mediaMode={mediaMode} />
+          <div key={p._id} className="flex-shrink-0 w-40 sm:w-48 md:w-auto snap-start">
+            <ProductCard product={p} mediaMode={mediaMode} />
           </div>
         ))}
       </div>

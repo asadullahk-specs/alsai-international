@@ -40,10 +40,25 @@ const inputClass = 'w-full px-4 py-2.5 border border-cream-200 text-sm focus:out
 
 const WebsiteContentPage = () => {
   const [content, setContent] = useState(null);
-  const [about, setAbout] = useState({ image: '', heading: '', description: '' });
+  const [about, setAbout] = useState({
+    eyebrow: '',
+    heading: '',
+    description: '',
+    image: '',
+    video: '',
+    storyHeading: '',
+    storyBody: '',
+    storyImage: '',
+    storyVideo: '',
+    values: [],
+    milestones: [],
+    quoteText: '',
+    quoteAuthor: '',
+    closingImage: '',
+  });
   const [shopPage, setShopPage] = useState({ allBannerImage: '' });
   const [giftSetPage, setGiftSetPage] = useState({ bannerImage: '' });
-  const [contact, setContact] = useState({ storeName: '', address: '', phone: '', email: '', whatsapp: '', workingHours: '' });
+  const [contact, setContact] = useState({ storeName: '', address: '', phone: '', email: '', whatsapp: '', workingHours: '', storeMapUrl: '' });
   const [footer, setFooter] = useState({ description: '', columns: [] });
   const [social, setSocial] = useState([]);
   const [announcement, setAnnouncement] = useState({ text: '', link: '', isActive: true });
@@ -55,7 +70,23 @@ const WebsiteContentPage = () => {
     adminAxios.get('website-content').then(({ data }) => {
       const c = data.data.content;
       setContent(c);
-      setAbout(c.aboutPage || {});
+      setAbout({
+        eyebrow: '',
+        heading: '',
+        description: '',
+        image: '',
+        video: '',
+        storyHeading: '',
+        storyBody: '',
+        storyImage: '',
+        storyVideo: '',
+        values: [],
+        milestones: [],
+        quoteText: '',
+        quoteAuthor: '',
+        closingImage: '',
+        ...(c.aboutPage || {}),
+      });
       setShopPage(c.shopPage || { allBannerImage: '' });
       setGiftSetPage(c.giftSetPage || { bannerImage: '' });
       setContact(c.contactInfo || {});
@@ -81,13 +112,128 @@ const WebsiteContentPage = () => {
       <h1 className="font-serif text-2xl text-ink mb-1">Website Content</h1>
       <p className="text-sm text-muted mb-6">Manage content that appears on your website.</p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
-        <SectionCard title="ABOUT PAGE" description="Update the content for the About Us page." onSave={() => adminAxios.put('website-content/about-page', about)}>
-          <input placeholder="About Image (Google Drive link)" value={about.image} onChange={(e) => setAbout({ ...about, image: e.target.value })} className={inputClass} />
-          <input placeholder="Heading" value={about.heading} onChange={(e) => setAbout({ ...about, heading: e.target.value })} className={inputClass} />
-          <textarea placeholder="Description" rows={3} value={about.description} onChange={(e) => setAbout({ ...about, description: e.target.value })} className={`${inputClass} resize-none`} />
-        </SectionCard>
+      <div className="bg-white border border-cream-200 p-5 mb-5">
+        <p className="text-xs tracking-widest text-muted mb-1">ABOUT PAGE / OUR STORY</p>
+        <p className="text-xs text-muted mb-4">Manage every section of the About page - the intro banner, the Our Story narrative, brand values, milestones, and the closing quote.</p>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="space-y-3">
+            <p className="text-[11px] tracking-widest text-brand">INTRO BANNER</p>
+            <input placeholder="Eyebrow (e.g. THE ESSENCE OF LUXURY)" value={about.eyebrow} onChange={(e) => setAbout({ ...about, eyebrow: e.target.value })} className={inputClass} />
+            <input placeholder="Heading" value={about.heading} onChange={(e) => setAbout({ ...about, heading: e.target.value })} className={inputClass} />
+            <textarea placeholder="Intro description" rows={3} value={about.description} onChange={(e) => setAbout({ ...about, description: e.target.value })} className={`${inputClass} resize-none`} />
+            <input placeholder="Banner Image (Google Drive link)" value={about.image} onChange={(e) => setAbout({ ...about, image: e.target.value })} className={inputClass} />
+            <input placeholder="Banner Video (Google Drive link, optional - shown instead of the image)" value={about.video} onChange={(e) => setAbout({ ...about, video: e.target.value })} className={inputClass} />
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-[11px] tracking-widest text-brand">OUR STORY</p>
+            <input placeholder="Story Heading (e.g. Our Story)" value={about.storyHeading} onChange={(e) => setAbout({ ...about, storyHeading: e.target.value })} className={inputClass} />
+            <textarea placeholder="Story body" rows={5} value={about.storyBody} onChange={(e) => setAbout({ ...about, storyBody: e.target.value })} className={`${inputClass} resize-none`} />
+            <input placeholder="Story Image (Google Drive link)" value={about.storyImage} onChange={(e) => setAbout({ ...about, storyImage: e.target.value })} className={inputClass} />
+            <input placeholder="Story Video (Google Drive link, optional - shown instead of the image)" value={about.storyVideo} onChange={(e) => setAbout({ ...about, storyVideo: e.target.value })} className={inputClass} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+          <div>
+            <p className="text-[11px] tracking-widest text-brand mb-2">BRAND VALUES</p>
+            <div className="space-y-2">
+              {about.values.map((v, i) => (
+                <div key={i} className="border border-cream-100 p-2 space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <input
+                      placeholder="Value title (e.g. Craftsmanship)"
+                      value={v.title}
+                      onChange={(e) => setAbout({ ...about, values: about.values.map((x, xi) => (xi === i ? { ...x, title: e.target.value } : x)) })}
+                      className="flex-1 text-sm border-b border-cream-200 py-1 focus:outline-none"
+                    />
+                    <button type="button" onClick={() => setAbout({ ...about, values: about.values.filter((_, xi) => xi !== i) })} className="text-muted hover:text-charcoal ml-2 flex-shrink-0">
+                      <FiTrash2 size={14} />
+                    </button>
+                  </div>
+                  <textarea
+                    placeholder="Short description"
+                    rows={2}
+                    value={v.description}
+                    onChange={(e) => setAbout({ ...about, values: about.values.map((x, xi) => (xi === i ? { ...x, description: e.target.value } : x)) })}
+                    className="w-full text-sm border-b border-cream-200 py-1 focus:outline-none resize-none"
+                  />
+                </div>
+              ))}
+              <button type="button" onClick={() => setAbout({ ...about, values: [...about.values, { title: '', description: '' }] })} className="flex items-center gap-1 text-xs text-brand">
+                <FiPlus size={12} /> Add Value
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-[11px] tracking-widest text-brand mb-2">MILESTONES / TIMELINE</p>
+            <div className="space-y-2">
+              {about.milestones.map((m, i) => (
+                <div key={i} className="border border-cream-100 p-2 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <input
+                      placeholder="Year"
+                      value={m.year}
+                      onChange={(e) => setAbout({ ...about, milestones: about.milestones.map((x, xi) => (xi === i ? { ...x, year: e.target.value } : x)) })}
+                      className="w-20 text-sm border-b border-cream-200 py-1 focus:outline-none flex-shrink-0"
+                    />
+                    <input
+                      placeholder="Title"
+                      value={m.title}
+                      onChange={(e) => setAbout({ ...about, milestones: about.milestones.map((x, xi) => (xi === i ? { ...x, title: e.target.value } : x)) })}
+                      className="flex-1 text-sm border-b border-cream-200 py-1 focus:outline-none"
+                    />
+                    <button type="button" onClick={() => setAbout({ ...about, milestones: about.milestones.filter((_, xi) => xi !== i) })} className="text-muted hover:text-charcoal flex-shrink-0">
+                      <FiTrash2 size={14} />
+                    </button>
+                  </div>
+                  <textarea
+                    placeholder="Description"
+                    rows={2}
+                    value={m.description}
+                    onChange={(e) => setAbout({ ...about, milestones: about.milestones.map((x, xi) => (xi === i ? { ...x, description: e.target.value } : x)) })}
+                    className="w-full text-sm border-b border-cream-200 py-1 focus:outline-none resize-none"
+                  />
+                </div>
+              ))}
+              <button type="button" onClick={() => setAbout({ ...about, milestones: [...about.milestones, { year: '', title: '', description: '' }] })} className="flex items-center gap-1 text-xs text-brand">
+                <FiPlus size={12} /> Add Milestone
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+          <div className="space-y-3">
+            <p className="text-[11px] tracking-widest text-brand">CLOSING QUOTE</p>
+            <textarea placeholder="Quote text" rows={2} value={about.quoteText} onChange={(e) => setAbout({ ...about, quoteText: e.target.value })} className={`${inputClass} resize-none`} />
+            <input placeholder="Quote author (e.g. Founder, AL SA'I)" value={about.quoteAuthor} onChange={(e) => setAbout({ ...about, quoteAuthor: e.target.value })} className={inputClass} />
+          </div>
+          <div className="space-y-3">
+            <p className="text-[11px] tracking-widest text-brand">CLOSING IMAGE</p>
+            <input placeholder="Closing Image (Google Drive link)" value={about.closingImage} onChange={(e) => setAbout({ ...about, closingImage: e.target.value })} className={inputClass} />
+            {about.closingImage && (
+              <div className="w-full h-24 bg-cream-100 rounded-md overflow-hidden">
+                <img src={driveImg(about.closingImage)} alt="Closing preview" className="w-full h-full object-cover" />
+              </div>
+            )}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={async () => {
+            await adminAxios.put('website-content/about-page', about);
+          }}
+          className="mt-5 bg-brand hover:bg-brand-dark text-white text-xs tracking-widest px-4 py-2.5"
+        >
+          UPDATE ABOUT PAGE
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
         <SectionCard
           title="SHOP PAGE"
           description="Background image shown behind the 'All Fragrances' banner on the Shop page. (Perfumes and Attars each get their own background from Admin &gt; Categories.)"
@@ -108,7 +254,7 @@ const WebsiteContentPage = () => {
 
         <SectionCard
           title="GIFT SET PAGE"
-          description="Background banner shown at the top of every individual gift set's product page."
+          description="Background banner shown at the top of the Gift Sets page - the page shown when a shopper clicks 'Gift Sets' in the navbar. Not shown on individual gift set product pages."
           onSave={() => adminAxios.put('website-content/gift-set-page', giftSetPage)}
         >
           <input
@@ -131,6 +277,12 @@ const WebsiteContentPage = () => {
           <input placeholder="Email" value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} className={inputClass} />
           <input placeholder="WhatsApp" value={contact.whatsapp} onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })} className={inputClass} />
           <input placeholder="Working Hours" value={contact.workingHours} onChange={(e) => setContact({ ...contact, workingHours: e.target.value })} className={inputClass} />
+          <input
+            placeholder="Store Locator - Google Maps link (search your store on Google Maps, tap Share, paste the link here)"
+            value={contact.storeMapUrl}
+            onChange={(e) => setContact({ ...contact, storeMapUrl: e.target.value })}
+            className={inputClass}
+          />
         </SectionCard>
 
         <SectionCard title="FAQS" description="Manage frequently asked questions." onSave={() => adminAxios.put('website-content/faqs', faqs)}>

@@ -25,7 +25,7 @@ const AdminLogin = () => {
       // regardless of which page originally redirected here.
       navigate('/admin/dashboard', { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || 'Unable to sign in. Please try again.');
+      setError(err.response?.data?.message || 'Invalid Credentials');
     } finally {
       setSubmitting(false);
     }

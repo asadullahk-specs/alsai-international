@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiX } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
+import { driveImg } from '../../../utils/driveImg';
 
-const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, hasDescription = true, hasVideo = false }) => {
+const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, hasDescription = true, hasVideo = false, hasCollectionSelect = false }) => {
   const [items, setItems] = useState([]);
+  const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [form, setForm] = useState({ name: '', description: '', image: '', video: '', isActive: true, displayOrder: 0 });
+  const [form, setForm] = useState({ name: '', description: '', image: '', video: '', collection: '', isActive: true, displayOrder: 0 });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -21,11 +23,14 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
 
   useEffect(() => {
     fetchItems();
+    if (hasCollectionSelect) {
+      adminAxios.get('/collections').then(({ data }) => setCollections(data.data.items));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiPath]);
 
   const openNewForm = () => {
-    setForm({ name: '', description: '', image: '', video: '', isActive: true, displayOrder: items.length });
+    setForm({ name: '', description: '', image: '', video: '', collection: collections[0]?._id || '', isActive: true, displayOrder: items.length });
     setEditingId(null);
     setError('');
     setShowForm(true);
@@ -37,6 +42,7 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
       description: item.description || '',
       image: item.image || '',
       video: item.video || '',
+      collection: item.collection?._id || item.collection || '',
       isActive: item.isActive,
       displayOrder: item.displayOrder,
     });
@@ -53,6 +59,10 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (hasCollectionSelect && !form.collection) {
+      setError('Please select whether this belongs to Perfumes or Attars.');
+      return;
+    }
     setSubmitting(true);
     try {
       const payload = { ...form, displayOrder: Number(form.displayOrder) };
@@ -140,6 +150,24 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
                 className="w-full px-4 py-3 rounded-md border border-cream-200 text-sm focus:outline-none focus:ring-1 focus:ring-brand"
               />
             )}
+            {hasCollectionSelect && (
+              <div>
+                <label className="text-xs tracking-widest text-muted block mb-1.5">BELONGS TO</label>
+                <select
+                  name="collection"
+                  required
+                  value={form.collection}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-md border border-cream-200 text-sm focus:outline-none focus:ring-1 focus:ring-brand"
+                >
+                  <option value="">Select Perfumes or Attars</option>
+                  {collections.map((c) => (
+                    <option key={c._id} value={c._id}>{c.name}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted mt-1.5">Controls which navbar dropdown (Perfumes or Attars) shows this family.</p>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <input
                 type="number"
@@ -185,6 +213,7 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
               <tr className="border-b border-cream-200 text-left text-xs tracking-widest text-muted">
                 {hasImage && <th className="p-4 max-480:p-2 font-normal">Image</th>}
                 <th className="p-4 max-480:p-2 max-480:text-[11px] max-320:text-[9px] font-normal">Name</th>
+                {hasCollectionSelect && <th className="p-4 max-480:p-2 max-480:text-[11px] max-320:text-[9px] font-normal table-cell max-640:hidden">Belongs To</th>}
                 <th className="p-4 max-480:p-2 max-480:text-[11px] max-320:text-[9px] font-normal table-cell max-520:hidden">Status</th>
                 <th className="p-4 max-480:p-2 max-480:text-[11px] max-320:text-[9px] font-normal">Order</th>
                 <th className="p-4 max-480:p-2 max-480:text-[11px] max-320:text-[9px] font-normal text-right">Actions</th>
@@ -196,11 +225,14 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
                   {hasImage && (
                     <td className="p-4 max-480:p-2">
                       <div className="w-10 h-10 max-320:w-7 max-320:h-7 rounded-md bg-cream-100 overflow-hidden">
-                        {item.image && <img src={item.image} alt={item.name} className="w-full h-full object-cover" />}
+                        {item.image && <img src={driveImg(item.image)} alt={item.name} className="w-full h-full object-cover" />}
                       </div>
                     </td>
                   )}
                   <td className="p-4 max-480:p-2 max-480:text-xs max-320:text-[10px] text-ink whitespace-nowrap">{item.name}</td>
+                  {hasCollectionSelect && (
+                    <td className="p-4 max-480:p-2 table-cell max-640:hidden text-sm text-muted">{item.collection?.name || '—'}</td>
+                  )}
                   <td className="p-4 max-480:p-2 table-cell max-520:hidden">
                     <span
                       className={`text-[10px] max-320:text-[9px] tracking-wide px-2 py-1 rounded-full ${

@@ -89,7 +89,7 @@ const ReportsPage = () => {
         <>
           {tab === 'Sales' && (
             <>
-              <div className="grid grid-cols-1 min-641:grid-cols-3 min-1221:grid-cols-6 gap-3 mb-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 min-641:grid-cols-3 min-1221:grid-cols-6 gap-3 mb-6">
                 <StatCard label="Total Sales" value={formatPrice(data.totalSales)} tone="brand" />
                 <StatCard label="Total Orders" value={data.totalOrders} tone="ink" />
                 <StatCard label="Total Customers" value={data.totalCustomers} tone="ink" />

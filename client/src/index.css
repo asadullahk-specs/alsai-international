@@ -6,6 +6,15 @@
 
 html {
   scroll-behavior: smooth;
+  /* Always reserves the scrollbar's track width, whether or not the page
+     currently has a scrollbar. Without this, anything that temporarily
+     locks body scroll (cart preview, search modal, mobile menu, etc.)
+     removes the scrollbar, the viewport gets a few pixels wider, and every
+     fixed-position, full-width element (the header) visibly nudges right -
+     then snaps back left when scrolling is restored. Reserving the gutter
+     up front means opening/closing those overlays never changes the
+     viewport width at all. */
+  scrollbar-gutter: stable;
 }
 
 /* System-wide: below 480px every rem-based font size (and spacing, since
@@ -30,16 +39,20 @@ body {
   width: 8px;
   height: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: #EFE6D8;
 }
+
 ::-webkit-scrollbar-thumb {
   background-color: #A9662A;
   border: 2px solid #EFE6D8;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background-color: #8A5220;
 }
+
 * {
   scrollbar-width: thin;
   scrollbar-color: #A9662A #EFE6D8;
@@ -48,16 +61,66 @@ body {
 .scrollbar-dark::-webkit-scrollbar-track {
   background: #1F1B18;
 }
+
 .scrollbar-dark::-webkit-scrollbar-thumb {
   background-color: #C9A15A;
   border: 2px solid #1F1B18;
 }
+
 .scrollbar-dark::-webkit-scrollbar-thumb:hover {
   background-color: #D9BE8B;
 }
+
 .scrollbar-dark {
   scrollbar-color: #C9A15A #1F1B18;
 }
+
+/* Main navbar links (Shop, Collections, Promotions, Gift Sets). The
+   underline grows from the left edge on hover, and stays fully drawn - in
+   the active-page color - for whichever page is currently open. */
+.nav-underline {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.nav-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.nav-underline:hover {
+  color: #A9662A;
+}
+
+.nav-underline:hover::after,
+.nav-underline-active {
+  color: #A9662A;
+}
+
+.nav-underline:hover::after,
+.nav-underline-active::after {
+  transform: scaleX(1);
+}
+
+/* Short decorative underline below a section heading - a fixed-width bar
+   under the start of the text, not a full-width rule. Usage:
+   <h2>Title</h2><span className="heading-underline" /> */
+.heading-underline {
+  display: block;
+  width: 48px;
+  height: 2px;
+  background-color: #A9662A;
+  margin-top: 10px;
+}
+
 
 /* Used on horizontal mobile sliders (Featured Collections, Best Sellers, New
    Arrivals) where a visible scrollbar would look like a UI mistake rather
@@ -66,6 +129,7 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
@@ -77,6 +141,7 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
@@ -94,6 +159,7 @@ body {
   cursor: pointer;
   box-shadow: 0 0 0 1px rgba(169, 102, 42, 0.4);
 }
+
 .price-range-thumb::-moz-range-thumb {
   pointer-events: auto;
   width: 16px;
@@ -104,12 +170,25 @@ body {
   cursor: pointer;
   box-shadow: 0 0 0 1px rgba(169, 102, 42, 0.4);
 }
+
 .price-range-thumb::-webkit-slider-runnable-track {
   -webkit-appearance: none;
   background: transparent;
 }
+
 .price-range-thumb::-moz-range-track {
   background: transparent;
+}
+
+/* Cart sidebar (CartPreview) slide-in from the right edge of the screen. */
+@keyframes cartSlideIn {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 /* Order bill printing (OrderDetails page). "Print Receipt" calls
@@ -121,16 +200,19 @@ body {
   body * {
     visibility: hidden;
   }
+
   #order-receipt-print,
   #order-receipt-print * {
     visibility: visible;
   }
+
   #order-receipt-print {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
   }
+
   .no-print {
     display: none !important;
   }

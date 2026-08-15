@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { driveImg } from '../../utils/driveImg';
 
 // Mirrors HeroSlider's fixed frame so both sections read as the same visual
@@ -12,11 +11,10 @@ const SeasonalBanner = ({ campaigns = [] }) => {
   const [current, setCurrent] = useState(0);
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % campaigns.length), [campaigns.length]);
-  const prev = () => setCurrent((c) => (c - 1 + campaigns.length) % campaigns.length);
 
   useEffect(() => {
     if (campaigns.length < 2) return undefined;
-    const timer = setInterval(next, 2500);
+    const timer = setInterval(next, 3000);
     return () => clearInterval(timer);
   }, [next, campaigns.length]);
 
@@ -37,9 +35,8 @@ const SeasonalBanner = ({ campaigns = [] }) => {
               alt={c.name}
               loading={i === 0 ? 'eager' : undefined}
               fetchpriority={i === 0 ? 'high' : undefined}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'
-              }`}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                }`}
             />
           ) : null
         )}
@@ -54,43 +51,11 @@ const SeasonalBanner = ({ campaigns = [] }) => {
             SHOP THE OFFER
           </Link>
         </div>
-        <div className="absolute top-6 right-6 bg-brand text-white text-center rounded-full w-16 h-16 flex flex-col items-center justify-center leading-none">
+        <div className="absolute top-16 right-6 bg-brand text-white text-center rounded-full w-16 h-16 flex flex-col items-center justify-center leading-none">
           <span className="text-[10px]">UP TO</span>
           <span className="text-lg font-semibold">{campaign.discountPercent}%</span>
           <span className="text-[9px]">OFF</span>
         </div>
-
-        {campaigns.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={prev}
-              aria-label="Previous offer"
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 flex items-center justify-center text-ink hover:bg-white transition-colors"
-            >
-              <FiChevronLeft size={18} />
-            </button>
-            <button
-              type="button"
-              onClick={next}
-              aria-label="Next offer"
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 flex items-center justify-center text-ink hover:bg-white transition-colors"
-            >
-              <FiChevronRight size={18} />
-            </button>
-            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
-              {campaigns.map((c, i) => (
-                <button
-                  key={c._id}
-                  type="button"
-                  onClick={() => setCurrent(i)}
-                  className={`w-2 h-2 rounded-full transition-colors ${i === current ? 'bg-gold' : 'bg-white/40'}`}
-                  aria-label={`Go to offer ${i + 1}`}
-                />
-              ))}
-            </div>
-          </>
-        )}
       </div>
     </section>
   );

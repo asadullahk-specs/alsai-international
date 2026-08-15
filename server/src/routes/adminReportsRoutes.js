@@ -12,5 +12,6 @@ router.get('/customers', controller.getCustomersReport);
 router.get('/products', controller.getProductsReport);
 router.get('/inventory', controller.getInventoryReport);
 router.get('/revenue', controller.getRevenueReport);
+router.get('/business', controller.getBusinessReport);
 
 module.exports = router;

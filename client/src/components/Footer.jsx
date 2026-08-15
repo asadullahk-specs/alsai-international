@@ -12,9 +12,88 @@ const SOCIAL_ICONS = {
   x: FaXTwitter,
 };
 
+const DEFAULT_COLUMNS = [
+  {
+    title: 'Shop',
+    links: [
+      { label: 'All Products', url: '/shop' },
+      { label: 'Best Sellers', url: '/shop?sort=popular' },
+      { label: 'New Arrivals', url: '/shop?sort=newest' },
+      { label: 'Promotions & Discounts', url: '/promotions' },
+      { label: 'Gift Sets', url: '/gift-sets' },
+    ],
+  },
+  {
+    title: 'Customer Care',
+    links: [
+      { label: 'Shipping & Delivery', url: '/policies/shipping' },
+      { label: 'Returns & Exchanges', url: '/policies/returns' },
+      { label: 'FAQs', url: '/faqs' },
+      { label: 'Contact Us', url: '/contact' },
+      { label: 'Track Order', url: '/login' },
+    ],
+  },
+  {
+    title: 'About Us',
+    links: [
+      { label: 'Our Story', url: '/about' },
+      { label: 'Collections', url: '/shop' },
+    ],
+  },
+];
+
+const formatFooterColumns = (columns) => {
+  if (!columns || !columns.length) return DEFAULT_COLUMNS;
+
+  return columns.map((col) => {
+    const titleLower = col.title?.toLowerCase() || '';
+
+    let updatedLinks = (col.links || []).map((link) => {
+      if (link.label?.toLowerCase() === 'track order' || link.url === '/track-order') {
+        return { ...link, url: '/login' };
+      }
+      return link;
+    });
+
+    if (titleLower.includes('about')) {
+      const hasStory = updatedLinks.some((l) => l.label?.toLowerCase() === 'our story');
+      const storyLink = hasStory
+        ? updatedLinks.find((l) => l.label?.toLowerCase() === 'our story')
+        : { label: 'Our Story', url: '/about' };
+
+      return {
+        ...col,
+        links: [
+          { label: 'Our Story', url: storyLink.url || '/about' },
+          { label: 'Collections', url: '/shop' },
+        ],
+      };
+    }
+
+    if (titleLower.includes('shop')) {
+      updatedLinks = updatedLinks.map((link) => {
+        const labelLower = link.label?.toLowerCase() || '';
+        if (labelLower === 'all perfumes') {
+          return { label: 'All Products', url: '/shop' };
+        }
+        if (labelLower === 'seasonal cuts' || labelLower === 'promotions') {
+          return { label: 'Promotions & Discounts', url: '/promotions' };
+        }
+        return link;
+      });
+    }
+
+    return {
+      ...col,
+      links: updatedLinks,
+    };
+  });
+};
+
 const Footer = ({ websiteContent }) => {
   const footer = websiteContent?.footer;
   const socialLinks = websiteContent?.socialLinks || [];
+  const columns = formatFooterColumns(footer?.columns);
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -48,7 +127,7 @@ const Footer = ({ websiteContent }) => {
           )}
         </div>
 
-        {(footer?.columns || []).map((col) => (
+        {columns.map((col) => (
           <div key={col.title}>
             <h4 className="text-[11px] tracking-widest text-gold mb-4">{col.title.toUpperCase()}</h4>
             <ul className="space-y-2.5">

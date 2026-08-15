@@ -10,6 +10,7 @@ import { addRecentlyViewed, getRecentlyViewedIds } from '../../utils/recentlyVie
 import ProductGallery from '../../components/product/ProductGallery';
 import ReviewsSection from '../../components/product/ReviewsSection';
 import ProductCard from '../../components/ProductCard';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const TABS = ['Description', 'Shipping', 'Facts', 'Reviews'];
 
@@ -26,6 +27,8 @@ const ProductPage = () => {
   const [wishlisted, setWishlisted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+
+  usePageTitle('Products', product?.name);
 
   useEffect(() => {
     setLoading(true);
@@ -118,7 +121,7 @@ const ProductPage = () => {
         </Link>{' '}
         &gt;{' '}
         <Link to="/shop" className="hover:text-brand">
-          Collections
+          Shop
         </Link>
         {product.collection && (
           <>

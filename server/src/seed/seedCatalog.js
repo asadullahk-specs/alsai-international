@@ -297,10 +297,10 @@ const run = async () => {
           {
             title: 'Shop',
             links: [
-              { label: 'All Perfumes', url: '/shop?collection=perfumes' },
+              { label: 'All Products', url: '/shop' },
               { label: 'Best Sellers', url: '/shop?sort=popular' },
               { label: 'New Arrivals', url: '/shop?sort=newest' },
-              { label: 'Promotions', url: '/promotions' },
+              { label: 'Promotions & Discounts', url: '/promotions' },
               { label: 'Gift Sets', url: '/gift-sets' },
             ],
           },
@@ -311,16 +311,14 @@ const run = async () => {
               { label: 'Returns & Exchanges', url: '/policies/returns' },
               { label: 'FAQs', url: '/faqs' },
               { label: 'Contact Us', url: '/contact' },
-              { label: 'Track Order', url: '/orders' },
+              { label: 'Track Order', url: '/login' },
             ],
           },
           {
             title: 'About Us',
             links: [
               { label: 'Our Story', url: '/about' },
-              { label: 'Ingredients', url: '/about#ingredients' },
-              { label: 'Sustainability', url: '/about#sustainability' },
-              { label: 'Careers', url: '/careers' },
+              { label: 'Collections', url: '/shop' },
             ],
           },
         ],

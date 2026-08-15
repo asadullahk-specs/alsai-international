@@ -41,7 +41,7 @@ const Register = () => {
     setSubmitting(true);
     try {
       await register(form);
-      navigate('/orders', { replace: true });
+      navigate('/', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Unable to create your account. Please try again.');
     } finally {
@@ -152,9 +152,8 @@ const Register = () => {
                 ].map((g) => (
                   <label
                     key={g.value}
-                    className={`text-center text-sm py-2.5 rounded-md border cursor-pointer transition-colors ${
-                      form.gender === g.value ? 'border-brand text-brand bg-brand/5' : 'border-cream-200 text-muted'
-                    }`}
+                    className={`text-center text-sm py-2.5 rounded-md border cursor-pointer transition-colors ${form.gender === g.value ? 'border-brand text-brand bg-brand/5' : 'border-cream-200 text-muted'
+                      }`}
                   >
                     <input
                       type="radio"

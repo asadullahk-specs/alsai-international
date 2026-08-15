@@ -5,7 +5,7 @@ const protectAdmin = require('../middleware/adminAuth');
 const authorize = require('../middleware/authorize');
 
 const router = express.Router();
-const controller = createCrudController(FragranceFamily);
+const controller = createCrudController(FragranceFamily, { populate: { path: 'collection', select: 'name' } });
 
 router.use(protectAdmin);
 

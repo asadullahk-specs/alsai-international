@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthTransitionProvider } from './context/AuthTransitionContext';
 import { AuthProvider } from './context/AuthContext';
 import { CustomerNotificationProvider } from './context/CustomerNotificationContext';
 import { AdminAuthProvider } from './context/AdminAuthContext';
@@ -65,9 +66,20 @@ import SettingsPage from './admin/pages/Settings/SettingsPage';
 import UsersRolesPage from './admin/pages/UsersRoles/UsersRolesPage';
 import ActivityLogsPage from './admin/pages/ActivityLogs/ActivityLogsPage';
 import BackupRestorePage from './admin/pages/BackupRestore/BackupRestorePage';
+import SuppliersList from './admin/pages/Suppliers/SuppliersList';
+import SupplierDetails from './admin/pages/Suppliers/SupplierDetails';
+import PurchasesList from './admin/pages/Purchases/PurchasesList';
+import PurchaseForm from './admin/pages/Purchases/PurchaseForm';
+import PurchaseDetails from './admin/pages/Purchases/PurchaseDetails';
+import PaymentsList from './admin/pages/Payments/PaymentsList';
+import ExpensesList from './admin/pages/Expenses/ExpensesList';
+import ReturnsList from './admin/pages/Returns/ReturnsList';
+import ReturnDetails from './admin/pages/Returns/ReturnDetails';
+import TestimonialsPage from './admin/pages/Testimonials/TestimonialsPage';
 
 function App() {
   return (
+    <AuthTransitionProvider>
     <AuthProvider>
       <CustomerNotificationProvider>
       <AdminAuthProvider>
@@ -180,6 +192,17 @@ function App() {
               <Route path="users-roles" element={<UsersRolesPage />} />
               <Route path="activity-logs" element={<ActivityLogsPage />} />
               <Route path="backup-restore" element={<BackupRestorePage />} />
+              <Route path="suppliers" element={<SuppliersList />} />
+              <Route path="suppliers/:id" element={<SupplierDetails />} />
+              <Route path="purchases" element={<PurchasesList />} />
+              <Route path="purchases/new" element={<PurchaseForm />} />
+              <Route path="purchases/:id" element={<PurchaseDetails />} />
+              <Route path="purchases/:id/edit" element={<PurchaseForm />} />
+              <Route path="payments" element={<PaymentsList />} />
+              <Route path="expenses" element={<ExpensesList />} />
+              <Route path="returns" element={<ReturnsList />} />
+              <Route path="returns/:id" element={<ReturnDetails />} />
+              <Route path="testimonials" element={<TestimonialsPage />} />
             </Route>
           </Routes>
         </CartProvider>
@@ -187,6 +210,7 @@ function App() {
       </AdminAuthProvider>
       </CustomerNotificationProvider>
     </AuthProvider>
+    </AuthTransitionProvider>
   );
 }
 

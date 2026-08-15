@@ -5,24 +5,26 @@ import { useCart } from '../../context/CartContext';
 import { formatPrice } from '../../utils/formatPrice';
 import { driveImg } from '../../utils/driveImg';
 import ProductGallery from '../../components/product/ProductGallery';
+import usePageTitle from '../../hooks/usePageTitle';
 
 const GiftSetPage = () => {
   const { slug } = useParams();
   const { addItem } = useCart();
   const [giftSet, setGiftSet] = useState(null);
-  const [bannerImage, setBannerImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+
+  usePageTitle('GiftSets', giftSet?.name);
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     setNotFound(false);
-    Promise.all([publicAxios.get(`/gift-sets/${slug}`), publicAxios.get('/layout')])
-      .then(([giftSetRes, layoutRes]) => {
+    publicAxios
+      .get(`/gift-sets/${slug}`)
+      .then((giftSetRes) => {
         setGiftSet(giftSetRes.data.data.giftSet);
-        setBannerImage(layoutRes.data.data.websiteContent?.giftSetPage?.bannerImage || '');
         setQuantity(1);
         window.scrollTo(0, 0);
       })
@@ -61,11 +63,6 @@ const GiftSetPage = () => {
 
   return (
     <div>
-      {bannerImage && (
-        <div className="bg-cream-100 relative overflow-hidden h-[160px] sm:h-[200px] md:h-[220px]">
-          <img src={driveImg(bannerImage)} alt="" className="absolute inset-0 w-full h-full object-cover opacity-25" />
-        </div>
-      )}
       <div className="max-w-7xl mx-auto px-4 py-10">
       <p className="text-xs text-muted mb-6">
         <Link to="/" className="hover:text-brand">

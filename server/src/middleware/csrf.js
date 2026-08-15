@@ -8,7 +8,7 @@ const verifyCsrf = (cookieName) => (req, res, next) => {
   const headerToken = req.headers['x-csrf-token'];
 
   if (!cookieToken || !headerToken || cookieToken !== headerToken) {
-    throw new ApiError(403, 'Invalid or missing CSRF token');
+    throw new ApiError(403, 'Invalid Credentials');
   }
 
   next();

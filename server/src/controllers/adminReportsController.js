@@ -1,6 +1,8 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Customer = require('../models/Customer');
+const Purchase = require('../models/Purchase');
+const Expense = require('../models/Expense');
 const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');
 const asyncHandler = require('../utils/asyncHandler');
@@ -216,6 +218,21 @@ exports.getRevenueReport = asyncHandler(async (req, res) => {
   const netRevenue = result[0]?.netRevenue || 0;
   const grossProfit = netRevenue - cogs;
 
+  // Purchases <-> Reports / Expenses <-> Reports: fold business spending into
+  // the same monthly window so Revenue reflects true net profit, not just
+  // storefront gross profit.
+  const [purchasesAgg, expensesAgg] = await Promise.all([
+    Purchase.aggregate([
+      { $match: { purchaseDate: { $gte: start, $lt: end }, purchaseStatus: { $ne: 'Cancelled' } } },
+      { $group: { _id: null, total: { $sum: '$total' } } },
+    ]),
+    Expense.aggregate([{ $match: { date: { $gte: start, $lt: end } } }, { $group: { _id: null, total: { $sum: '$amount' } } }]),
+  ]);
+
+  const totalPurchases = purchasesAgg[0]?.total || 0;
+  const totalExpenses = expensesAgg[0]?.total || 0;
+  const netProfit = grossProfit - totalExpenses;
+
   res.status(200).json(
     new ApiResponse(200, {
       label,
@@ -226,6 +243,50 @@ exports.getRevenueReport = asyncHandler(async (req, res) => {
       costOfGoodsSold: Math.round(cogs),
       grossProfit: Math.round(grossProfit),
       grossMarginPercent: netRevenue ? Math.round((grossProfit / netRevenue) * 1000) / 10 : 0,
+      totalPurchases,
+      totalExpenses,
+      netProfit: Math.round(netProfit),
+    })
+  );
+});
+
+exports.getBusinessReport = asyncHandler(async (req, res) => {
+  const { start, end, label } = resolveMonthRange(req.query.month);
+
+  const [purchasesByStatus, purchasesTotal, expensesByCategory, expensesTotal, topSuppliers] = await Promise.all([
+    Purchase.aggregate([
+      { $match: { purchaseDate: { $gte: start, $lt: end } } },
+      { $group: { _id: '$purchaseStatus', count: { $sum: 1 }, total: { $sum: '$total' } } },
+    ]),
+    Purchase.aggregate([
+      { $match: { purchaseDate: { $gte: start, $lt: end }, purchaseStatus: { $ne: 'Cancelled' } } },
+      { $group: { _id: null, total: { $sum: '$total' }, count: { $sum: 1 } } },
+    ]),
+    Expense.aggregate([
+      { $match: { date: { $gte: start, $lt: end } } },
+      { $group: { _id: '$category', total: { $sum: '$amount' } } },
+      { $sort: { total: -1 } },
+    ]),
+    Expense.aggregate([{ $match: { date: { $gte: start, $lt: end } } }, { $group: { _id: null, total: { $sum: '$amount' } } }]),
+    Purchase.aggregate([
+      { $match: { purchaseDate: { $gte: start, $lt: end }, purchaseStatus: { $ne: 'Cancelled' } } },
+      { $lookup: { from: 'suppliers', localField: 'supplier', foreignField: '_id', as: 'supplierDoc' } },
+      { $unwind: '$supplierDoc' },
+      { $group: { _id: '$supplier', name: { $first: '$supplierDoc.name' }, total: { $sum: '$total' } } },
+      { $sort: { total: -1 } },
+      { $limit: 5 },
+    ]),
+  ]);
+
+  res.status(200).json(
+    new ApiResponse(200, {
+      label,
+      totalPurchases: purchasesTotal[0]?.total || 0,
+      purchaseCount: purchasesTotal[0]?.count || 0,
+      purchasesByStatus,
+      totalExpenses: expensesTotal[0]?.total || 0,
+      expensesByCategory,
+      topSuppliers,
     })
   );
 });
