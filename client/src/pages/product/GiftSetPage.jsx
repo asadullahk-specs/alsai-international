@@ -6,6 +6,7 @@ import { formatPrice } from '../../utils/formatPrice';
 import { driveImg } from '../../utils/driveImg';
 import ProductGallery from '../../components/product/ProductGallery';
 import usePageTitle from '../../hooks/usePageTitle';
+import BrandSpinner from '../../components/BrandSpinner';
 
 const GiftSetPage = () => {
   const { slug } = useParams();
@@ -33,11 +34,7 @@ const GiftSetPage = () => {
   }, [slug]);
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="h-8 w-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <BrandSpinner fullPage />;
   }
 
   if (notFound || !giftSet) {

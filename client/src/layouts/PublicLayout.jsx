@@ -7,12 +7,12 @@ import Footer from '../components/Footer';
 // Same hero-route list as Navbar.jsx - those pages start with a full-bleed
 // banner at y=0 so the transparent header can overlay it; every other page
 // needs top padding to clear the now fixed (not sticky) header.
-const HERO_ROUTES = ['/', '/shop', '/gift-sets', '/promotions', '/about'];
+const HERO_ROUTES = ['/', '/shop', '/gift-sets', '/promotions', '/about', '/faqs', '/contact'];
 
 const PublicLayout = () => {
   const [layout, setLayout] = useState(null);
   const location = useLocation();
-  const isHeroRoute = HERO_ROUTES.includes(location.pathname);
+  const isHeroRoute = HERO_ROUTES.includes(location.pathname) || location.pathname.startsWith('/policies');
   const hasAnnouncement = Boolean(layout?.websiteContent?.announcementBar?.isActive);
 
   useEffect(() => {

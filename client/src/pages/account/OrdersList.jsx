@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import customerAxios from '../../api/customerAxios';
 import { formatPrice } from '../../utils/formatPrice';
 import OrderStatusBadge from '../../components/account/OrderStatusBadge';
+import BrandSpinner from '../../components/BrandSpinner';
 
 const TABS = ['all', 'processing', 'shipped', 'delivered', 'cancelled'];
 
@@ -42,7 +43,9 @@ const OrdersList = () => {
       </div>
 
       {loading ? (
-        <div className="h-8 w-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+        <div className="flex justify-center py-16">
+          <BrandSpinner />
+        </div>
       ) : orders.length === 0 ? (
         <p className="text-sm text-muted py-10 text-center">No orders here yet.</p>
       ) : (

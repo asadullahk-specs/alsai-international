@@ -1,13 +1,12 @@
 import { createContext, useContext, useRef, useState } from 'react';
-import BrandMark from '../components/BrandMark';
+import BrandSpinner from '../components/BrandSpinner';
 
 const AuthTransitionContext = createContext(null);
 
 // A brief full-screen loading effect shown while a login or logout request
 // is in flight, so account transitions never feel like a blank/instant jump.
-// A clockwise ring spins around the centered brand mark + wordmark. Shared
-// by both the customer AuthContext and the admin AdminAuthContext so both
-// surfaces get identical treatment.
+// Uses the signature luxury BrandSpinner. Shared by both customer AuthContext
+// and AdminAuthContext.
 const MIN_VISIBLE_MS = 550;
 
 export const AuthTransitionProvider = ({ children }) => {
@@ -41,28 +40,7 @@ export const AuthTransitionProvider = ({ children }) => {
       {children}
       {visible && (
         <div className="fixed inset-0 z-[999] bg-cream/95 backdrop-blur-sm flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative w-20 h-20 flex items-center justify-center">
-              <svg viewBox="0 0 80 80" className="absolute inset-0 w-full h-full animate-spin" style={{ animationDuration: '1.1s' }}>
-                <circle cx="40" cy="40" r="35" fill="none" stroke="#E9DFCE" strokeWidth="4" />
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="35"
-                  fill="none"
-                  stroke="#A9662A"
-                  strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeDasharray="55 165"
-                />
-              </svg>
-              <BrandMark className="w-7 h-7" />
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="font-serif text-lg tracking-wide text-ink">AL SA&apos;I</span>
-              <span className="text-[8px] tracking-[0.3em] text-muted">EXTRAIT DE PARFUM</span>
-            </div>
-          </div>
+          <BrandSpinner />
         </div>
       )}
     </AuthTransitionContext.Provider>

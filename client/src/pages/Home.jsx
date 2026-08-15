@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import publicAxios from '../api/publicAxios';
+import BrandSpinner from '../components/BrandSpinner';
 import HeroSlider from '../components/home/HeroSlider';
 import FeaturedCollections from '../components/home/FeaturedCollections';
 import ShopByCategory from '../components/home/ShopByCategory';
@@ -24,11 +25,7 @@ const Home = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="h-8 w-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <BrandSpinner fullPage />;
   }
 
   if (!homepage) return null;

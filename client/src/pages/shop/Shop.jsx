@@ -6,6 +6,7 @@ import ProductCard from '../../components/ProductCard';
 import FilterSidebar from '../../components/shop/FilterSidebar';
 import { driveImg } from '../../utils/driveImg';
 import usePageTitle from '../../hooks/usePageTitle';
+import BrandSpinner from '../../components/BrandSpinner';
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' },
@@ -155,7 +156,7 @@ const Shop = () => {
 
           {loading ? (
             <div className="min-h-[40vh] flex items-center justify-center">
-              <div className="h-8 w-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+              <BrandSpinner size="small" />
             </div>
           ) : products.length === 0 ? (
             <p className="text-muted text-sm py-20 text-center">No products match these filters.</p>

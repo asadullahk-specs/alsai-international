@@ -4,6 +4,7 @@ import { formatPrice } from '../utils/formatPrice';
 import { driveImg } from '../utils/driveImg';
 import { Link } from 'react-router-dom';
 import usePageTitle from '../hooks/usePageTitle';
+import BrandSpinner from '../components/BrandSpinner';
 
 const GiftSets = () => {
   usePageTitle('GiftSets');
@@ -47,7 +48,7 @@ const GiftSets = () => {
       <div className="max-w-7xl mx-auto px-4 py-10">
         {loading ? (
           <div className="flex justify-center py-24">
-            <div className="h-8 w-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+            <BrandSpinner />
           </div>
         ) : giftSets.length === 0 ? (
           <p className="text-sm text-muted text-center py-24">No gift sets available right now - check back soon.</p>

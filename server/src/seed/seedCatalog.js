@@ -280,8 +280,40 @@ const run = async () => {
     {},
     {
       aboutPage: {
-        heading: 'The Essence of Luxury',
-        description: "AL SA'I is more than a perfume house. It is a journey of passion, craftsmanship, and the pursuit of olfactory perfection.",
+        eyebrow: 'THE ESSENCE OF HAUTE PARFUMERIE',
+        heading: 'Curating Timeless Olfactory Masterpieces',
+        description: "Founded with an unyielding passion for luxury and distinction, AL SA'I crafts extraordinary extraits de parfum and pure oils that encapsulate elegance, heritage, and emotion.",
+        image: 'https://drive.google.com/file/d/1WY76oCmgXrPCDG-oawAvgCh8TQjZV3Ob/view?usp=drive_link',
+        video: '',
+        storyHeading: 'Our Story & Legacy',
+        storyBody:
+          "AL SA'I was born from an unwavering dedication to rare botanical essences, oriental heritage, and modern master perfumery.\n\nFrom hand-selected Bulgarian rose and French lavender to ethically harvested wild agarwood, every fragrance in our boutique represents hundreds of hours of precise blending, aging, and refinement.\n\nOur master perfumers merge centuries-old Middle Eastern fragrance traditions with contemporary European artistry, delivering sensory journeys designed for those who appreciate true craftsmanship.",
+        storyImage: 'https://drive.google.com/file/d/1WY76oCmgXrPCDG-oawAvgCh8TQjZV3Ob/view?usp=drive_link',
+        storyVideo: '',
+        values: [
+          { icon: 'feather', title: 'Uncompromising Quality', description: 'Every formulation uses ultra-rare raw ingredients, cold-pressed extracts, and pure oils sourced from ethical global growers.' },
+          { icon: 'droplet', title: 'Artisanal Purity', description: 'Crafted without synthetic fillers or diluted bases, preserving the opulent depth and natural vibrancy of every note.' },
+          { icon: 'award', title: 'Heritage & Innovation', description: 'Harmonizing classic oriental perfumery traditions with innovative modern extraction techniques.' },
+          { icon: 'heart', title: 'Dedicated Craftsmanship', description: 'Hand-poured into heavy glass flacons and stringently tested for exceptional longevity and sillage.' },
+        ],
+        milestones: [
+          { year: '2018', title: 'The Inception', description: "AL SA'I was established with a singular mission: to redefine artisanal luxury fragrances for scent connoisseurs." },
+          { year: '2020', title: 'The Signature Oud Collection', description: 'Unveiled our premier Extrait de Parfum series featuring aged wild agarwood and hand-picked spices.' },
+          { year: '2022', title: 'Global Expansion', description: 'Expanded our flagship presence and bespoke online experience, serving scent enthusiasts across 35+ countries.' },
+          { year: '2024', title: 'Alcohol-Free Attar Range', description: 'Introduced our pure oil attars, establishing a new standard of luxury and skin-friendly fragrance artistry.' },
+        ],
+        craftEyebrow: 'OUR CRAFT',
+        craftHeading: 'The Art of Master Blending',
+        craftImage: 'https://drive.google.com/file/d/1WY76oCmgXrPCDG-oawAvgCh8TQjZV3Ob/view?usp=drive_link',
+        quoteText: "Perfume is an invisible portrait of one's identity. We do not merely blend notes; we encapsulate memories, passions, and timeless elegance into every single drop.",
+        quoteAuthor: "House of AL SA'I",
+        closingImage: 'https://drive.google.com/file/d/1WY76oCmgXrPCDG-oawAvgCh8TQjZV3Ob/view?usp=drive_link',
+        stats: [
+          { icon: 'award', value: '50+', label: 'Signature Scents' },
+          { icon: 'globe', value: '35+', label: 'Countries Served' },
+          { icon: 'star', value: '100%', label: 'Pure Artisanal Quality' },
+          { icon: 'users', value: '25,000+', label: 'Happy Customers' },
+        ],
       },
       contactInfo: {
         storeName: "AL SA'I Fragrances",
@@ -290,6 +322,14 @@ const run = async () => {
         email: 'info@alsai.com',
         whatsapp: '+92 300 1234567',
         workingHours: 'Monday - Saturday, 10:00 AM - 8:00 PM. Sunday Closed.',
+      },
+      contactPage: {
+        heroHeading: 'Contact Us',
+        heroDescription: "We're here to help! Reach out to us for any questions, feedback, or assistance.",
+      },
+      faqsPage: {
+        heroHeading: 'Frequently Asked Questions',
+        heroDescription: 'Find quick answers to the most common questions about our products, orders, and services.',
       },
       footer: {
         description: 'Crafted with passion, inspired by heritage, designed for timeless impressions.',
@@ -335,10 +375,120 @@ const run = async () => {
         { question: "How long do AL SA'I perfumes last?", answer: 'Most of our extraits last 6-10 hours depending on skin type and the individual fragrance.', displayOrder: 2 },
         { question: 'Do you offer Cash on Delivery?', answer: 'Yes, Cash on Delivery is available nationwide alongside EasyPaisa, JazzCash, and card payments.', displayOrder: 3 },
         { question: 'Can I return or exchange a product?', answer: 'Unused, unopened items in original packaging can be returned within 7 days of delivery.', displayOrder: 4 },
+        { question: 'How long does delivery take?', answer: 'Estimated delivery time is 2-4 business days across Pakistan.', displayOrder: 5 },
+        { question: 'Do you offer gift wrapping?', answer: "Yes, every order is presented in AL SA'I's signature packaging - perfect for gifting as-is.", displayOrder: 6 },
       ],
       policies: {
-        shippingPolicy: 'Orders are dispatched within 1-2 business days. Free shipping on orders over PKR 10,000; standard shipping is PKR 250 otherwise.',
-        returnPolicy: 'Unused, unopened items in original packaging may be returned within 7 days of delivery.',
+        privacy: {
+          heroImage: 'https://drive.google.com/file/d/1WY76oCmgXrPCDG-oawAvgCh8TQjZV3Ob/view?usp=drive_link',
+          heroHeading: 'Privacy Policy',
+          heroDescription: 'At AL SA\'I, we value your privacy and are committed to protecting your personal information with the highest standards of security and transparency.',
+          showNeedHelp: true,
+          highlightCards: [],
+          bulletsHeading: '',
+          bullets: [],
+          sections: [
+            {
+              heading: 'Information We Collect',
+              body: 'We collect personal information that you voluntarily provide to us when registering an account, placing an order, subscribing to our newsletter, or contacting customer support. This includes your name, email address, shipping address, billing details, phone number, and purchase history. Additionally, we automatically collect device information, IP address, browsing behavior, and cookies to improve your shopping experience.',
+            },
+            {
+              heading: 'How We Use Your Information',
+              body: 'Your personal data is used solely to process and fulfill your orders, send order confirmations and tracking details, respond to customer inquiries, personalize your browsing experience, and send promotional offers (if opted in). We do not sell, rent, or trade your personal information to third parties for marketing purposes.',
+            },
+            {
+              heading: 'Payment Security & Transactions',
+              body: 'All payment transactions are encrypted using industry-standard SSL (Secure Sockets Layer) technology. Card details and sensitive payment credentials are processed securely by authorized payment gateways. AL SA\'I never stores your full credit card numbers or banking passwords on our servers.',
+            },
+            {
+              heading: 'Cookies & Tracking Technologies',
+              body: 'We use cookies and similar technologies to maintain your active shopping session, remember items in your cart, analyze website traffic, and provide a tailored user experience. You can manage or disable cookie preferences through your browser settings, though some website features may require cookies to function properly.',
+            },
+            {
+              heading: 'Third-Party Service Providers',
+              body: 'We may share limited data with trusted third-party service providers who assist us in operating our platform, such as payment processors, shipping carriers, email delivery services, and website hosting partners. These partners are legally bound to protect your data and only use it to perform specific services for AL SA\'I.',
+            },
+            {
+              heading: 'Your Rights & Data Protection',
+              body: 'You have the right to access, update, correct, or request deletion of your personal data at any time through your account settings or by contacting our Privacy Support team. You may also unsubscribe from marketing emails at any time using the opt-out link provided in every newsletter.',
+            },
+          ],
+        },
+        terms: {
+          heroImage: 'https://drive.google.com/file/d/1WY76oCmgXrPCDG-oawAvgCh8TQjZV3Ob/view?usp=drive_link',
+          heroHeading: 'Terms & Conditions',
+          heroDescription: 'Please review the terms and conditions that govern your use of the AL SA\'I boutique platform and the purchase of our products.',
+          showNeedHelp: true,
+          highlightCards: [],
+          bulletsHeading: '',
+          bullets: [],
+          sections: [
+            {
+              heading: 'Acceptance of Terms',
+              body: 'By accessing or using the AL SA\'I website, browsing our catalog, or placing an order, you agree to be bound by these Terms & Conditions and our Privacy Policy. If you do not agree with any part of these terms, please do not use our services.',
+            },
+            {
+              heading: 'Product Accuracy & Pricing',
+              body: 'We strive to display fragrance descriptions, bottle sizing, notes, and pricing as accurately as possible. However, colors and packaging presentation may vary slightly due to screen resolutions and handcrafted glass flacon variations. Prices are subject to change without notice, and we reserve the right to correct pricing errors.',
+            },
+            {
+              heading: 'Orders & Availability',
+              body: 'All orders are subject to acceptance and stock availability. Due to the limited handcrafted batch nature of our extraits de parfum, items in your cart are not reserved until payment is completed. AL SA\'I reserves the right to cancel or limit order quantities at our discretion.',
+            },
+            {
+              heading: 'Intellectual Property Rights',
+              body: 'All content on this platform, including trademarks, brand names, product logos, perfume formulas, photography, typography, graphics, and software, is the exclusive intellectual property of AL SA\'I and is protected by international copyright laws.',
+            },
+            {
+              heading: 'Limitation of Liability',
+              body: 'AL SA\'I shall not be held liable for indirect, incidental, or consequential damages resulting from website downtime, minor delivery carrier delays, or misuse of products. Fragrance oils and extraits de parfum should be used as directed on skin or clothing; perform a small patch test if you have skin sensitivities.',
+            },
+            {
+              heading: 'Governing Law & Dispute Resolution',
+              body: 'These Terms & Conditions are governed by and construed in accordance with international commercial law standards. Any disputes arising from transactions or platform use shall be resolved amicably through customer support or binding arbitration.',
+            },
+          ],
+        },
+        shipping: {
+          heroImage: 'https://drive.google.com/file/d/1WY76oCmgXrPCDG-oawAvgCh8TQjZV3Ob/view?usp=drive_link',
+          heroHeading: 'Shipping & Delivery Policy',
+          heroDescription: 'We hand-package and dispatch every order with extreme care, delivering luxury fragrance creations safely to your doorstep worldwide.',
+          showNeedHelp: true,
+          sections: [],
+          highlightCards: [
+            { icon: 'box', title: 'Dispatch Time', description: 'Orders are meticulously packed and dispatched within 24–48 hours of confirmation.' },
+            { icon: 'shield-check', title: 'Insured Delivery', description: 'Every shipment is fully insured against damage, theft, or loss during transport.' },
+            { icon: 'truck', title: 'Global Express', description: 'Fast express shipping across 35+ countries via premium courier partners.' },
+          ],
+          bulletsHeading: 'Shipping Guidelines & Delivery Estimates',
+          bullets: [
+            'Domestic Orders: Standard delivery takes 2–4 business days across major metropolitan areas.',
+            'International Express Shipping: Delivered within 5–9 business days depending on location and local customs clearance.',
+            'Real-Time Order Tracking: A tracking link and courier reference code will be emailed immediately upon order dispatch.',
+            'Customs & Import Duties: International shipments may be subject to local import taxes or customs duties assessed by destination authorities.',
+            'Signature Requirement: High-value extrait de parfum shipments require a recipient signature upon physical delivery.',
+          ],
+        },
+        returns: {
+          heroImage: 'https://drive.google.com/file/d/1WY76oCmgXrPCDG-oawAvgCh8TQjZV3Ob/view?usp=drive_link',
+          heroHeading: 'Return & Exchange Policy',
+          heroDescription: 'Your complete satisfaction is our priority. Discover our transparent returns and exchange policy for luxury perfumes.',
+          showNeedHelp: true,
+          sections: [],
+          highlightCards: [
+            { icon: 'rotate-ccw', title: '14-Day Returns', description: 'Initiate returns within 14 days of receiving your package for eligible items.' },
+            { icon: 'check-circle', title: 'Original Condition', description: 'Returned items must remain unopened, sealed, and in original packaging.' },
+            { icon: 'credit-card', title: 'Prompt Refunds', description: 'Refunds are processed within 3-5 business days upon item inspection.' },
+          ],
+          bulletsHeading: 'Return Instructions & Eligibility',
+          bullets: [
+            'Unopened Fragrance Bottles: Eligible for full refund or store exchange within 14 days of delivery.',
+            'Damaged or Defective Items: If your package arrives damaged, contact support within 48 hours with photos for an immediate replacement.',
+            'Sample & Discovery Sets: Complimentary discovery vials included with full-sized bottles allow testing before breaking the main bottle seal.',
+            'Return Shipping Label: Contact our support team to receive a prepaid return shipping label for eligible domestic returns.',
+            'Refund Method: Approved refunds are automatically credited back to your original payment method within 3–5 business days.',
+          ],
+        },
       },
     }
   );

@@ -4,6 +4,7 @@ import publicAxios from '../api/publicAxios';
 import ProductCard from '../components/ProductCard';
 import { driveImg } from '../utils/driveImg';
 import usePageTitle from '../hooks/usePageTitle';
+import BrandSpinner from '../components/BrandSpinner';
 
 const SeasonalCuts = () => {
   usePageTitle('Promotions');
@@ -79,7 +80,7 @@ const SeasonalCuts = () => {
       <div className="max-w-7xl mx-auto px-4 py-10">
         {loading ? (
           <div className="flex justify-center py-24">
-            <div className="h-8 w-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+            <BrandSpinner />
           </div>
         ) : discountedProducts.length === 0 ? (
           <p className="text-sm text-muted text-center py-24">No discounted products right now - check back soon.</p>

@@ -29,8 +29,27 @@ exports.updateAboutPage = makeSectionUpdater('aboutPage', 'About Page');
 exports.updateShopPage = makeSectionUpdater('shopPage', 'Shop Page');
 exports.updateGiftSetPage = makeSectionUpdater('giftSetPage', 'Gift Set Page');
 exports.updateContactInfo = makeSectionUpdater('contactInfo', 'Contact Information');
+exports.updateContactPage = makeSectionUpdater('contactPage', 'Contact Page Hero');
+exports.updateFaqsPage = makeSectionUpdater('faqsPage', 'FAQs Page Hero');
 exports.updateFooter = makeSectionUpdater('footer', 'Footer');
 exports.updateSocialLinks = makeSectionUpdater('socialLinks', 'Social Links');
 exports.updateAnnouncementBar = makeSectionUpdater('announcementBar', 'Announcement Bar');
 exports.updateFaqs = makeSectionUpdater('faqs', 'FAQs');
-exports.updatePolicies = makeSectionUpdater('policies', 'Policies');
+
+const POLICY_TYPES = ['shipping', 'terms', 'privacy', 'returns'];
+
+// Each policy page (Shipping/Terms/Privacy/Returns) saves independently so
+// editing one doesn't risk clobbering another admin's in-progress edit to a
+// different policy page in another browser tab.
+exports.updatePolicyPage = asyncHandler(async (req, res) => {
+  const { type } = req.params;
+  if (!POLICY_TYPES.includes(type)) {
+    return res.status(400).json(new ApiResponse(400, null, 'Unknown policy page type'));
+  }
+  const content = await getOrCreate();
+  content.policies[type] = req.body;
+  content.markModified('policies');
+  await content.save();
+  await logActivity({ admin: req.admin._id, action: `Updated ${type} policy page`, module: 'content', details: '' });
+  res.status(200).json(new ApiResponse(200, { content }, 'Policy page updated'));
+});

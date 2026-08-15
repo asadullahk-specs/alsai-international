@@ -11,6 +11,7 @@ import ProductGallery from '../../components/product/ProductGallery';
 import ReviewsSection from '../../components/product/ReviewsSection';
 import ProductCard from '../../components/ProductCard';
 import usePageTitle from '../../hooks/usePageTitle';
+import BrandSpinner from '../../components/BrandSpinner';
 
 const TABS = ['Description', 'Shipping', 'Facts', 'Reviews'];
 
@@ -61,11 +62,7 @@ const ProductPage = () => {
   }, [product]);
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="h-8 w-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <BrandSpinner fullPage />;
   }
 
   if (notFound || !product || !selectedSize) {

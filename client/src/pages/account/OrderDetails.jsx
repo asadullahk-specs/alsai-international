@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FiPrinter } from 'react-icons/fi';
 import customerAxios from '../../api/customerAxios';
 import OrderReceipt from '../../components/account/OrderReceipt';
+import BrandSpinner from '../../components/BrandSpinner';
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -37,11 +38,7 @@ const OrderDetails = () => {
   };
 
   if (loading)
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <div className="h-8 w-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <BrandSpinner fullPage />;
   if (!order) return <p className="max-w-4xl mx-auto px-4 py-10 text-sm text-muted">Order not found.</p>;
 
   const canCancel =

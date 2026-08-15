@@ -34,8 +34,8 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
   // navbar overlaid transparently on top of it; everything else (product
   // pages, cart, account, checkout...) gets a normal solid header, since
   // there's no hero image behind it to show through.
-  const HERO_ROUTES = ['/', '/shop', '/gift-sets', '/promotions', '/about'];
-  const isHeroRoute = HERO_ROUTES.includes(location.pathname);
+  const HERO_ROUTES = ['/', '/shop', '/gift-sets', '/promotions', '/about', '/faqs', '/contact'];
+  const isHeroRoute = HERO_ROUTES.includes(location.pathname) || location.pathname.startsWith('/policies');
   const transparent = isHeroRoute && !scrolled;
 
   useEffect(() => {

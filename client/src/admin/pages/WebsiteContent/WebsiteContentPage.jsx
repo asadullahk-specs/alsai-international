@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
 import { driveImg } from '../../../utils/driveImg';
+import { ICON_OPTIONS } from '../../../utils/pageIcons';
+import PolicyPageEditor from './PolicyPageEditor';
 
 const SectionCard = ({ title, description, onSave, children, savingLabel = 'Update' }) => {
   const [saving, setSaving] = useState(false);
@@ -52,18 +54,24 @@ const WebsiteContentPage = () => {
     storyVideo: '',
     values: [],
     milestones: [],
+    craftEyebrow: '',
+    craftHeading: '',
+    craftImage: '',
     quoteText: '',
     quoteAuthor: '',
     closingImage: '',
+    stats: [],
   });
   const [shopPage, setShopPage] = useState({ allBannerImage: '' });
   const [giftSetPage, setGiftSetPage] = useState({ bannerImage: '' });
   const [contact, setContact] = useState({ storeName: '', address: '', phone: '', email: '', whatsapp: '', workingHours: '', storeMapUrl: '' });
+  const [contactPage, setContactPage] = useState({ heroImage: '', heroHeading: '', heroDescription: '' });
+  const [faqsPage, setFaqsPage] = useState({ heroImage: '', heroHeading: '', heroDescription: '' });
   const [footer, setFooter] = useState({ description: '', columns: [] });
   const [social, setSocial] = useState([]);
   const [announcement, setAnnouncement] = useState({ text: '', link: '', isActive: true });
   const [faqs, setFaqs] = useState([]);
-  const [policies, setPolicies] = useState({ privacyPolicy: '', termsConditions: '', shippingPolicy: '', returnPolicy: '' });
+  const [policies, setPolicies] = useState({ shipping: {}, terms: {}, privacy: {}, returns: {} });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -82,19 +90,25 @@ const WebsiteContentPage = () => {
         storyVideo: '',
         values: [],
         milestones: [],
+        craftEyebrow: '',
+        craftHeading: '',
+        craftImage: '',
         quoteText: '',
         quoteAuthor: '',
         closingImage: '',
+        stats: [],
         ...(c.aboutPage || {}),
       });
       setShopPage(c.shopPage || { allBannerImage: '' });
       setGiftSetPage(c.giftSetPage || { bannerImage: '' });
       setContact(c.contactInfo || {});
+      setContactPage(c.contactPage || { heroImage: '', heroHeading: '', heroDescription: '' });
+      setFaqsPage(c.faqsPage || { heroImage: '', heroHeading: '', heroDescription: '' });
       setFooter(c.footer || { description: '', columns: [] });
       setSocial(c.socialLinks || []);
       setAnnouncement(c.announcementBar || { text: '', link: '', isActive: true });
       setFaqs(c.faqs || []);
-      setPolicies(c.policies || {});
+      setPolicies(c.policies || { shipping: {}, terms: {}, privacy: {}, returns: {} });
       setLoading(false);
     });
   }, []);
@@ -142,11 +156,20 @@ const WebsiteContentPage = () => {
               {about.values.map((v, i) => (
                 <div key={i} className="border border-cream-100 p-2 space-y-1">
                   <div className="flex items-center justify-between gap-2">
+                    <select
+                      value={v.icon || 'feather'}
+                      onChange={(e) => setAbout({ ...about, values: about.values.map((x, xi) => (xi === i ? { ...x, icon: e.target.value } : x)) })}
+                      className="text-xs border border-cream-200 px-2 py-1.5 flex-shrink-0"
+                    >
+                      {ICON_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
                     <input
                       placeholder="Value title (e.g. Craftsmanship)"
                       value={v.title}
                       onChange={(e) => setAbout({ ...about, values: about.values.map((x, xi) => (xi === i ? { ...x, title: e.target.value } : x)) })}
-                      className="flex-1 text-sm border-b border-cream-200 py-1 focus:outline-none"
+                      className="flex-1 text-sm border-b border-cream-200 py-1 focus:outline-none min-w-0"
                     />
                     <button type="button" onClick={() => setAbout({ ...about, values: about.values.filter((_, xi) => xi !== i) })} className="text-muted hover:text-charcoal ml-2 flex-shrink-0">
                       <FiTrash2 size={14} />
@@ -161,7 +184,7 @@ const WebsiteContentPage = () => {
                   />
                 </div>
               ))}
-              <button type="button" onClick={() => setAbout({ ...about, values: [...about.values, { title: '', description: '' }] })} className="flex items-center gap-1 text-xs text-brand">
+              <button type="button" onClick={() => setAbout({ ...about, values: [...about.values, { icon: 'feather', title: '', description: '' }] })} className="flex items-center gap-1 text-xs text-brand">
                 <FiPlus size={12} /> Add Value
               </button>
             </div>
@@ -207,18 +230,72 @@ const WebsiteContentPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
           <div className="space-y-3">
+            <p className="text-[11px] tracking-widest text-brand">OUR CRAFT (signed quote + image, e.g. "The Art of Perfumery")</p>
+            <input placeholder="Eyebrow (e.g. OUR CRAFT)" value={about.craftEyebrow} onChange={(e) => setAbout({ ...about, craftEyebrow: e.target.value })} className={inputClass} />
+            <input placeholder="Heading (e.g. The Art of Perfumery)" value={about.craftHeading} onChange={(e) => setAbout({ ...about, craftHeading: e.target.value })} className={inputClass} />
+            <input placeholder="Craft Image (Google Drive link)" value={about.craftImage} onChange={(e) => setAbout({ ...about, craftImage: e.target.value })} className={inputClass} />
+            {about.craftImage && (
+              <div className="w-full h-24 bg-cream-100 overflow-hidden">
+                <img src={driveImg(about.craftImage)} alt="Craft preview" className="w-full h-full object-cover" />
+              </div>
+            )}
+          </div>
+          <div className="space-y-3">
             <p className="text-[11px] tracking-widest text-brand">CLOSING QUOTE</p>
+            <p className="text-xs text-muted -mt-1">
+              Used above as the quote paired with the Craft Image. If no Craft Image is set, this renders on its own instead
+              (over the Closing Image below, or centered if neither image is set).
+            </p>
             <textarea placeholder="Quote text" rows={2} value={about.quoteText} onChange={(e) => setAbout({ ...about, quoteText: e.target.value })} className={`${inputClass} resize-none`} />
             <input placeholder="Quote author (e.g. Founder, AL SA'I)" value={about.quoteAuthor} onChange={(e) => setAbout({ ...about, quoteAuthor: e.target.value })} className={inputClass} />
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
           <div className="space-y-3">
-            <p className="text-[11px] tracking-widest text-brand">CLOSING IMAGE</p>
+            <p className="text-[11px] tracking-widest text-brand">CLOSING IMAGE (fallback full-bleed quote background, used only when there's no Craft Image)</p>
             <input placeholder="Closing Image (Google Drive link)" value={about.closingImage} onChange={(e) => setAbout({ ...about, closingImage: e.target.value })} className={inputClass} />
             {about.closingImage && (
-              <div className="w-full h-24 bg-cream-100 rounded-md overflow-hidden">
+              <div className="w-full h-24 bg-cream-100 overflow-hidden">
                 <img src={driveImg(about.closingImage)} alt="Closing preview" className="w-full h-full object-cover" />
               </div>
             )}
+          </div>
+          <div>
+            <p className="text-[11px] tracking-widest text-brand mb-2">TRUST BAR STATS (shown above the footer, e.g. "50+ Signature Scents")</p>
+            <div className="space-y-2">
+              {about.stats.map((s, i) => (
+                <div key={i} className="border border-cream-100 p-2 flex items-center gap-2">
+                  <select
+                    value={s.icon || 'award'}
+                    onChange={(e) => setAbout({ ...about, stats: about.stats.map((x, xi) => (xi === i ? { ...x, icon: e.target.value } : x)) })}
+                    className="text-xs border border-cream-200 px-2 py-1.5 flex-shrink-0"
+                  >
+                    {ICON_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  <input
+                    placeholder="Value (e.g. 50+)"
+                    value={s.value}
+                    onChange={(e) => setAbout({ ...about, stats: about.stats.map((x, xi) => (xi === i ? { ...x, value: e.target.value } : x)) })}
+                    className="w-24 text-sm border-b border-cream-200 py-1 focus:outline-none flex-shrink-0"
+                  />
+                  <input
+                    placeholder="Label (e.g. Signature Scents)"
+                    value={s.label}
+                    onChange={(e) => setAbout({ ...about, stats: about.stats.map((x, xi) => (xi === i ? { ...x, label: e.target.value } : x)) })}
+                    className="flex-1 text-sm border-b border-cream-200 py-1 focus:outline-none min-w-0"
+                  />
+                  <button type="button" onClick={() => setAbout({ ...about, stats: about.stats.filter((_, xi) => xi !== i) })} className="text-muted hover:text-charcoal flex-shrink-0">
+                    <FiTrash2 size={14} />
+                  </button>
+                </div>
+              ))}
+              <button type="button" onClick={() => setAbout({ ...about, stats: [...about.stats, { icon: 'award', value: '', label: '' }] })} className="flex items-center gap-1 text-xs text-brand">
+                <FiPlus size={12} /> Add Stat
+              </button>
+            </div>
           </div>
         </div>
 
@@ -283,6 +360,36 @@ const WebsiteContentPage = () => {
             onChange={(e) => setContact({ ...contact, storeMapUrl: e.target.value })}
             className={inputClass}
           />
+        </SectionCard>
+
+        <SectionCard
+          title="CONTACT PAGE HERO"
+          description="The banner shown at the top of the Contact Us page. Phone/email/address shown below it come from Contact Details above."
+          onSave={() => adminAxios.put('website-content/contact-page', contactPage)}
+        >
+          <input placeholder="Heading (e.g. Contact Us)" value={contactPage.heroHeading} onChange={(e) => setContactPage({ ...contactPage, heroHeading: e.target.value })} className={inputClass} />
+          <textarea placeholder="Description" rows={2} value={contactPage.heroDescription} onChange={(e) => setContactPage({ ...contactPage, heroDescription: e.target.value })} className={`${inputClass} resize-none`} />
+          <input placeholder="Hero Image (Google Drive link)" value={contactPage.heroImage} onChange={(e) => setContactPage({ ...contactPage, heroImage: e.target.value })} className={inputClass} />
+          {contactPage.heroImage && (
+            <div className="w-full h-24 bg-cream-100 overflow-hidden">
+              <img src={driveImg(contactPage.heroImage)} alt="Contact hero preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+        </SectionCard>
+
+        <SectionCard
+          title="FAQ PAGE HERO"
+          description="The banner shown at the top of the FAQs page. The questions/answers themselves are managed below."
+          onSave={() => adminAxios.put('website-content/faqs-page', faqsPage)}
+        >
+          <input placeholder="Heading (e.g. Frequently Asked Questions)" value={faqsPage.heroHeading} onChange={(e) => setFaqsPage({ ...faqsPage, heroHeading: e.target.value })} className={inputClass} />
+          <textarea placeholder="Description" rows={2} value={faqsPage.heroDescription} onChange={(e) => setFaqsPage({ ...faqsPage, heroDescription: e.target.value })} className={`${inputClass} resize-none`} />
+          <input placeholder="Hero Image (Google Drive link)" value={faqsPage.heroImage} onChange={(e) => setFaqsPage({ ...faqsPage, heroImage: e.target.value })} className={inputClass} />
+          {faqsPage.heroImage && (
+            <div className="w-full h-24 bg-cream-100 overflow-hidden">
+              <img src={driveImg(faqsPage.heroImage)} alt="FAQ hero preview" className="w-full h-full object-cover" />
+            </div>
+          )}
         </SectionCard>
 
         <SectionCard title="FAQS" description="Manage frequently asked questions." onSave={() => adminAxios.put('website-content/faqs', faqs)}>
@@ -361,33 +468,12 @@ const WebsiteContentPage = () => {
         </SectionCard>
       </div>
 
-      <div className="bg-white border border-cream-200 p-5">
-        <p className="text-xs tracking-widest text-muted mb-3">POLICIES</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            ['privacyPolicy', 'Privacy Policy'],
-            ['termsConditions', 'Terms & Conditions'],
-            ['shippingPolicy', 'Shipping Policy'],
-            ['returnPolicy', 'Return Policy'],
-          ].map(([key, label]) => (
-            <div key={key}>
-              <label className="text-xs text-muted block mb-1">{label}</label>
-              <textarea
-                rows={4}
-                value={policies[key] || ''}
-                onChange={(e) => setPolicies({ ...policies, [key]: e.target.value })}
-                className={`${inputClass} resize-none`}
-              />
-            </div>
-          ))}
-        </div>
-        <button
-          type="button"
-          onClick={() => adminAxios.put('website-content/policies', policies)}
-          className="mt-4 bg-brand hover:bg-brand-dark text-white text-xs tracking-widest px-4 py-2.5"
-        >
-          UPDATE POLICIES
-        </button>
+      <div className="space-y-5">
+        <p className="text-xs tracking-widest text-muted">POLICY PAGES</p>
+        <PolicyPageEditor type="shipping" label="Shipping Policy" initial={policies.shipping} />
+        <PolicyPageEditor type="returns" label="Return Policy" initial={policies.returns} />
+        <PolicyPageEditor type="terms" label="Terms & Conditions" initial={policies.terms} />
+        <PolicyPageEditor type="privacy" label="Privacy Policy" initial={policies.privacy} />
       </div>
     </div>
   );
