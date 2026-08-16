@@ -94,6 +94,7 @@ const Footer = ({ websiteContent }) => {
   const footer = websiteContent?.footer;
   const socialLinks = websiteContent?.socialLinks || [];
   const columns = formatFooterColumns(footer?.columns);
+  const storeMapUrl = websiteContent?.contactInfo?.storeMapUrl;
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -141,6 +142,38 @@ const Footer = ({ websiteContent }) => {
             </ul>
           </div>
         ))}
+
+        {/* Privacy Policy, Terms & Conditions, and Store Locator sit in the
+            bottom bar on larger screens, but that bar hides them below sm.
+            Surface them here as their own footer section on phone view so
+            they're not lost. */}
+        <div className="sm:hidden">
+          <h4 className="text-[11px] tracking-widest text-gold mb-4">MORE</h4>
+          <ul className="space-y-2.5">
+            <li>
+              <Link to="/policies/privacy" className="text-xs text-cream-200/75 hover:text-gold transition-colors">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/policies/terms" className="text-xs text-cream-200/75 hover:text-gold transition-colors">
+                Terms &amp; Conditions
+              </Link>
+            </li>
+            {storeMapUrl && (
+              <li>
+                <a
+                  href={storeMapUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-cream-200/75 hover:text-gold transition-colors"
+                >
+                  Store Locator
+                </a>
+              </li>
+            )}
+          </ul>
+        </div>
       </div>
 
       <div className="border-t border-white/10">

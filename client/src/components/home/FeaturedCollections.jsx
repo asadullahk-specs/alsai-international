@@ -12,7 +12,7 @@ const FeaturedCollections = ({ collections = [] }) => {
           VIEW ALL →
         </Link>
       </div>
-      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-5 md:overflow-visible scrollbar-none">
+      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 md:pb-0 md:grid md:grid-cols-5 md:overflow-visible scrollbar-none">
         {collections.map((col) => (
           <Link
             key={col._id}

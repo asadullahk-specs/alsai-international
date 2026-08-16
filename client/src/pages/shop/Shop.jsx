@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { FiSliders } from 'react-icons/fi';
+import { FiSliders, FiChevronDown } from 'react-icons/fi';
 import publicAxios from '../../api/publicAxios';
 import ProductCard from '../../components/ProductCard';
 import FilterSidebar from '../../components/shop/FilterSidebar';
@@ -141,17 +141,20 @@ const Shop = () => {
             <p className="text-sm text-muted max-480:order-2">
               Showing {rangeStart}-{rangeEnd} of {pagination.total} Perfumes
             </p>
-            <select
-              value={filters.sort || 'newest'}
-              onChange={(e) => updateFilter('sort', e.target.value)}
-              className="text-sm border border-cream-200 rounded px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-brand max-480:order-1"
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  Sort by: {o.label}
-                </option>
-              ))}
-            </select>
+            <div className="relative max-480:order-1">
+              <select
+                value={filters.sort || 'newest'}
+                onChange={(e) => updateFilter('sort', e.target.value)}
+                className="appearance-none text-xs tracking-widest text-ink border border-cream-200 pl-4 pr-9 py-2.5 bg-transparent hover:border-ink transition-colors focus:outline-none focus:ring-1 focus:ring-brand"
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    Sort by: {o.label}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink" />
+            </div>
           </div>
 
           {loading ? (
@@ -210,9 +213,13 @@ const Shop = () => {
               VIEW ALL →
             </Link>
           </div>
-          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-4 md:overflow-visible scrollbar-none">
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 md:pb-0 md:grid md:grid-cols-4 md:overflow-visible scrollbar-none">
             {giftSets.map((g) => (
-              <Link key={g._id} to={`/gift-sets/${g.slug}`} className="group flex-shrink-0 w-36 sm:w-44 md:w-auto snap-start">
+              <Link
+                key={g._id}
+                to={`/gift-sets/${g.slug}`}
+                className="group flex-shrink-0 max-480:w-[calc(100vw-3rem)] w-36 sm:w-44 md:w-auto snap-start"
+              >
                 <div className="aspect-square rounded-md overflow-hidden bg-cream-100 mb-2">
                   {g.mainImage && (
                     <img

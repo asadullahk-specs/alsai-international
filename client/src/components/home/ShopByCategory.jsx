@@ -16,12 +16,17 @@ const OurSpecialities = ({ collections = [] }) => {
   return (
     <section className="max-w-7xl mx-auto px-4 py-14">
       <h2 className="text-xs tracking-widest text-ink mb-6">OUR SPECIALITIES</h2>
-      <div className="grid grid-cols-2 gap-2 sm:gap-4">
+      {/* Below 480px this becomes a one-card-per-view slider, matching the
+          other card rows on the site, instead of a cramped 2-up grid. A real
+          spacer element (not container padding) keeps the left gap intact -
+          padding on the leading edge of a horizontally-scrolling flex
+          container gets clipped by some mobile browsers. */}
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 max-480:flex max-480:gap-4 max-480:overflow-x-auto max-480:snap-x max-480:snap-mandatory max-480:pb-2 scrollbar-none">
         {cards.map((c) => (
           <Link
             key={c._id}
             to={`/shop?collection=${c._id}`}
-            className="relative overflow-hidden aspect-[4/3] sm:aspect-[16/10] group bg-cream-100"
+            className="relative overflow-hidden aspect-[4/3] sm:aspect-[16/10] group bg-cream-100 max-480:flex-shrink-0 max-480:w-[calc(100vw-3rem)] max-480:snap-start"
           >
             {c.video ? (
               <video

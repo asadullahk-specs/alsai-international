@@ -18,7 +18,7 @@ const ProductRow = ({ title, products = [], viewAllLink, mediaMode = 'image' }) 
           </Link>
         )}
       </div>
-      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 md:grid md:grid-cols-5 md:overflow-visible scrollbar-none">
+      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 md:pb-0 md:grid md:grid-cols-5 md:overflow-visible scrollbar-none">
         {products.map((p) => (
           <div key={p._id} className="flex-shrink-0 w-40 sm:w-48 md:w-auto snap-start">
             <ProductCard product={p} mediaMode={mediaMode} />

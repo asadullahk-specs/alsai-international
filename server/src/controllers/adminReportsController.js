@@ -44,15 +44,18 @@ exports.getSalesReport = asyncHandler(async (req, res) => {
       { $group: { _id: { $dayOfMonth: '$createdAt' }, total: { $sum: '$total' } } },
       { $sort: { _id: 1 } },
     ]),
-    Order.aggregate([{ $match: matchStage }, { $group: { _id: '$paymentMethod', total: { $sum: '$total' } } }]),
+    Order.aggregate([
+      { $match: matchStage },
+      { $group: { _id: { $ifNull: ['$paymentMethod', 'cod'] }, total: { $sum: '$total' } } },
+    ]),
     Order.aggregate([
       { $match: matchStage },
       { $unwind: '$items' },
       {
         $group: {
-          _id: { product: '$items.product', name: '$items.name' },
+          _id: { product: '$items.product', name: { $ifNull: ['$items.name', 'Unknown Product'] } },
           unitsSold: { $sum: '$items.quantity' },
-          totalSales: { $sum: { $multiply: ['$items.price', '$items.quantity'] } },
+          totalSales: { $sum: { $multiply: [{ $ifNull: ['$items.price', 0] }, { $ifNull: ['$items.quantity', 0] }] } },
         },
       },
       { $sort: { totalSales: -1 } },
@@ -78,7 +81,7 @@ exports.getSalesReport = asyncHandler(async (req, res) => {
       averageOrderValue: summary[0]?.totalOrders ? Math.round(summary[0].totalSales / summary[0].totalOrders) : 0,
       refunds: refundsResult[0]?.total || 0,
       dailySales: dailyRaw.map((d) => ({ day: d._id, total: d.total })),
-      byPaymentMethod: byPaymentMethod.map((p) => ({ method: p._id, total: p.total })),
+      byPaymentMethod: byPaymentMethod.map((p) => ({ method: p._id || 'cod', total: p.total })),
       topProducts,
     })
   );
@@ -124,9 +127,9 @@ exports.getProductsReport = asyncHandler(async (req, res) => {
     { $unwind: '$items' },
     {
       $group: {
-        _id: { product: '$items.product', name: '$items.name' },
+        _id: { product: '$items.product', name: { $ifNull: ['$items.name', 'Unknown Product'] } },
         unitsSold: { $sum: '$items.quantity' },
-        revenue: { $sum: { $multiply: ['$items.price', '$items.quantity'] } },
+        revenue: { $sum: { $multiply: [{ $ifNull: ['$items.price', 0] }, { $ifNull: ['$items.quantity', 0] }] } },
       },
     },
     { $sort: { unitsSold: -1 } },
@@ -139,7 +142,7 @@ exports.getProductsReport = asyncHandler(async (req, res) => {
     {
       $lookup: { from: 'products', localField: 'items.product', foreignField: '_id', as: 'productDoc' },
     },
-    { $unwind: '$productDoc' },
+    { $unwind: { path: '$productDoc', preserveNullAndEmptyArrays: true } },
     {
       $lookup: { from: 'collections', localField: 'productDoc.collection', foreignField: '_id', as: 'collectionDoc' },
     },
@@ -147,7 +150,7 @@ exports.getProductsReport = asyncHandler(async (req, res) => {
     {
       $group: {
         _id: { $ifNull: ['$collectionDoc.name', 'Uncategorized'] },
-        revenue: { $sum: { $multiply: ['$items.price', '$items.quantity'] } },
+        revenue: { $sum: { $multiply: [{ $ifNull: ['$items.price', 0] }, { $ifNull: ['$items.quantity', 0] }] } },
       },
     },
     { $sort: { revenue: -1 } },

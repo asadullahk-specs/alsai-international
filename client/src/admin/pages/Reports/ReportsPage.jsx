@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { FiDownload } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
@@ -27,13 +27,34 @@ const ReportsPage = () => {
   const [month, setMonth] = useState(currentMonthValue());
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Guards against out-of-order responses: each report tab has a different
+  // data shape (e.g. Sales has `topProducts`, Inventory has `totalUnits`),
+  // so if an older in-flight request for a previously-selected tab resolves
+  // *after* a newer one, it was overwriting `data` with the wrong shape
+  // while `tab` had already moved on - the mismatched render (e.g. an
+  // Inventory tab reading fields that only exist on the Sales response)
+  // then crashed with no error boundary to catch it, showing a blank page.
+  // Rapid clicks land in this state more easily than slow ones, which is
+  // why it looked direction-dependent rather than a genuine route issue.
+  const requestIdRef = useRef(0);
 
   const fetchReport = useCallback(() => {
+    const requestId = ++requestIdRef.current;
+    setData(null);
     setLoading(true);
     adminAxios
       .get(`/reports/${tab.toLowerCase()}`, { params: { month } })
-      .then(({ data: res }) => setData(res.data))
-      .finally(() => setLoading(false));
+      .then(({ data: res }) => {
+        if (requestId !== requestIdRef.current) return; // stale response - a newer request has since been made
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.error('Error loading report:', err);
+        if (requestId === requestIdRef.current) setData(null);
+      })
+      .finally(() => {
+        if (requestId === requestIdRef.current) setLoading(false);
+      });
   }, [tab, month]);
 
   useEffect(() => {
@@ -81,27 +102,31 @@ const ReportsPage = () => {
         <FilterTabs breakpoint={640} tabs={TABS} active={tab} onChange={setTab} />
       </div>
 
-      {loading || !data ? (
+      {loading ? (
         <div className="p-10 flex justify-center">
           <div className="h-8 w-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : !data ? (
+        <div className="p-10 text-center text-muted text-sm border border-cream-200 bg-white">
+          No report data available for this selection.
         </div>
       ) : (
         <>
           {tab === 'Sales' && (
             <>
               <div className="grid grid-cols-1 xs:grid-cols-2 min-641:grid-cols-3 min-1221:grid-cols-6 gap-3 mb-6">
-                <StatCard label="Total Sales" value={formatPrice(data.totalSales)} tone="brand" />
-                <StatCard label="Total Orders" value={data.totalOrders} tone="ink" />
-                <StatCard label="Total Customers" value={data.totalCustomers} tone="ink" />
-                <StatCard label="Avg Order Value" value={formatPrice(data.averageOrderValue)} tone="gold" />
-                <StatCard label="Items Sold" value={data.itemsSold} tone="ink" />
-                <StatCard label="Refunds" value={formatPrice(data.refunds)} tone="gold" />
+                <StatCard label="Total Sales" value={formatPrice(data.totalSales || 0)} tone="brand" />
+                <StatCard label="Total Orders" value={data.totalOrders || 0} tone="ink" />
+                <StatCard label="Total Customers" value={data.totalCustomers || 0} tone="ink" />
+                <StatCard label="Avg Order Value" value={formatPrice(data.averageOrderValue || 0)} tone="gold" />
+                <StatCard label="Items Sold" value={data.itemsSold || 0} tone="ink" />
+                <StatCard label="Refunds" value={formatPrice(data.refunds || 0)} tone="gold" />
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
                 <div className="bg-white border border-cream-200 p-5">
                   <p className="text-xs tracking-widest text-muted mb-4">SALES OVERVIEW (DAILY)</p>
                   <ResponsiveContainer width="100%" height={260}>
-                    <LineChart data={data.dailySales}>
+                    <LineChart data={data.dailySales || []}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#EFE6D8" />
                       <XAxis dataKey="day" tick={{ fontSize: 11 }} />
                       <YAxis tick={{ fontSize: 11 }} />
@@ -114,9 +139,9 @@ const ReportsPage = () => {
                   <p className="text-xs tracking-widest text-muted mb-4">SALES BY PAYMENT METHOD</p>
                   <ResponsiveContainer width="100%" height={260}>
                     <PieChart>
-                      <Pie data={data.byPaymentMethod} dataKey="total" nameKey="method" outerRadius={90} label={(e) => e.method}>
-                        {data.byPaymentMethod.map((entry, i) => (
-                          <Cell key={entry.method} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                      <Pie data={data.byPaymentMethod || []} dataKey="total" nameKey="method" outerRadius={90} label={(e) => e.method || 'Unknown'}>
+                        {(data.byPaymentMethod || []).map((entry, i) => (
+                          <Cell key={entry.method || i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                         ))}
                       </Pie>
                       <Tooltip formatter={(v) => formatPrice(v)} />
@@ -128,13 +153,13 @@ const ReportsPage = () => {
                 <p className="text-xs tracking-widest text-muted mb-4">TOP SELLING PRODUCTS</p>
                 <StackTable
                   breakpoint={640}
-                  rows={data.topProducts}
-                  rowKey={(p) => p._id.product}
+                  rows={data.topProducts || []}
+                  rowKey={(p) => p._id?.product || p._id?.name || Math.random()}
                   columns={[
-                    { key: 'rank', label: '#', render: (p) => data.topProducts.indexOf(p) + 1 },
-                    { key: 'product', label: 'Product', render: (p) => <span className="whitespace-nowrap">{p._id.name}</span> },
-                    { key: 'unitsSold', label: 'Units Sold', render: (p) => p.unitsSold },
-                    { key: 'totalSales', label: 'Total Sales', render: (p) => formatPrice(p.totalSales) },
+                    { key: 'rank', label: '#', render: (p) => (data.topProducts || []).indexOf(p) + 1 },
+                    { key: 'product', label: 'Product', render: (p) => <span className="whitespace-nowrap">{p._id?.name || p._id?.product || 'Unknown Product'}</span> },
+                    { key: 'unitsSold', label: 'Units Sold', render: (p) => p.unitsSold || 0 },
+                    { key: 'totalSales', label: 'Total Sales', render: (p) => formatPrice(p.totalSales || 0) },
                   ]}
                 />
               </div>
@@ -144,12 +169,12 @@ const ReportsPage = () => {
           {tab === 'Orders' && (
             <>
               <div className="mb-6 max-w-xs">
-                <StatCard label="Total Orders" value={data.total} tone="ink" />
+                <StatCard label="Total Orders" value={data.total || 0} tone="ink" />
               </div>
               <div className="bg-white border border-cream-200 p-5">
                 <p className="text-xs tracking-widest text-muted mb-4">ORDERS BY STATUS</p>
                 <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={data.byStatus}>
+                  <BarChart data={data.byStatus || []}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#EFE6D8" />
                     <XAxis dataKey="_id" tick={{ fontSize: 11 }} />
                     <YAxis tick={{ fontSize: 11 }} />
@@ -163,8 +188,8 @@ const ReportsPage = () => {
 
           {tab === 'Customers' && (
             <div className="grid grid-cols-2 gap-3">
-              <StatCard label="New Customers" value={data.newCustomers} tone="brand" />
-              <StatCard label="Repeat Buyers" value={data.repeatBuyers} tone="gold" />
+              <StatCard label="New Customers" value={data.newCustomers || 0} tone="brand" />
+              <StatCard label="Repeat Buyers" value={data.repeatBuyers || 0} tone="gold" />
             </div>
           )}
 
@@ -172,52 +197,60 @@ const ReportsPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <div className="bg-white border border-cream-200 p-5">
                 <p className="text-xs tracking-widest text-muted mb-4">TOP SELLING PRODUCTS</p>
-                <table className="w-full text-sm">
-                  <tbody>
-                    {data.topSelling.map((p) => (
-                      <tr key={p._id.product} className="border-b border-cream-100 last:border-0">
-                        <td className="py-2 text-ink">{p._id.name}</td>
-                        <td className="py-2 text-muted text-right">{p.unitsSold} units</td>
-                        <td className="py-2 text-ink text-right">{formatPrice(p.revenue)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {(data.topSelling || []).length === 0 ? (
+                  <p className="text-xs text-muted py-6 text-center">No products sold in this period.</p>
+                ) : (
+                  <table className="w-full text-sm">
+                    <tbody>
+                      {(data.topSelling || []).map((p, idx) => (
+                        <tr key={p._id?.product || p._id?.name || idx} className="border-b border-cream-100 last:border-0">
+                          <td className="py-2 text-ink">{p._id?.name || p._id?.product || 'Unknown Product'}</td>
+                          <td className="py-2 text-muted text-right">{p.unitsSold || 0} units</td>
+                          <td className="py-2 text-ink text-right">{formatPrice(p.revenue || 0)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
               <div className="bg-white border border-cream-200 p-5">
                 <p className="text-xs tracking-widest text-muted mb-4">CATEGORY PERFORMANCE</p>
-                <table className="w-full text-sm">
-                  <tbody>
-                    {data.categoryPerformance.map((c) => (
-                      <tr key={c._id} className="border-b border-cream-100 last:border-0">
-                        <td className="py-2 text-ink">{c._id}</td>
-                        <td className="py-2 text-ink text-right">{formatPrice(c.revenue)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {(data.categoryPerformance || []).length === 0 ? (
+                  <p className="text-xs text-muted py-6 text-center">No category data in this period.</p>
+                ) : (
+                  <table className="w-full text-sm">
+                    <tbody>
+                      {(data.categoryPerformance || []).map((c, idx) => (
+                        <tr key={c._id || idx} className="border-b border-cream-100 last:border-0">
+                          <td className="py-2 text-ink">{c._id || 'Uncategorized'}</td>
+                          <td className="py-2 text-ink text-right">{formatPrice(c.revenue || 0)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           )}
 
           {tab === 'Inventory' && (
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              <StatCard label="Total Products" value={data.totalProducts} tone="ink" />
-              <StatCard label="Total Units" value={data.totalUnits} tone="ink" />
-              <StatCard label="Total Value" value={formatPrice(data.totalValue)} tone="brand" />
-              <StatCard label="Low Stock" value={data.lowStock} tone="gold" />
-              <StatCard label="Out of Stock" value={data.outOfStock} tone="ink" />
+              <StatCard label="Total Products" value={data.totalProducts || 0} tone="ink" />
+              <StatCard label="Total Units" value={data.totalUnits || 0} tone="ink" />
+              <StatCard label="Total Value" value={formatPrice(data.totalValue || 0)} tone="brand" />
+              <StatCard label="Low Stock" value={data.lowStock || 0} tone="gold" />
+              <StatCard label="Out of Stock" value={data.outOfStock || 0} tone="ink" />
             </div>
           )}
 
           {tab === 'Revenue' && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              <StatCard label="Gross Revenue" value={formatPrice(data.grossRevenue)} tone="ink" />
-              <StatCard label="Discounts" value={formatPrice(data.discounts)} tone="gold" />
-              <StatCard label="Shipping" value={formatPrice(data.shipping)} tone="ink" />
-              <StatCard label="Net Revenue" value={formatPrice(data.netRevenue)} tone="brand" />
-              <StatCard label="Cost of Goods Sold" value={formatPrice(data.costOfGoodsSold)} tone="ink" />
-              <StatCard label="Gross Profit" value={`${formatPrice(data.grossProfit)} (${data.grossMarginPercent}%)`} tone="brand" />
+              <StatCard label="Gross Revenue" value={formatPrice(data.grossRevenue || 0)} tone="ink" />
+              <StatCard label="Discounts" value={formatPrice(data.discounts || 0)} tone="gold" />
+              <StatCard label="Shipping" value={formatPrice(data.shipping || 0)} tone="ink" />
+              <StatCard label="Net Revenue" value={formatPrice(data.netRevenue || 0)} tone="brand" />
+              <StatCard label="Cost of Goods Sold" value={formatPrice(data.costOfGoodsSold || 0)} tone="ink" />
+              <StatCard label="Gross Profit" value={`${formatPrice(data.grossProfit || 0)} (${data.grossMarginPercent || 0}%)`} tone="brand" />
             </div>
           )}
         </>
