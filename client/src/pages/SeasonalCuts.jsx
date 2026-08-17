@@ -68,7 +68,7 @@ const SeasonalCuts = () => {
             <p className="text-xs text-cream-100/80 mb-3">
               <Link to="/" className="hover:text-gold">Home</Link> / Promotions
             </p>
-            <p className="text-xs tracking-widest text-cream-100/90 mb-2">LIMITED TIME OFFERS</p>
+            {/* <p className="text-xs tracking-widest text-cream-100/90 mb-2">LIMITED TIME OFFERS</p> */}
             <h1 className="font-serif text-3xl sm:text-4xl max-480:text-2xl text-white mb-2 line-clamp-2">
               {activeBanner ? activeBanner.name : 'Promotions'}
             </h1>

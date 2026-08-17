@@ -91,7 +91,7 @@ const Shop = () => {
   const activeCollection =
     activeCollectionIds.length === 1 ? collections.find((c) => c._id === activeCollectionIds[0]) : null;
 
-  const bannerEyebrow = activeCollection ? 'COLLECTION' : 'SHOP';
+  // const bannerEyebrow = activeCollection ? 'COLLECTION' : 'SHOP';
   const bannerTitle = activeCollection ? activeCollection.name : 'All Fragrances';
   const bannerText = activeCollection?.description || "Discover timeless perfumes crafted from the world's finest ingredients.";
   const bannerImage = activeCollection?.image || websiteContent?.shopPage?.allBannerImage;
@@ -110,7 +110,7 @@ const Shop = () => {
           <p className="text-xs text-cream-100/80 mb-3">
             <Link to="/" className="hover:text-gold">Home</Link> / Shop
           </p>
-          <p className="text-xs tracking-widest text-cream-100/90 mb-2">{bannerEyebrow}</p>
+          {/* <p className="text-xs tracking-widest text-cream-100/90 mb-2">{bannerEyebrow}</p> */}
           <h1 className="font-serif text-3xl sm:text-4xl text-white">{bannerTitle}</h1>
           <p className="text-sm text-cream-100/90 mt-2 max-w-lg">{bannerText}</p>
         </div>
@@ -208,7 +208,7 @@ const Shop = () => {
       {giftSets.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-14 border-t border-cream-200">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xs tracking-widest text-ink">EXPLORE OUR GIFT SETS</h2>
+            <h2 className="text-xs tracking-widest text-ink">— EXPLORE OUR GIFT SETS —</h2>
             <Link to="/gift-sets" className="text-xs text-brand hover:underline">
               VIEW ALL →
             </Link>

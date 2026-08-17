@@ -66,7 +66,6 @@ const PolicyPage = () => {
         description={page?.heroDescription}
         image={page?.heroImage}
         breadcrumb={title}
-        eyebrow="CUSTOMER CARE"
       />
 
       {isEmpty ? (
@@ -79,19 +78,18 @@ const PolicyPage = () => {
           {hasCards && (
             <section className="border-b border-cream-200 bg-white">
               <div className="max-w-5xl mx-auto px-4 py-12">
-                <div className={`grid gap-6 ${
-                  page.highlightCards.length === 2
+                <div className={`grid gap-6 ${page.highlightCards.length === 2
                     ? 'grid-cols-2'
                     : page.highlightCards.length === 3
-                    ? 'grid-cols-1 sm:grid-cols-3'
-                    : 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-4'
-                }`}>
+                      ? 'grid-cols-1 sm:grid-cols-3'
+                      : 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-4'
+                  }`}>
                   {page.highlightCards.map((card, i) => {
                     const Icon = getPageIcon(card.icon);
                     return (
                       <div
                         key={i}
-                        className="flex flex-col items-center text-center px-4 py-6 border border-cream-200 rounded-md bg-cream-100/40"
+                        className="flex flex-col items-center text-center px-4 py-6 border border-cream-200 bg-cream-100/40"
                       >
                         {/* Fixed-height icon zone — ensures all icons sit at the same vertical position */}
                         <div className="w-12 h-12 mb-4 rounded-full border border-gold/50 flex items-center justify-center flex-shrink-0">
@@ -111,26 +109,32 @@ const PolicyPage = () => {
           )}
 
           <div className="max-w-7xl mx-auto px-4 py-14">
-            <div className={hasSections ? 'grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-10' : ''}>
+            <div className={hasSections ? 'grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-10' : ''}>
               {/* TOC sidebar - Terms / Privacy style */}
               {hasSections && (
                 <aside className="lg:sticky lg:top-24 self-start">
-                  <nav className="border border-cream-200 bg-white divide-y divide-cream-200 lg:border-0 lg:divide-y-0 lg:pl-4 lg:border-l lg:border-cream-200 overflow-x-auto lg:overflow-visible">
-                    <div className="flex lg:flex-col">
-                      {page.sections.map((s, i) => (
-                        <button
-                          key={i}
-                          type="button"
-                          onClick={() => scrollToSection(i)}
-                          className={`text-left text-xs sm:text-sm whitespace-nowrap lg:whitespace-normal px-4 py-3 lg:px-0 lg:py-2 border-l-2 transition-colors ${
-                            activeSection === i ? 'text-brand border-brand font-medium' : 'text-muted border-transparent hover:text-ink'
-                          }`}
-                        >
-                          {String(i + 1).padStart(2, '0')}. {s.heading}
-                        </button>
-                      ))}
-                    </div>
-                  </nav>
+                  <div className="bg-white border border-cream-200 p-4 sm:p-5 shadow-xs">
+                    <p className="text-[10px] tracking-[0.2em] font-semibold text-brand uppercase mb-3 px-2">
+                      — TABLE OF CONTENTS —
+                    </p>
+                    <nav className="overflow-x-auto lg:overflow-visible scrollbar-none">
+                      <div className="flex lg:flex-col gap-1">
+                        {page.sections.map((s, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => scrollToSection(i)}
+                            className={`text-left text-xs sm:text-sm whitespace-nowrap lg:whitespace-normal px-3.5 py-2.5 border-l-2 transition-all duration-200 ${activeSection === i
+                                ? 'bg-cream-100/80 text-brand border-brand font-medium'
+                                : 'text-muted border-transparent hover:text-ink hover:bg-cream-50/60'
+                              }`}
+                          >
+                            {String(i + 1).padStart(2, '0')}. {s.heading}
+                          </button>
+                        ))}
+                      </div>
+                    </nav>
+                  </div>
                 </aside>
               )}
 

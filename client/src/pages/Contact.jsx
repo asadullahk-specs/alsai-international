@@ -46,7 +46,6 @@ const Contact = () => {
         description={hero?.heroDescription}
         image={hero?.heroImage}
         breadcrumb="Contact Us"
-        eyebrow="CUSTOMER CARE"
       />
 
       <div className="max-w-7xl mx-auto px-4 py-14">

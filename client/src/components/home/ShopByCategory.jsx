@@ -15,7 +15,7 @@ const OurSpecialities = ({ collections = [] }) => {
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-14">
-      <h2 className="text-xs tracking-widest text-ink mb-6">OUR SPECIALITIES</h2>
+      <h2 className="text-xs tracking-widest text-ink mb-6">— OUR SPECIALITIES —</h2>
       {/* Below 480px this becomes a one-card-per-view slider, matching the
           other card rows on the site, instead of a cramped 2-up grid. A real
           spacer element (not container padding) keeps the left gap intact -

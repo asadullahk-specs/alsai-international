@@ -7,7 +7,7 @@ const FeaturedCollections = ({ collections = [] }) => {
   return (
     <section className="max-w-7xl mx-auto px-4 py-14">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xs tracking-widest text-ink">FEATURED COLLECTIONS</h2>
+        <h2 className="text-xs tracking-widest text-ink">— FEATURED COLLECTIONS —</h2>
         <Link to="/shop" className="text-xs text-brand hover:underline">
           VIEW ALL →
         </Link>

@@ -35,9 +35,9 @@ const Home = () => {
       <HeroSlider slides={homepage.heroSlides} />
       <FeaturedCollections collections={homepage.featuredCollections} />
       <ShopByCategory collections={collections} />
-      <ProductRow title="BEST SELLERS" products={homepage.bestSellers} viewAllLink="/shop?sort=popular" mediaMode="video" />
+      <ProductRow title="— BEST SELLERS —" products={homepage.bestSellers} viewAllLink="/shop?sort=popular" mediaMode="video" />
       {homepage.seasonalCollections?.length > 0 && <SeasonalBanner campaigns={homepage.seasonalCollections} />}
-      <ProductRow title="NEW ARRIVALS" products={homepage.newArrivals} viewAllLink="/shop?sort=newest" mediaMode="video" />
+      <ProductRow title="— NEW ARRIVALS —" products={homepage.newArrivals} viewAllLink="/shop?sort=newest" mediaMode="video" />
       <Testimonials testimonials={homepage.testimonials} />
       <OurStory story={homepage.ourStory} />
       <Newsletter heading={homepage.newsletterSection?.heading} description={homepage.newsletterSection?.description} />

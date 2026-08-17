@@ -41,7 +41,7 @@ const SeasonalBanner = ({ campaigns = [] }) => {
           ) : null
         )}
         <div className="absolute inset-0 bg-black/20 flex flex-col justify-center px-8 sm:px-14">
-          <p className="text-white/80 text-xs tracking-[0.25em] mb-2">LIMITED TIME OFFERS</p>
+          {/* <p className="text-white/80 text-xs tracking-[0.25em] mb-2">LIMITED TIME OFFERS</p> */}
           <h2 className="font-serif text-white text-2xl sm:text-4xl mb-2 line-clamp-2">{campaign.name}</h2>
           <p className="text-white/90 text-sm mb-5 max-w-sm">Exclusive seasonal discounts on selected perfumes.</p>
           <Link

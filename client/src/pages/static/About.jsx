@@ -47,7 +47,6 @@ const About = () => {
           <p className="text-xs text-cream-100/80 mb-3">
             <Link to="/" className="hover:text-gold">Home</Link> / Our Story
           </p>
-          {about.eyebrow && <p className="text-xs tracking-widest text-gold mb-2 uppercase">{about.eyebrow}</p>}
           {about.heading && <h1 className="font-serif text-3xl sm:text-4xl max-480:text-2xl text-white">{about.heading}</h1>}
           {about.description && (
             <p className="text-sm sm:text-base text-cream-100/90 mt-2 max-w-xl leading-relaxed">{about.description}</p>
@@ -60,7 +59,9 @@ const About = () => {
         <section className="max-w-6xl mx-auto px-4 py-14 sm:py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
             <div className={about.storyImage || about.storyVideo ? 'order-2 md:order-1' : 'md:col-span-2 max-w-2xl mx-auto text-center'}>
-              <p className="text-brand text-xs tracking-[0.25em] mb-3">{about.storyHeading || 'OUR STORY'}</p>
+              <p className="text-brand text-xs tracking-[0.25em] mb-3">
+                — {about.storyHeading ? about.storyHeading.replace(/^—\s*|\s*—$/g, '') : 'OUR STORY'} —
+              </p>
               <div className="space-y-4">
                 {about.storyBody.split('\n').filter(Boolean).map((para, i) => (
                   <p key={i} className="text-muted text-sm leading-relaxed">{para}</p>
@@ -84,7 +85,7 @@ const About = () => {
       {hasValues && (
         <section className="bg-cream-100/60 border-y border-cream-200">
           <div className="max-w-6xl mx-auto px-4 py-14 sm:py-16">
-            <p className="text-brand text-xs tracking-[0.25em] mb-6 text-center">OUR VALUES</p>
+            <p className="text-brand text-xs tracking-[0.25em] mb-6 text-center">— OUR VALUES —</p>
             <h2 className="font-serif text-2xl sm:text-3xl text-ink text-center mb-10">What Drives Us</h2>
             <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6 lg:divide-x lg:divide-cream-200">
               {about.values.map((v, i) => {
@@ -105,7 +106,7 @@ const About = () => {
       {/* Milestones / timeline */}
       {hasMilestones && (
         <section className="max-w-3xl mx-auto px-4 py-14 sm:py-16">
-          <p className="text-brand text-xs tracking-[0.25em] mb-10 text-center">OUR JOURNEY</p>
+          <p className="text-brand text-xs tracking-[0.25em] mb-10 text-center">— OUR JOURNEY —</p>
           <div className="relative border-l border-cream-200 pl-8 space-y-10">
             {about.milestones.map((m, i) => (
               <div key={i} className="relative">
@@ -127,7 +128,11 @@ const About = () => {
               <img src={driveImg(about.craftImage)} alt={about.craftHeading || 'Our Craft'} className="w-full h-full object-cover" />
             </div>
             <div>
-              {about.craftEyebrow && <p className="text-brand text-xs tracking-[0.25em] mb-3">{about.craftEyebrow}</p>}
+              {about.craftEyebrow && (
+                <p className="text-brand text-xs tracking-[0.25em] mb-3">
+                  — {about.craftEyebrow.replace(/^—\s*|\s*—$/g, '')} —
+                </p>
+              )}
               {about.craftHeading && <h2 className="font-serif text-2xl sm:text-3xl text-ink mb-4">{about.craftHeading}</h2>}
               <blockquote className="text-sm sm:text-base text-muted leading-relaxed mb-5">{about.quoteText}</blockquote>
               {about.quoteAuthor && <p className="font-serif italic text-brand text-base">{about.quoteAuthor}</p>}

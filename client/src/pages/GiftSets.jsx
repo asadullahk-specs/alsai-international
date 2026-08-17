@@ -37,7 +37,7 @@ const GiftSets = () => {
           <p className="text-xs text-cream-100/80 mb-3">
             <Link to="/" className="hover:text-gold">Home</Link> / Gift Sets
           </p>
-          <p className="text-xs tracking-widest text-gold mb-1">CURATED SETS</p>
+          {/* <p className="text-xs tracking-widest text-gold mb-1">CURATED SETS</p> */}
           <h1 className="font-serif text-3xl sm:text-4xl max-480:text-2xl text-white">Gift Sets</h1>
           <p className="text-sm text-cream-100/90 mt-2 max-w-lg">
             Thoughtfully paired fragrances, presented in signature AL SA&apos;I packaging - the perfect gift for every occasion.

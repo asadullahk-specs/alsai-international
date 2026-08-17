@@ -115,8 +115,8 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
                   COLLECTIONS <FiChevronDown size={12} />
                 </button>
                 {collectionsOpen && collections.length > 0 && (
-                  <div className="absolute top-full left-0">
-                    <div className="flex gap-10 bg-white border border-cream-200 shadow-lg p-6 min-w-[420px]">
+                  <div className="absolute top-full left-0 pt-2">
+                    <div className="flex gap-8 bg-white border border-cream-200 shadow-lg p-6 w-max max-w-[85vw]">
                       {collections.map((col) => {
                         // Each collection (Perfumes / Attars) shows only the
                         // fragrance families assigned to it, not a shared list.
@@ -124,10 +124,10 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
                           (fam) => (fam.collection?._id || fam.collection) === col._id
                         );
                         return (
-                          <div key={col._id}>
+                          <div key={col._id} className="min-w-[120px] flex-shrink-0">
                             <Link
                               to={`/shop?collection=${col._id}`}
-                              className="font-serif text-sm text-ink hover:text-brand block mb-3 normal-case tracking-normal"
+                              className="font-serif text-sm font-medium text-ink hover:text-brand block mb-3 pb-1 border-b border-cream-200 normal-case tracking-normal whitespace-nowrap"
                             >
                               {col.name}
                             </Link>
@@ -136,14 +136,14 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
                                 <li key={fam._id}>
                                   <Link
                                     to={`/shop?collection=${col._id}&fragranceFamily=${fam._id}`}
-                                    className="text-xs text-muted hover:text-brand normal-case tracking-normal"
+                                    className="text-xs text-muted hover:text-brand normal-case tracking-normal whitespace-nowrap block"
                                   >
                                     {fam.name}
                                   </Link>
                                 </li>
                               ))}
                               {famsForCollection.length === 0 && (
-                                <li className="text-xs text-muted/60 normal-case tracking-normal">No families yet</li>
+                                <li className="text-xs text-muted/60 normal-case tracking-normal whitespace-nowrap">No families yet</li>
                               )}
                             </ul>
                           </div>

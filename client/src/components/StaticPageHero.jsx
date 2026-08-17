@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 // Full-bleed hero banner with dark background overlay used by static & policy pages,
 // matching the exact height, overlay, and breadcrumb layout used across main pages (About, Shop, Gift Sets).
-const StaticPageHero = ({ heading, description, image, eyebrow = 'CUSTOMER CARE', breadcrumb }) => (
+const StaticPageHero = ({ heading, description, image, eyebrow = null, breadcrumb }) => (
   <section className="relative bg-cream-100 overflow-hidden h-[532px] sm:h-[616px] md:h-[672px] flex items-center">
     {image && (
       <img src={driveImg(image)} alt="" className="absolute inset-0 w-full h-full object-cover" />
