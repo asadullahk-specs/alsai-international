@@ -218,7 +218,7 @@ const Shop = () => {
               <Link
                 key={g._id}
                 to={`/gift-sets/${g.slug}`}
-                className="group flex-shrink-0 max-480:w-[calc(100vw-3rem)] w-36 sm:w-44 md:w-auto snap-start"
+                className="group flex-shrink-0 max-480:w-[78vw] w-36 sm:w-44 md:w-auto snap-start"
               >
                 <div className="aspect-square rounded-md overflow-hidden bg-cream-100 mb-2">
                   {g.mainImage && (

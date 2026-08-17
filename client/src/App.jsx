@@ -6,6 +6,7 @@ import { AdminAuthProvider } from './context/AdminAuthContext';
 import { AdminNotificationProvider } from './context/AdminNotificationContext';
 import { CartProvider } from './context/CartContext';
 import PublicLayout from './layouts/PublicLayout';
+import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './routes/ProtectedRoute';
 import AdminProtectedRoute from './routes/AdminProtectedRoute';
 import AdminLayout from './admin/layouts/AdminLayout';
@@ -85,6 +86,7 @@ function App() {
       <AdminAuthProvider>
         <AdminNotificationProvider>
         <CartProvider>
+          <ScrollToTop />
           <Routes>
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />

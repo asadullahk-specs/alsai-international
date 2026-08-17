@@ -26,7 +26,7 @@ const OurSpecialities = ({ collections = [] }) => {
           <Link
             key={c._id}
             to={`/shop?collection=${c._id}`}
-            className="relative overflow-hidden aspect-[4/3] sm:aspect-[16/10] group bg-cream-100 max-480:flex-shrink-0 max-480:w-[calc(100vw-3rem)] max-480:snap-start"
+            className="relative overflow-hidden aspect-[4/3] sm:aspect-[16/10] group bg-cream-100 max-480:flex-shrink-0 max-480:w-[78vw] max-480:snap-start"
           >
             {c.video ? (
               <video
