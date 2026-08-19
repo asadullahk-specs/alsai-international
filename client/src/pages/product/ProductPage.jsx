@@ -205,14 +205,25 @@ const ProductPage = () => {
               </button>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={outOfStock}
-            className="w-full bg-brand hover:bg-brand-dark text-white text-xs tracking-widest py-3 transition-colors mb-4 disabled:opacity-40"
-          >
-            {outOfStock ? 'OUT OF STOCK' : 'ADD TO CART'}
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={outOfStock}
+              className="flex-1 border border-brand text-brand hover:bg-brand hover:text-white text-xs tracking-widest py-3.5 font-medium transition-colors disabled:opacity-40"
+            >
+              {outOfStock ? 'OUT OF STOCK' : 'ADD TO CART'}
+            </button>
+            {!outOfStock && (
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                className="flex-1 bg-brand hover:bg-brand-dark text-white text-xs tracking-widest py-3.5 font-medium transition-colors shadow-sm"
+              >
+                BUY IT NOW
+              </button>
+            )}
+          </div>
 
           <div className="flex items-center gap-5 text-sm text-muted">
             <button type="button" onClick={handleToggleWishlist} className="flex items-center gap-1.5 hover:text-brand">

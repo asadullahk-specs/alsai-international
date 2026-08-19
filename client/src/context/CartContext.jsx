@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import CartPreview from '../components/CartPreview';
 
 const CartContext = createContext(null);
 const STORAGE_KEY = 'alsai_cart';
 
 export const CartProvider = ({ children }) => {
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [items, setItems] = useState(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -21,7 +23,11 @@ export const CartProvider = ({ children }) => {
     }
   }, [items]);
 
-  const addItem = (product, size, quantity = 1) => {
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
+  const toggleCart = () => setIsCartOpen((prev) => !prev);
+
+  const addItem = (product, size, quantity = 1, openSidebar = true) => {
     setItems((prev) => {
       const existingIndex = prev.findIndex((i) => i.productId === product._id && i.size === size.size);
       if (existingIndex > -1) {
@@ -43,6 +49,10 @@ export const CartProvider = ({ children }) => {
         },
       ];
     });
+
+    if (openSidebar) {
+      setIsCartOpen(true);
+    }
   };
 
   const removeItem = (productId, size) => {
@@ -61,8 +71,23 @@ export const CartProvider = ({ children }) => {
   const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.price * i.quantity, 0), [items]);
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, itemCount, subtotal }}>
+    <CartContext.Provider
+      value={{
+        items,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clearCart,
+        itemCount,
+        subtotal,
+        isCartOpen,
+        openCart,
+        closeCart,
+        toggleCart,
+      }}
+    >
       {children}
+      {isCartOpen && <CartPreview onClose={closeCart} />}
     </CartContext.Provider>
   );
 };
