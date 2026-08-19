@@ -41,12 +41,12 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #EFE6D8;
+  background: #F8F9FA;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #A9662A;
-  border: 2px solid #EFE6D8;
+  border: 2px solid #F8F9FA;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -55,7 +55,7 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #A9662A #EFE6D8;
+  scrollbar-color: #A9662A #F8F9FA;
 }
 
 .scrollbar-dark::-webkit-scrollbar-track {

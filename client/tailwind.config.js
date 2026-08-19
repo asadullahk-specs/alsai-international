@@ -40,10 +40,10 @@ export default {
     extend: {
       colors: {
         cream: {
-          DEFAULT: '#FAF6F0',
-          50: '#FEFDFB',
-          100: '#FAF6F0',
-          200: '#EFE6D8',
+          DEFAULT: '#FFFFFF',
+          50: '#FFFFFF',
+          100: '#F8F9FA',
+          200: '#E9ECEF',
         },
         charcoal: {
           DEFAULT: '#141210',
