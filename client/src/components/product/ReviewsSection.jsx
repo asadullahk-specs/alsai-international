@@ -177,9 +177,9 @@ const ReviewsSection = ({ productId, ratingAverage, ratingCount }) => {
       ) : reviews.length === 0 ? (
         <p className="text-sm text-muted">No reviews yet - be the first to share your thoughts.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 sm:pb-0 sm:grid sm:grid-cols-2 sm:overflow-visible scrollbar-none">
           {reviews.map((r) => (
-            <div key={r._id} className="border border-cream-200 rounded-md p-4">
+            <div key={r._id} className="flex-shrink-0 w-72 sm:w-auto snap-start border border-cream-200 rounded-md p-4 bg-white">
               <div className="flex items-center gap-2 mb-2">
                 {r.customer?.avatar ? (
                   <img src={r.customer.avatar} alt={r.customer.fullName} className="w-8 h-8 rounded-full object-cover" />
