@@ -125,6 +125,10 @@ const HomepageManager = () => {
   const [loading, setLoading] = useState(true);
   const [slideForm, setSlideForm] = useState(null);
 
+  const [ourStoryForm, setOurStoryForm] = useState({ tagline: '', heading: '', description: '', image: '' });
+  const [savingStory, setSavingStory] = useState(false);
+  const [storySuccess, setStorySuccess] = useState('');
+
   const fetchAll = useCallback(() => {
     setLoading(true);
     Promise.all([
@@ -133,7 +137,16 @@ const HomepageManager = () => {
       adminAxios.get('featured-collections'),
       adminAxios.get('newsletter', { params: { limit: 1 } }),
     ]).then(([homepageRes, productsRes, fcRes, newsletterRes]) => {
-      setContent(homepageRes.data.data.content);
+      const c = homepageRes.data.data.content;
+      setContent(c);
+      if (c?.ourStory) {
+        setOurStoryForm({
+          tagline: c.ourStory.tagline || '',
+          heading: c.ourStory.heading || '',
+          description: c.ourStory.description || '',
+          image: c.ourStory.image || '',
+        });
+      }
       setProducts(productsRes.data.data.products);
       setFeaturedCollections(fcRes.data.data.items);
       setSubscriberCount(newsletterRes.data.data.stats.total);
@@ -144,6 +157,21 @@ const HomepageManager = () => {
   useEffect(() => {
     fetchAll();
   }, [fetchAll]);
+
+  const saveOurStory = async (e) => {
+    e.preventDefault();
+    setSavingStory(true);
+    setStorySuccess('');
+    try {
+      await adminAxios.put('homepage/our-story', ourStoryForm);
+      setStorySuccess('Our Story banner updated successfully!');
+      fetchAll();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update Our Story section');
+    } finally {
+      setSavingStory(false);
+    }
+  };
 
   const saveSlide = async (form) => {
     if (slideForm.id) await adminAxios.put(`homepage/hero-slides/${slideForm.id}`, form);
@@ -223,6 +251,64 @@ const HomepageManager = () => {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* OUR STORY BANNER */}
+          <div className="bg-white border border-cream-200 p-5">
+            <p className="text-xs tracking-widest text-muted mb-1">5. OUR STORY BANNER</p>
+            <p className="text-xs text-muted mb-4">
+              Manage the tagline, heading, description, and background image for the dark "Our Story" banner on the homepage.
+            </p>
+            {storySuccess && <p className="text-xs text-emerald-600 mb-3 font-medium">{storySuccess}</p>}
+            <form onSubmit={saveOurStory} className="space-y-3">
+              <div>
+                <label className="text-xs text-muted block mb-1">Tagline (Eyebrow Text)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. THE ESSENCE OF LUXURY"
+                  value={ourStoryForm.tagline}
+                  onChange={(e) => setOurStoryForm({ ...ourStoryForm, tagline: e.target.value })}
+                  className="w-full px-3 py-2 border border-cream-200 text-sm focus:outline-none focus:ring-1 focus:ring-brand"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-muted block mb-1">Heading</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Our Story"
+                  value={ourStoryForm.heading}
+                  onChange={(e) => setOurStoryForm({ ...ourStoryForm, heading: e.target.value })}
+                  className="w-full px-3 py-2 border border-cream-200 text-sm focus:outline-none focus:ring-1 focus:ring-brand font-serif"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-muted block mb-1">Description / Teaser Text</label>
+                <textarea
+                  rows={3}
+                  placeholder="Teaser text for the banner..."
+                  value={ourStoryForm.description}
+                  onChange={(e) => setOurStoryForm({ ...ourStoryForm, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-cream-200 text-sm focus:outline-none focus:ring-1 focus:ring-brand resize-none"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-muted block mb-1">Background Image (Google Drive link or Image URL)</label>
+                <input
+                  type="text"
+                  placeholder="https://drive.google.com/file/d/..."
+                  value={ourStoryForm.image}
+                  onChange={(e) => setOurStoryForm({ ...ourStoryForm, image: e.target.value })}
+                  className="w-full px-3 py-2 border border-cream-200 text-sm focus:outline-none focus:ring-1 focus:ring-brand"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={savingStory}
+                className="bg-brand hover:bg-brand-dark text-white text-xs tracking-widest px-4 py-2.5 disabled:opacity-60"
+              >
+                {savingStory ? 'SAVING...' : 'SAVE OUR STORY BANNER'}
+              </button>
+            </form>
           </div>
 
           {/* Testimonials are now submitted by customers on the homepage
