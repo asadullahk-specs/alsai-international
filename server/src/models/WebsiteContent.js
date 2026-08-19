@@ -115,6 +115,11 @@ const websiteContentSchema = new mongoose.Schema(
       heroHeading: { type: String, default: 'Frequently Asked Questions' },
       heroDescription: { type: String, default: 'Find quick answers to the most common questions about our products, orders, and services.' },
     },
+    promotionsPage: {
+      heroImage: { type: String, default: '' },
+      heroHeading: { type: String, default: 'Promotions & Offers' },
+      heroDescription: { type: String, default: 'Exclusive seasonal discounts on selected luxury fragrances.' },
+    },
     footer: {
       description: { type: String, default: '' },
       columns: [

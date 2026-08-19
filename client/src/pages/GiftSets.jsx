@@ -56,12 +56,21 @@ const GiftSets = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 max-480:gap-3">
             {giftSets.map((g) => (
               <Link key={g._id} to={`/gift-sets/${g.slug}`} className="group block">
-                <div className="aspect-square rounded-md overflow-hidden bg-cream-100 mb-3">
+                <div className="aspect-square rounded-md overflow-hidden bg-cream-100 mb-3 relative">
                   {g.mainImage && (
                     <img
                       src={driveImg(g.mainImage)}
                       alt={g.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className={`w-full h-full object-cover transition-opacity duration-500 ${
+                        g.hoverImage ? 'group-hover:opacity-0' : 'group-hover:scale-105'
+                      }`}
+                    />
+                  )}
+                  {g.hoverImage && (
+                    <img
+                      src={driveImg(g.hoverImage)}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                     />
                   )}
                 </div>

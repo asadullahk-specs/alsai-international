@@ -93,7 +93,7 @@ const run = async () => {
   // filters, and admin Products dropdown: Perfumes and Attars.
   const perfumesCollection = await Collection.findOneAndUpdate(
     { slug: 'perfumes' },
-    { name: 'Perfumes', slug: 'perfumes', description: 'Extrait de Parfum', displayOrder: 1 },
+    { name: 'Perfumes', slug: 'perfumes', description: 'International', displayOrder: 1 },
     { upsert: true, new: true, setDefaultsOnInsert: true }
   );
   const attarsCollection = await Collection.findOneAndUpdate(
@@ -102,38 +102,6 @@ const run = async () => {
     { upsert: true, new: true, setDefaultsOnInsert: true }
   );
   console.log('Collections ready: Perfumes, Attars');
-
-  // One demo product per collection so the storefront and admin panel aren't
-  // empty when the client reviews a fresh environment.
-  const demoProduct = await Product.findOneAndUpdate(
-    { slug: 'oud-elixir' },
-    {
-      name: 'Oud Elixir',
-      slug: 'oud-elixir',
-      shortDescription: 'Deep. Powerful. Unforgettable.',
-      fullDescription:
-        'Oud Elixir is an intense and sophisticated extrait de parfum crafted for those who appreciate depth and character.',
-      collection: perfumesCollection._id,
-      fragranceNotes: { top: ['Saffron', 'Black Pepper', 'Bergamot'], heart: ['Oud', 'Cedarwood', 'Patchouli'], base: ['Amber', 'Musk', 'Sandalwood'] },
-      facts: { concentration: 'Extrait de Parfum', longevity: '8-10 Hours', sillage: 'Strong', gender: 'Unisex', ingredients: 'Alcohol Denat, Parfum (Fragrance), Aqua (Water)' },
-      shippingInfo: {
-        deliveryTime: 'Karachi: 1-2 Working Days · Other Cities: 2-4 Working Days',
-        shippingCharges: 'Free Shipping on orders over PKR 10,000; Standard Shipping: PKR 250',
-        returnExchange: '7-day return policy. Items must be unused, undamaged, and in original packaging.',
-        orderCancellation: 'Orders can be cancelled within 15 minutes of placing the order.',
-      },
-      sizes: [
-        { size: '30ml', sku: 'ALS-OUD-001-30', price: 8500, stock: 40, costPrice: 3200 },
-        { size: '50ml', sku: 'ALS-OUD-001-50', price: 11500, salePrice: 9200, stock: 60, costPrice: 4300 },
-        { size: '75ml', sku: 'ALS-OUD-001-75', price: 15500, stock: 25, costPrice: 5800 },
-        { size: '100ml', sku: 'ALS-OUD-001-100', price: 19500, stock: 15, costPrice: 7200 },
-      ],
-      isFeatured: true,
-      isBestSeller: true,
-      isActive: true,
-    },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
-  );
 
   await Product.findOneAndUpdate(
     { slug: 'saffron-attar' },

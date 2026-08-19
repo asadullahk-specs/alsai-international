@@ -48,7 +48,7 @@ const AdminResetPassword = () => {
             <BrandMark className="w-7 h-7" color="#A9662A" />
           </div>
           <h1 className="font-serif text-3xl tracking-wide text-ink">AL SA'I</h1>
-          <p className="text-[10px] tracking-[0.3em] text-muted mt-1">EXTRAIT DE PARFUM</p>
+          <p className="text-[10px] tracking-[0.3em] text-muted mt-1">INTERNATIONAL</p>
         </div>
 
         <h2 className="font-serif text-2xl text-ink mb-1 text-center">Reset Admin Password</h2>

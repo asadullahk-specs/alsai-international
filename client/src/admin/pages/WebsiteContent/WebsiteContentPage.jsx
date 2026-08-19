@@ -67,6 +67,7 @@ const WebsiteContentPage = () => {
   const [contact, setContact] = useState({ storeName: '', address: '', phone: '', email: '', whatsapp: '', workingHours: '', storeMapUrl: '' });
   const [contactPage, setContactPage] = useState({ heroImage: '', heroHeading: '', heroDescription: '' });
   const [faqsPage, setFaqsPage] = useState({ heroImage: '', heroHeading: '', heroDescription: '' });
+  const [promotionsPage, setPromotionsPage] = useState({ heroImage: '', heroHeading: '', heroDescription: '' });
   const [footer, setFooter] = useState({ description: '', columns: [] });
   const [social, setSocial] = useState([]);
   const [announcement, setAnnouncement] = useState({ text: '', link: '', isActive: true });
@@ -104,6 +105,7 @@ const WebsiteContentPage = () => {
       setContact(c.contactInfo || {});
       setContactPage(c.contactPage || { heroImage: '', heroHeading: '', heroDescription: '' });
       setFaqsPage(c.faqsPage || { heroImage: '', heroHeading: '', heroDescription: '' });
+      setPromotionsPage(c.promotionsPage || { heroImage: '', heroHeading: '', heroDescription: '' });
       setFooter(c.footer || { description: '', columns: [] });
       setSocial(c.socialLinks || []);
       setAnnouncement(c.announcementBar || { text: '', link: '', isActive: true });
@@ -388,6 +390,21 @@ const WebsiteContentPage = () => {
           {faqsPage.heroImage && (
             <div className="w-full h-24 bg-cream-100 overflow-hidden">
               <img src={driveImg(faqsPage.heroImage)} alt="FAQ hero preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+        </SectionCard>
+
+        <SectionCard
+          title="PROMOTIONS PAGE HERO"
+          description="The banner shown at the top of the Promotions page."
+          onSave={() => adminAxios.put('website-content/promotions-page', promotionsPage)}
+        >
+          <input placeholder="Heading (e.g. Promotions & Offers)" value={promotionsPage.heroHeading} onChange={(e) => setPromotionsPage({ ...promotionsPage, heroHeading: e.target.value })} className={inputClass} />
+          <textarea placeholder="Description" rows={2} value={promotionsPage.heroDescription} onChange={(e) => setPromotionsPage({ ...promotionsPage, heroDescription: e.target.value })} className={`${inputClass} resize-none`} />
+          <input placeholder="Hero Image (Google Drive link)" value={promotionsPage.heroImage} onChange={(e) => setPromotionsPage({ ...promotionsPage, heroImage: e.target.value })} className={inputClass} />
+          {promotionsPage.heroImage && (
+            <div className="w-full h-24 bg-cream-100 overflow-hidden">
+              <img src={driveImg(promotionsPage.heroImage)} alt="Promotions hero preview" className="w-full h-full object-cover" />
             </div>
           )}
         </SectionCard>

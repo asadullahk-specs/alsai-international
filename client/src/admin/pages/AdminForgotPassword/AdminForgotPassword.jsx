@@ -32,7 +32,7 @@ const AdminForgotPassword = () => {
           <BrandMark className="w-7 h-7" color="#A9662A" />
         </div>
         <h1 className="font-serif text-3xl tracking-wide text-ink">AL SA'I</h1>
-        <p className="text-[10px] tracking-[0.3em] text-muted mt-1 mb-8">EXTRAIT DE PARFUM</p>
+        <p className="text-[10px] tracking-[0.3em] text-muted mt-1 mb-8">INTERNATIONAL</p>
 
         <p className="text-brand text-xs tracking-[0.2em] font-medium mb-2">RESET PASSWORD</p>
         <h2 className="font-serif text-2xl text-ink mb-2">Admin Forgot Password?</h2>

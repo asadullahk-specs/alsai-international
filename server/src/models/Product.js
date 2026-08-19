@@ -43,7 +43,7 @@ const productSchema = new mongoose.Schema(
       base: [{ type: String }],
     },
     facts: {
-      concentration: { type: String, default: 'Extrait de Parfum' },
+      concentration: { type: String, default: 'International' },
       longevity: { type: String, default: '' },
       sillage: { type: String, default: '' },
       gender: { type: String, enum: ['Men', 'Women', 'Unisex'], default: 'Unisex' },
@@ -70,9 +70,8 @@ const productSchema = new mongoose.Schema(
     metaTitle: { type: String, default: '' },
     metaKeywords: [{ type: String }],
     metaDescription: { type: String, default: '' },
-    canonicalUrl: { type: String, default: '' },
   },
-  { timestamps: true }
+  { timestamps: true, suppressReservedKeysWarning: true }
 );
 
 productSchema.index({ name: 'text', shortDescription: 'text' });

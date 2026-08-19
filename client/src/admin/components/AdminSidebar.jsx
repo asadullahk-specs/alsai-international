@@ -106,7 +106,7 @@ const AdminSidebar = ({ onNavigate }) => {
       <div className="flex flex-col items-center py-7 border-b border-white/10 flex-shrink-0">
         <BrandMark className="w-7 h-7 mb-2" color="#C9A15A" />
         <span className="font-serif text-xl tracking-wide text-white">AL SA'I</span>
-        <span className="text-[9px] tracking-[0.3em] text-cream-200/60 mt-0.5">EXTRAIT DE PARFUM</span>
+        <span className="text-[9px] tracking-[0.3em] text-cream-200/60 mt-0.5">INTERNATIONAL</span>
       </div>
 
       <nav className="flex-1 py-4 px-3 space-y-5">

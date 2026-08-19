@@ -121,7 +121,7 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
                         // Each collection (Perfumes / Attars) shows only the
                         // fragrance families assigned to it, not a shared list.
                         const famsForCollection = fragranceFamilies.filter(
-                          (fam) => (fam.collection?._id || fam.collection) === col._id
+                          (fam) => !fam.belongsTo || fam.belongsTo === 'Both' || fam.belongsTo === col.name || (fam.collection?._id || fam.collection) === col._id
                         );
                         return (
                           <div key={col._id} className="min-w-[120px] flex-shrink-0">
@@ -165,7 +165,7 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
             {/* Logo: centered at xl+, pinned left below xl */}
             <Link to="/" className="flex flex-col items-start xl:items-center flex-shrink-0">
               <span className={`font-serif text-xl sm:text-2xl tracking-wide transition-colors duration-300 ${transparent ? 'text-white' : 'text-ink'}`}>AL SA'I</span>
-              <span className={`text-[8px] sm:text-[9px] tracking-[0.3em] transition-colors duration-300 ${transparent ? 'text-white/70' : 'text-muted'}`}>EXTRAIT DE PARFUM</span>
+              <span className={`text-[8px] sm:text-[9px] tracking-[0.3em] transition-colors duration-300 ${transparent ? 'text-white/70' : 'text-muted'}`}>INTERNATIONAL</span>
             </Link>
 
             {/* Right-side icons - visible from md (768px) up */}

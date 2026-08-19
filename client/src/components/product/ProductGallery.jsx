@@ -6,6 +6,7 @@ const ProductGallery = ({ product }) => {
   const media = [
     ...(product.video ? [{ type: 'video', src: product.video }] : []),
     ...(product.mainImage ? [{ type: 'image', src: product.mainImage }] : []),
+    ...(product.hoverImage ? [{ type: 'image', src: product.hoverImage }] : []),
     ...(product.galleryImages || []).map((src) => ({ type: 'image', src })),
   ];
   const [active, setActive] = useState(0);

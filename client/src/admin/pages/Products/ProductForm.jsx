@@ -24,7 +24,7 @@ const emptyForm = {
   galleryImages: [],
   video: '',
   fragranceNotes: { top: '', heart: '', base: '' },
-  facts: { concentration: 'Extrait de Parfum', longevity: '', sillage: '', gender: 'Unisex', ingredients: '' },
+  facts: { concentration: 'International', longevity: '', sillage: '', gender: 'Unisex', ingredients: '' },
   shippingInfo: { deliveryTime: '', shippingCharges: '', returnExchange: '', orderCancellation: '' },
   isFeatured: false,
   isBestSeller: false,
@@ -34,7 +34,6 @@ const emptyForm = {
   metaTitle: '',
   metaKeywords: '',
   metaDescription: '',
-  canonicalUrl: '',
 };
 
 const FLAG_DEFS = [
@@ -104,7 +103,6 @@ const ProductForm = () => {
         metaTitle: p.metaTitle || '',
         metaKeywords: (p.metaKeywords || []).join(', '),
         metaDescription: p.metaDescription || '',
-        canonicalUrl: p.canonicalUrl || '',
       });
       setLoading(false);
     });
@@ -125,7 +123,16 @@ const ProductForm = () => {
   };
 
   const updateSize = (idx, field, value) =>
-    setForm((prev) => ({ ...prev, sizes: prev.sizes.map((s, i) => (i === idx ? { ...s, [field]: value } : s)) }));
+    setForm((prev) => ({
+      ...prev,
+      sizes: prev.sizes.map((s, i) => {
+        if (i !== idx) return s;
+        if (field === 'price' && (!s.salePrice || s.salePrice === s.price)) {
+          return { ...s, price: value, salePrice: value };
+        }
+        return { ...s, [field]: value };
+      }),
+    }));
   const addSize = () => setForm((prev) => ({ ...prev, sizes: [...prev.sizes, { ...emptySize }] }));
   const removeSize = (idx) => setForm((prev) => ({ ...prev, sizes: prev.sizes.filter((_, i) => i !== idx) }));
 
@@ -164,8 +171,8 @@ const ProductForm = () => {
           size: s.size,
           sku: s.sku,
           price: Number(s.price),
-          salePrice: s.salePrice ? Number(s.salePrice) : undefined,
-          costPrice: s.costPrice ? Number(s.costPrice) : undefined,
+          salePrice: Number(s.salePrice) || Number(s.price),
+          costPrice: s.costPrice ? Number(s.costPrice) : Math.round(Number(s.price) * 0.83),
           stock: Number(s.stock) || 0,
         })),
         lowStockThreshold: Number(form.lowStockThreshold),
@@ -188,7 +195,6 @@ const ProductForm = () => {
         metaTitle: form.metaTitle,
         metaKeywords: form.metaKeywords.split(',').map((s) => s.trim()).filter(Boolean),
         metaDescription: form.metaDescription,
-        canonicalUrl: form.canonicalUrl,
       };
 
       if (isEdit) {
@@ -624,10 +630,6 @@ const ProductForm = () => {
               <label className={labelClass}>META DESCRIPTION</label>
               <textarea rows={3} maxLength={160} value={form.metaDescription} onChange={(e) => update('metaDescription', e.target.value)} className={`${inputClass} resize-none`} />
               <p className="text-xs text-muted mt-1">{form.metaDescription.length}/160</p>
-            </div>
-            <div>
-              <label className={labelClass}>CANONICAL URL (OPTIONAL)</label>
-              <input value={form.canonicalUrl} onChange={(e) => update('canonicalUrl', e.target.value)} className={inputClass} />
             </div>
           </div>
         )}

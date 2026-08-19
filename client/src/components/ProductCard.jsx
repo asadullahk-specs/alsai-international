@@ -19,7 +19,8 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
 
   if (!selectedSize) return null;
 
-  const discount = selectedSize.salePrice ? Math.round((1 - selectedSize.salePrice / selectedSize.price) * 100) : 0;
+  const hasSale = selectedSize.salePrice && Number(selectedSize.salePrice) < Number(selectedSize.price);
+  const discount = hasSale ? Math.round((1 - selectedSize.salePrice / selectedSize.price) * 100) : 0;
   // On pages that specifically surface discounted items (Promotions), a
   // product's sale badge should win out over Best Seller/New so shoppers
   // immediately see the offer they came for, rather than a generic tag.
@@ -100,16 +101,12 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
           <FiHeart size={14} className={wishlisted ? 'fill-brand text-brand' : ''} />
         </button>
 
-        {/* Size (e.g. "50ml") lives on the image itself, bottom-right, rather
-            than as a text row in the details block below. */}
-        <span className="absolute bottom-3 right-3 z-10 bg-white/90 text-ink text-[10px] tracking-wide px-2 py-1 rounded">
+        {/* Size (e.g. "50ml") lives on the image itself, bottom-right - high contrast luxury theme tag */}
+        <span className="absolute bottom-3 right-3 z-10 bg-charcoal/85 text-cream-100 backdrop-blur-sm border border-gold/40 text-[10px] font-medium tracking-widest px-2.5 py-1 rounded-sm shadow-md">
           {selectedSize.size}
         </span>
 
-        {/* Desktop (>=1024px, Tailwind's lg): Add to Cart is a hover-revealed
-            overlay so the image stays clean until the shopper engages with
-            the card. Hidden entirely below lg - see the static button
-            beneath the image for that. */}
+        {/* Desktop (>=1024px, Tailwind's lg): Add to Cart is a hover-revealed overlay */}
         <button
           type="button"
           onClick={handleAddToCart}
@@ -122,9 +119,6 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
         </button>
       </div>
 
-      {/* Below 1024px there's no hover, so Add to Cart stays visible as a
-          normal button under the image instead of overlaying it (which
-          would otherwise collide with the size badge on the image). */}
       <button
         type="button"
         onClick={handleAddToCart}
@@ -148,8 +142,8 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
       )}
 
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-ink">{formatPrice(selectedSize.salePrice || selectedSize.price)}</span>
-        {selectedSize.salePrice && <span className="text-xs text-muted line-through">{formatPrice(selectedSize.price)}</span>}
+        <span className="text-sm font-medium text-ink">{formatPrice(hasSale ? selectedSize.salePrice : selectedSize.price)}</span>
+        {hasSale && <span className="text-xs text-muted line-through">{formatPrice(selectedSize.price)}</span>}
       </div>
     </div>
   );

@@ -22,15 +22,30 @@ exports.listSeasonalCollections = asyncHandler(async (req, res) => {
     campaigns.map(async (c) => {
       let products;
       if (c.applicableProducts === 'all') {
-        products = await Product.find({ isActive: true, isHidden: false }).limit(60);
+        products = await Product.find({ isActive: true, isHidden: false }).limit(24);
       } else {
-        products = c.selectedProducts || [];
+        products = (c.selectedProducts || []).filter((p) => p && p.isActive && !p.isHidden);
       }
 
-      // Promotions is a discounts page - only ever show products that
-      // actually carry a live discount on at least one size, regardless of
-      // how the campaign's product list was built.
-      products = products.filter((p) => p.sizes?.some((s) => s.salePrice > 0 && s.salePrice < s.price)).slice(0, 24);
+      // Apply the campaign's discountPercent to product size prices so products display
+      // their promo discount badge (e.g. "15% OFF") and strikethrough price on the Promotions page.
+      const promoProducts = products.map((p) => {
+        const prodObj = p.toObject ? p.toObject() : JSON.parse(JSON.stringify(p));
+        if (c.discountPercent > 0) {
+          prodObj.sizes = (prodObj.sizes || []).map((s) => {
+            const price = Number(s.price) || 0;
+            const salePrice = Number(s.salePrice) || price;
+            if (price > 0 && salePrice >= price) {
+              return {
+                ...s,
+                salePrice: Math.round(price * (1 - c.discountPercent / 100)),
+              };
+            }
+            return s;
+          });
+        }
+        return prodObj;
+      });
 
       return {
         _id: c._id,
@@ -39,13 +54,11 @@ exports.listSeasonalCollections = asyncHandler(async (req, res) => {
         banner: c.banner,
         startDate: c.startDate,
         endDate: c.endDate,
-        products,
+        products: promoProducts,
       };
     })
   );
 
-  // Drop campaigns that end up with no genuinely discounted products left
-  // after the filter above, rather than showing an empty section.
   const nonEmptyResults = results.filter((c) => c.products.length > 0);
 
   res.status(200).json(new ApiResponse(200, { campaigns: nonEmptyResults }));

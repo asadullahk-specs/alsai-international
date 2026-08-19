@@ -9,7 +9,7 @@ const usePageTitle = (section, name) => {
     const parts = ["AL SA'I", section, name].filter(Boolean);
     document.title = parts.join(' | ');
     return () => {
-      document.title = "AL SA'I | Extrait de Parfum";
+      document.title = "AL SA'I | International";
     };
   }, [section, name]);
 };

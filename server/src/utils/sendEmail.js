@@ -42,7 +42,7 @@ const emailShell = (bodyHtml) => `
             <tr>
               <td style="background-color:#141210;padding:28px;text-align:center;">
                 <span style="color:#C9A15A;font-size:22px;letter-spacing:3px;font-family:Georgia,serif;">AL SA'I</span>
-                <div style="color:#C9A15A;font-size:10px;letter-spacing:3px;margin-top:2px;">EXTRAIT DE PARFUM</div>
+                <div style="color:#C9A15A;font-size:10px;letter-spacing:3px;margin-top:2px;">INTERNATIONAL</div>
               </td>
             </tr>
             <tr>

@@ -31,7 +31,7 @@ const CheckboxRow = ({ label, checked, onChange }) => (
   </label>
 );
 
-const SIZES = ['30ml', '50ml', '70ml', '75ml', '100ml'];
+const SIZES = ['50ml', '100ml', '150ml'];
 const AVAILABILITY_OPTIONS = [
   { value: 'in_stock', label: 'In Stock' },
   { value: 'limited', label: 'Limited Stock' },

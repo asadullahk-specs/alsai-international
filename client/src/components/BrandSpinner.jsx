@@ -25,7 +25,7 @@ const BrandSpinner = ({ fullPage = false, className = '', message = null, size =
       </div>
       <div className="flex flex-col items-center text-center">
         <span className={`font-serif ${isSmall ? 'text-sm' : 'text-lg'} tracking-wide text-ink`}>AL SA&apos;I</span>
-        <span className={`${isSmall ? 'text-[7px]' : 'text-[8px]'} tracking-[0.3em] text-muted`}>EXTRAIT DE PARFUM</span>
+        <span className={`${isSmall ? 'text-[7px]' : 'text-[8px]'} tracking-[0.3em] text-muted`}>INTERNATIONAL</span>
         {message && <p className="text-xs text-muted mt-2 tracking-wide">{message}</p>}
       </div>
     </div>

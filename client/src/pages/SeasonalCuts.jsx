@@ -9,13 +9,19 @@ import BrandSpinner from '../components/BrandSpinner';
 const SeasonalCuts = () => {
   usePageTitle('Promotions');
   const [campaigns, setCampaigns] = useState([]);
+  const [promotionsPage, setPromotionsPage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    publicAxios
-      .get('/seasonal-collections')
-      .then(({ data }) => setCampaigns(data.data.campaigns))
+    Promise.all([
+      publicAxios.get('/seasonal-collections'),
+      publicAxios.get('/layout'),
+    ])
+      .then(([secRes, layoutRes]) => {
+        setCampaigns(secRes.data.data.campaigns || []);
+        setPromotionsPage(layoutRes.data.data.websiteContent?.promotionsPage || null);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -24,55 +30,53 @@ const SeasonalCuts = () => {
 
   useEffect(() => {
     if (banners.length < 2) return undefined;
-    // Matches the homepage Seasonal Cuts slider's own 3s cadence, so the
-    // slider behaves identically wherever it appears on the site.
     const timer = setInterval(next, 3000);
     return () => clearInterval(timer);
   }, [next, banners.length]);
 
   const activeBanner = banners[current];
 
-  // Flattens every campaign's products into one deduplicated list (a
-  // product could technically belong to more than one active campaign) so
-  // the page shows a single grid of discounted products instead of
-  // grouping by campaign.
   const discountedProducts = Array.from(
     new Map(campaigns.flatMap((c) => c.products || []).map((p) => [p._id, p])).values()
   );
 
+  const heroHeading = promotionsPage?.heroHeading || (activeBanner ? activeBanner.name : 'Promotions');
+  const heroDescription = promotionsPage?.heroDescription || 'Exclusive seasonal discounts on selected perfumes.';
+  const heroImage = promotionsPage?.heroImage;
+
   return (
     <div className="bg-cream min-h-screen">
-      {/* One unified banner instead of a static heading strip PLUS a separate
-          promo slider underneath it - that combination read as two banners
-          stacked on top of each other. The heading/text now cycles per
-          campaign (name + discount), same as the homepage promotions
-          section, so both places behave identically. The background cycles
-          through every active campaign's banner image, the same up-front-
-          preload approach used by the Hero Slider so slides never look like
-          they're "not changing" or loading late. */}
       <section className="relative bg-cream-100 overflow-hidden h-[532px] sm:h-[616px] md:h-[672px]">
-        {banners.map((c, i) => (
-          <img
-            key={c._id}
-            src={driveImg(c.banner)}
-            alt=""
-            loading={i === 0 ? 'eager' : undefined}
-            fetchpriority={i === 0 ? 'high' : undefined}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        {banners.length > 0 ? (
+          banners.map((c, i) => (
+            <img
+              key={c._id}
+              src={driveImg(c.banner)}
+              alt=""
+              loading={i === 0 ? 'eager' : undefined}
+              fetchpriority={i === 0 ? 'high' : undefined}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
+            />
+          ))
+        ) : heroImage ? (
+          <img
+            src={driveImg(heroImage)}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
           />
-        ))}
+        ) : null}
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 flex flex-col justify-center px-4 pb-8 sm:pb-10">
           <div className="max-w-7xl mx-auto w-full">
             <p className="text-xs text-cream-100/80 mb-3">
               <Link to="/" className="hover:text-gold">Home</Link> / Promotions
             </p>
-            {/* <p className="text-xs tracking-widest text-cream-100/90 mb-2">LIMITED TIME OFFERS</p> */}
             <h1 className="font-serif text-3xl sm:text-4xl max-480:text-2xl text-white mb-2 line-clamp-2">
-              {activeBanner ? activeBanner.name : 'Promotions'}
+              {heroHeading}
             </h1>
-            <p className="text-sm text-cream-100/90 max-w-lg">Exclusive seasonal discounts on selected perfumes.</p>
+            <p className="text-sm text-cream-100/90 max-w-lg">{heroDescription}</p>
           </div>
         </div>
       </section>

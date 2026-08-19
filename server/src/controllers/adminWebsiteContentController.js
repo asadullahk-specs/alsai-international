@@ -31,6 +31,7 @@ exports.updateGiftSetPage = makeSectionUpdater('giftSetPage', 'Gift Set Page');
 exports.updateContactInfo = makeSectionUpdater('contactInfo', 'Contact Information');
 exports.updateContactPage = makeSectionUpdater('contactPage', 'Contact Page Hero');
 exports.updateFaqsPage = makeSectionUpdater('faqsPage', 'FAQs Page Hero');
+exports.updatePromotionsPage = makeSectionUpdater('promotionsPage', 'Promotions Page Hero');
 exports.updateFooter = makeSectionUpdater('footer', 'Footer');
 exports.updateSocialLinks = makeSectionUpdater('socialLinks', 'Social Links');
 exports.updateAnnouncementBar = makeSectionUpdater('announcementBar', 'Announcement Bar');

@@ -3,11 +3,11 @@ import SimpleTaxonomyManager from '../../components/catalog/SimpleTaxonomyManage
 const FragranceFamiliesPage = () => (
   <SimpleTaxonomyManager
     title="Fragrance Families"
-    description="Manage the scent families (Floral, Woody, Fresh...) admins assign to each product. Assign each one to Perfumes or Attars so the navbar shows the right list under each."
+    description="Manage scent families (Oud & Woody, Musk & Powdery, Floral & Rose...). Set Belongs To to Perfumes, Attars, or Both so the navbar and shop filters reflect them accurately."
     apiPath="/fragrance-families"
-    hasImage={false}
-    hasDescription={false}
-    hasCollectionSelect
+    hasImage={true}
+    hasDescription={true}
+    hasCollectionSelect={true}
   />
 );
 

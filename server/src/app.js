@@ -47,6 +47,11 @@ const reviewUploadsDir = process.env.VERCEL
   : path.join(__dirname, '..', 'uploads', 'reviews');
 app.use('/uploads/reviews', express.static(reviewUploadsDir));
 
+const mediaUploadsDir = process.env.VERCEL
+  ? '/tmp/uploads/media'
+  : path.join(__dirname, '..', 'uploads', 'media');
+app.use('/uploads/media', express.static(mediaUploadsDir));
+
 // Every other image/video across the site is a Google Drive share link
 // entered by the admin. This resolves + caches those links to local disk on
 // first request and serves the cached copy after that, so display doesn't

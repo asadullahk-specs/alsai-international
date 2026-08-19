@@ -7,6 +7,7 @@ const giftSetSchema = new mongoose.Schema(
     slug: { type: String, unique: true, lowercase: true, trim: true },
     price: { type: Number, required: true, min: 0 },
     mainImage: { type: String, default: '' },
+    hoverImage: { type: String, default: '' },
     galleryImages: [{ type: String }],
     includedProducts: [
       {

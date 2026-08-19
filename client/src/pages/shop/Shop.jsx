@@ -172,31 +172,25 @@ const Shop = () => {
           )}
 
           {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-10">
+            <div className="flex items-center justify-center gap-3 mt-10">
               <button
                 type="button"
                 disabled={pagination.page <= 1}
                 onClick={() => goToPage(pagination.page - 1)}
-                className="w-8 h-8 rounded border border-cream-200 disabled:opacity-30 text-ink"
+                className="w-9 h-9 flex items-center justify-center rounded border border-cream-200 disabled:opacity-30 text-ink hover:border-brand transition-colors"
+                aria-label="Previous page"
               >
                 ‹
               </button>
-              {pageButtons.map((n) => (
-                <button
-                  type="button"
-                  key={n}
-                  onClick={() => goToPage(n)}
-                  className={`w-8 h-8 rounded text-sm ${pagination.page === n ? 'bg-brand text-white' : 'border border-cream-200 text-ink'
-                    }`}
-                >
-                  {n}
-                </button>
-              ))}
+              <span className="text-xs font-medium tracking-widest text-ink px-2">
+                {pagination.page} / {pagination.totalPages}
+              </span>
               <button
                 type="button"
                 disabled={pagination.page >= pagination.totalPages}
                 onClick={() => goToPage(pagination.page + 1)}
-                className="w-8 h-8 rounded border border-cream-200 disabled:opacity-30 text-ink"
+                className="w-9 h-9 flex items-center justify-center rounded border border-cream-200 disabled:opacity-30 text-ink hover:border-brand transition-colors"
+                aria-label="Next page"
               >
                 ›
               </button>
@@ -220,12 +214,21 @@ const Shop = () => {
                 to={`/gift-sets/${g.slug}`}
                 className="group flex-shrink-0 max-480:w-[78vw] w-36 sm:w-44 md:w-auto snap-start"
               >
-                <div className="aspect-square rounded-md overflow-hidden bg-cream-100 mb-2">
+                <div className="aspect-square rounded-md overflow-hidden bg-cream-100 mb-2 relative">
                   {g.mainImage && (
                     <img
                       src={driveImg(g.mainImage)}
                       alt={g.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className={`w-full h-full object-cover transition-opacity duration-500 ${
+                        g.hoverImage ? 'group-hover:opacity-0' : 'group-hover:scale-105'
+                      }`}
+                    />
+                  )}
+                  {g.hoverImage && (
+                    <img
+                      src={driveImg(g.hoverImage)}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                     />
                   )}
                 </div>

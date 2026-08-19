@@ -23,7 +23,7 @@ const OrderReceipt = ({ order }) => {
       {/* Header */}
       <div className="text-center mb-6">
         <h1 className="font-serif text-2xl sm:text-4xl tracking-wide text-ink">AL SA'I</h1>
-        <p className="text-[9px] sm:text-xs tracking-[0.35em] text-muted mt-1">EXTRAIT DE PARFUM</p>
+        <p className="text-[9px] sm:text-xs tracking-[0.35em] text-muted mt-1">INTERNATIONAL</p>
       </div>
 
       {/* Order number + status */}

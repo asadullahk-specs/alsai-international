@@ -33,7 +33,7 @@ const ForgotPassword = () => {
             <BrandMark className="w-6 h-6" color="#C9A15A" />
           </div>
           <h1 className="font-serif text-3xl tracking-wide text-ink">AL SA'I</h1>
-          <p className="text-[10px] tracking-[0.3em] text-muted mt-1">EXTRAIT DE PARFUM</p>
+          <p className="text-[10px] tracking-[0.3em] text-muted mt-1">INTERNATIONAL</p>
         </div>
 
         <div className="bg-white border border-cream-200 rounded-lg shadow-sm px-8 py-10 text-center">

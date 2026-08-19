@@ -4,6 +4,7 @@ import { FiPlus, FiEye, FiEdit2, FiTrash2, FiSearch } from 'react-icons/fi';
 import adminAxios from '../../../api/adminAxios';
 import { formatPrice } from '../../../utils/formatPrice';
 import { driveImg } from '../../../utils/driveImg';
+import Pagination from '../../components/common/Pagination';
 
 const ProductsList = () => {
   const [urlParams, setUrlParams] = useSearchParams();
@@ -177,36 +178,7 @@ const ProductsList = () => {
             </table>
           </div>
 
-          {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-6">
-              <button
-                type="button"
-                disabled={pagination.page <= 1}
-                onClick={() => fetchProducts(pagination.page - 1)}
-                className="w-8 h-8 rounded border border-cream-200 disabled:opacity-30 text-ink"
-              >
-                ‹
-              </button>
-              {Array.from({ length: Math.min(pagination.totalPages, 6) }, (_, i) => i + 1).map((n) => (
-                <button
-                  type="button"
-                  key={n}
-                  onClick={() => fetchProducts(n)}
-                  className={`w-8 h-8 rounded text-sm ${pagination.page === n ? 'bg-brand text-white' : 'border border-cream-200 text-ink'}`}
-                >
-                  {n}
-                </button>
-              ))}
-              <button
-                type="button"
-                disabled={pagination.page >= pagination.totalPages}
-                onClick={() => fetchProducts(pagination.page + 1)}
-                className="w-8 h-8 rounded border border-cream-200 disabled:opacity-30 text-ink"
-              >
-                ›
-              </button>
-            </div>
-          )}
+          <Pagination page={pagination.page} totalPages={pagination.totalPages} onChange={(p) => fetchProducts(p)} />
         </>
       )}
     </div>

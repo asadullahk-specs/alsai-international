@@ -9,7 +9,7 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [form, setForm] = useState({ name: '', description: '', image: '', video: '', collection: '', isActive: true, displayOrder: 0 });
+  const [form, setForm] = useState({ name: '', description: '', image: '', video: '', collection: '', belongsTo: 'Both', isActive: true, displayOrder: 0 });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -30,7 +30,7 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
   }, [apiPath]);
 
   const openNewForm = () => {
-    setForm({ name: '', description: '', image: '', video: '', collection: collections[0]?._id || '', isActive: true, displayOrder: items.length });
+    setForm({ name: '', description: '', image: '', video: '', collection: collections[0]?._id || '', belongsTo: 'Both', isActive: true, displayOrder: items.length });
     setEditingId(null);
     setError('');
     setShowForm(true);
@@ -43,6 +43,7 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
       image: item.image || '',
       video: item.video || '',
       collection: item.collection?._id || item.collection || '',
+      belongsTo: item.belongsTo || 'Both',
       isActive: item.isActive,
       displayOrder: item.displayOrder,
     });
@@ -59,10 +60,6 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (hasCollectionSelect && !form.collection) {
-      setError('Please select whether this belongs to Perfumes or Attars.');
-      return;
-    }
     setSubmitting(true);
     try {
       const payload = { ...form, displayOrder: Number(form.displayOrder) };
@@ -154,18 +151,16 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
               <div>
                 <label className="text-xs tracking-widest text-muted block mb-1.5">BELONGS TO</label>
                 <select
-                  name="collection"
-                  required
-                  value={form.collection}
+                  name="belongsTo"
+                  value={form.belongsTo || 'Both'}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-md border border-cream-200 text-sm focus:outline-none focus:ring-1 focus:ring-brand"
                 >
-                  <option value="">Select Perfumes or Attars</option>
-                  {collections.map((c) => (
-                    <option key={c._id} value={c._id}>{c.name}</option>
-                  ))}
+                  <option value="Perfumes">Perfumes</option>
+                  <option value="Attars">Attars</option>
+                  <option value="Both">Both</option>
                 </select>
-                <p className="text-xs text-muted mt-1.5">Controls which navbar dropdown (Perfumes or Attars) shows this family.</p>
+                <p className="text-xs text-muted mt-1.5">Controls which navbar dropdown (Perfumes, Attars, or Both) shows this family.</p>
               </div>
             )}
             <div className="grid grid-cols-2 gap-3">
@@ -231,7 +226,7 @@ const SimpleTaxonomyManager = ({ title, description, apiPath, hasImage = true, h
                   )}
                   <td className="p-4 max-480:p-2 max-480:text-xs max-320:text-[10px] text-ink whitespace-nowrap">{item.name}</td>
                   {hasCollectionSelect && (
-                    <td className="p-4 max-480:p-2 table-cell max-640:hidden text-sm text-muted">{item.collection?.name || '—'}</td>
+                    <td className="p-4 max-480:p-2 table-cell max-640:hidden text-sm text-muted">{item.belongsTo || item.collection?.name || 'Both'}</td>
                   )}
                   <td className="p-4 max-480:p-2 table-cell max-520:hidden">
                     <span

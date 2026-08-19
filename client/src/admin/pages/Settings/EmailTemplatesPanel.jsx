@@ -181,7 +181,7 @@ const EmailTemplatesPanel = () => {
             <span className="text-brand text-xl tracking-[3px]" style={{ fontFamily: 'Georgia, serif' }}>
               AL SA&apos;I
             </span>
-            <div className="text-brand text-[9px] tracking-[3px] mt-0.5">EXTRAIT DE PARFUM</div>
+            <div className="text-brand text-[9px] tracking-[3px] mt-0.5">INTERNATIONAL</div>
           </div>
           <div className="p-6 bg-white" dangerouslySetInnerHTML={{ __html: form.bodyHtml }} />
         </div>
