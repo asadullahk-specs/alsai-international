@@ -42,16 +42,29 @@ const FAQs = () => {
         ) : (
           <div className="space-y-3">
             {faqs.map((faq, i) => (
-              <div key={faq._id || i} className="border border-cream-200 bg-white">
+              <div key={faq._id || i} className="border border-cream-200 bg-white rounded-sm overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                  className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left"
+                  className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left transition-colors hover:bg-cream-50"
                 >
                   <span className="text-sm sm:text-base font-serif text-ink">{faq.question}</span>
-                  <FiChevronDown size={16} className={`text-muted transition-transform flex-shrink-0 ${openIndex === i ? 'rotate-180' : ''}`} />
+                  <FiChevronDown
+                    size={16}
+                    className={`text-muted transition-transform duration-300 flex-shrink-0 ${openIndex === i ? 'rotate-180 text-brand' : ''}`}
+                  />
                 </button>
-                {openIndex === i && <p className="px-4 sm:px-5 pb-4 sm:pb-5 text-sm text-muted leading-relaxed">{faq.answer}</p>}
+                <div
+                  className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
+                    openIndex === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <p className="px-4 sm:px-5 pb-4 sm:pb-5 text-sm text-muted leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
