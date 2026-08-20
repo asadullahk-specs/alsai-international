@@ -251,36 +251,20 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
               <Link to="/gift-sets" onClick={closeMenu} className="block py-2.5 tracking-wide">
                 GIFT SETS
               </Link>
+              <Link to="/wishlist" onClick={closeMenu} className="block py-2.5 tracking-wide">
+                WISHLIST
+              </Link>
 
-              {/* Mobile-only extras in burger: wishlist (already in header on sm+), profile, logout, cart */}
-              <div className="pt-3 mt-3 border-t border-cream-200 space-y-1">
-                <Link to="/wishlist" onClick={closeMenu} className="sm:hidden flex items-center gap-3 py-2.5 tracking-wide">
-                  <FiHeart size={16} /> WISHLIST
-                </Link>
-                <Link to={user ? '/orders' : '/login'} onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide">
-                  <FiUser size={16} /> {user ? 'MY ORDERS' : 'ACCOUNT'}
-                </Link>
-                {user && (
+              {user && (
+                <div className="pt-3 mt-3 border-t border-cream-200 space-y-1">
                   <Link to="/profile" onClick={closeMenu} className="md:hidden flex items-center gap-3 py-2.5 tracking-wide">
                     <FiUserCheck size={16} /> PROFILE
                   </Link>
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeMenu();
-                    toggleCart();
-                  }}
-                  className="flex items-center gap-3 py-2.5 tracking-wide w-full text-left"
-                >
-                  <FiShoppingBag size={16} /> CART {itemCount > 0 && `(${itemCount})`}
-                </button>
-                {user && (
                   <button type="button" onClick={handleLogout} className="md:hidden flex items-center gap-3 py-2.5 tracking-wide w-full text-left">
                     <FiLogOut size={16} /> LOGOUT
                   </button>
-                )}
-              </div>
+                </div>
+              )}
             </nav>
           </div>
         </div>

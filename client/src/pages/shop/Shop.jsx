@@ -7,6 +7,7 @@ import FilterSidebar from '../../components/shop/FilterSidebar';
 import { driveImg } from '../../utils/driveImg';
 import usePageTitle from '../../hooks/usePageTitle';
 import BrandSpinner from '../../components/BrandSpinner';
+import SliderProgress from '../../components/SliderProgress';
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' },
@@ -259,13 +260,13 @@ const Shop = () => {
           {/* Gift Sets smooth horizontal slider (all viewports) */}
           <div
             ref={giftSetScrollRef}
-            className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none scroll-smooth"
+            className="flex gap-4 sm:gap-5 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none scroll-smooth"
           >
             {giftSets.map((g) => (
               <Link
                 key={g._id}
                 to={`/gift-sets/${g.slug}`}
-                className="group flex-shrink-0 max-480:w-[78vw] w-40 sm:w-48 lg:w-[calc((100%-4.5rem)/4)] snap-start block"
+                className="group flex-shrink-0 w-full xs:w-[calc((100%-1rem)/2)] sm:w-[calc((100%-2.5rem)/3)] md:w-[calc((100%-3.75rem)/4)] lg:w-[calc((100%-5rem)/5)] snap-start block"
               >
                 <div className="aspect-square rounded-md overflow-hidden bg-cream-100 mb-2 relative">
                   {g.mainImage && (
@@ -290,6 +291,7 @@ const Shop = () => {
               </Link>
             ))}
           </div>
+          <SliderProgress scrollRef={giftSetScrollRef} total={giftSets.length} itemLabel="cards" />
         </section>
       )}
 

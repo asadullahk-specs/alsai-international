@@ -47,8 +47,7 @@ const OurSpecialities = ({ collections = [] }) => {
               )
             )}
             <div className="absolute inset-0 bg-black/25 flex flex-col justify-end p-3 sm:p-6">
-              <h3 className="font-serif text-white text-sm max-480:text-xs sm:text-2xl">{c.name}</h3>
-              {c.description && <p className="hidden sm:block text-cream-100 text-xs mb-2">{c.description}</p>}
+              <h3 className="font-serif text-white text-sm max-480:text-xs sm:text-2xl mb-1">{c.name}</h3>
               <span className="text-white text-[10px] max-480:text-[8px] sm:text-xs tracking-widest">SHOP NOW →</span>
             </div>
           </Link>

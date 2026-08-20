@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiHeart, FiStar } from 'react-icons/fi';
+import { FiHeart, FiStar, FiShoppingBag } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import customerAxios from '../api/customerAxios';
@@ -48,8 +48,8 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
   };
 
   return (
-    <div className="group" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-      <div className="relative aspect-square bg-cream-100 overflow-hidden mb-3">
+    <div className="group flex flex-col h-full" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+      <div className="relative aspect-square bg-cream-100 overflow-hidden mb-3 rounded-md">
         <Link to={productHref} className="absolute inset-0 block">
           {mediaMode === 'video' && product.video ? (
             <video src={driveImg(product.video)} className="w-full h-full object-cover" autoPlay muted loop playsInline />
@@ -78,7 +78,7 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
         </Link>
 
         {(statusBadge || discountBadge) && (
-          <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+          <div className="absolute top-3 left-3 z-10 flex flex-col gap-1 pointer-events-none">
             {statusBadge && (
               <span className="bg-charcoal text-white text-[10px] tracking-wide px-2 py-1 rounded">
                 {statusBadge}
@@ -95,18 +95,38 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
         <button
           type="button"
           onClick={handleToggleWishlist}
-          className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center text-muted hover:text-brand transition-colors"
+          className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center text-muted hover:text-brand transition-colors shadow-xs"
           aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
           <FiHeart size={14} className={wishlisted ? 'fill-brand text-brand' : ''} />
         </button>
 
-        {/* Size (e.g. "50ml") lives on the image itself, bottom-right - high contrast luxury theme tag */}
-        <span className="absolute bottom-3 right-3 z-10 bg-charcoal/85 text-cream-100 backdrop-blur-sm border border-gold/40 text-[10px] font-medium tracking-widest px-2.5 py-1 rounded-sm shadow-md">
+        {/* Cart Icon button on bottom-left of image overlay (phones & tablets: < 1024px) */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleAddToCart();
+          }}
+          disabled={outOfStock}
+          className="lg:hidden absolute bottom-3 left-3 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-charcoal/90 hover:bg-brand text-white flex items-center justify-center shadow-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          aria-label={outOfStock ? 'Out of stock' : 'Add to cart'}
+          title={outOfStock ? 'Out of stock' : 'Add to cart'}
+        >
+          {justAdded ? (
+            <span className="text-xs font-bold text-white">✓</span>
+          ) : (
+            <FiShoppingBag size={15} />
+          )}
+        </button>
+
+        {/* Size (e.g. "50ml") lives on the image itself, bottom-right */}
+        <span className="absolute bottom-3 right-3 z-10 bg-charcoal/85 text-cream-100 backdrop-blur-sm border border-gold/40 text-[10px] font-medium tracking-widest px-2.5 py-1 rounded-sm shadow-md pointer-events-none">
           {selectedSize.size}
         </span>
 
-        {/* Desktop (>=1024px, Tailwind's lg): Add to Cart is a hover-revealed overlay */}
+        {/* Desktop (>= 1024px): Add to Cart is a hover-revealed full-width overlay button */}
         <button
           type="button"
           onClick={handleAddToCart}
@@ -118,15 +138,6 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
           {outOfStock ? 'OUT OF STOCK' : justAdded ? 'ADDED ✓' : 'ADD TO CART'}
         </button>
       </div>
-
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        disabled={outOfStock}
-        className="lg:hidden w-full border border-brand text-brand text-xs tracking-wide py-2 rounded-md hover:bg-brand hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed mb-3"
-      >
-        {outOfStock ? 'OUT OF STOCK' : justAdded ? 'ADDED ✓' : 'ADD TO CART'}
-      </button>
 
       <Link to={productHref} className="block">
         <h3 className="font-serif text-ink text-base mb-0.5 truncate">{product.name}</h3>

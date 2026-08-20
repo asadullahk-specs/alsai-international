@@ -6,10 +6,14 @@ import { useEffect } from 'react';
 // this hook) never leaves a stale title behind.
 const usePageTitle = (section, name) => {
   useEffect(() => {
-    const parts = ["AL SA'I", section, name].filter(Boolean);
-    document.title = parts.join(' | ');
+    if (!section && !name) {
+      document.title = "AL SA'I International";
+    } else {
+      const parts = ["AL SA'I", section, name].filter(Boolean);
+      document.title = parts.join(' | ');
+    }
     return () => {
-      document.title = "AL SA'I | International";
+      document.title = "AL SA'I International";
     };
   }, [section, name]);
 };

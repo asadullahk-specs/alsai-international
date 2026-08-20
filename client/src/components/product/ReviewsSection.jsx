@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { FiStar, FiUpload, FiX } from 'react-icons/fi';
+import { FiStar, FiUpload, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import publicAxios from '../../api/publicAxios';
 import { useAuth } from '../../context/AuthContext';
+import SliderProgress from '../SliderProgress';
 
 const ReviewForm = ({ productId, onSubmitted }) => {
   const [rating, setRating] = useState(0);
@@ -138,6 +139,7 @@ const ReviewsSection = ({ productId, ratingAverage, ratingCount }) => {
   const { user } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const scrollRef = useRef(null);
 
   const fetchReviews = useCallback(() => {
     if (!productId) return;
@@ -151,12 +153,50 @@ const ReviewsSection = ({ productId, ratingAverage, ratingCount }) => {
     fetchReviews();
   }, [fetchReviews]);
 
+  const next = () => {
+    if (scrollRef.current) {
+      const card = scrollRef.current.querySelector(':scope > div');
+      const step = card ? card.offsetWidth + 16 : 300;
+      scrollRef.current.scrollBy({ left: step, behavior: 'smooth' });
+    }
+  };
+
+  const prev = () => {
+    if (scrollRef.current) {
+      const card = scrollRef.current.querySelector(':scope > div');
+      const step = card ? card.offsetWidth + 16 : 300;
+      scrollRef.current.scrollBy({ left: -step, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div>
-      <div className="flex items-center gap-2 mb-6">
-        <FiStar size={20} className="fill-gold text-gold" />
-        <span className="font-serif text-3xl text-ink">{(ratingAverage || 0).toFixed(1)}</span>
-        <span className="text-muted text-sm">Based on {ratingCount || 0} reviews</span>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <FiStar size={20} className="fill-gold text-gold" />
+          <span className="font-serif text-3xl text-ink">{(ratingAverage || 0).toFixed(1)}</span>
+          <span className="text-muted text-sm">Based on {ratingCount || 0} reviews</span>
+        </div>
+        {reviews.length > 2 && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={prev}
+              aria-label="Previous reviews"
+              className="w-8 h-8 border border-cream-200 flex items-center justify-center text-ink hover:border-brand transition-colors"
+            >
+              <FiChevronLeft size={14} />
+            </button>
+            <button
+              type="button"
+              onClick={next}
+              aria-label="Next reviews"
+              className="w-8 h-8 border border-cream-200 flex items-center justify-center text-ink hover:border-brand transition-colors"
+            >
+              <FiChevronRight size={14} />
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="mb-8 max-w-lg">
@@ -177,31 +217,40 @@ const ReviewsSection = ({ productId, ratingAverage, ratingCount }) => {
       ) : reviews.length === 0 ? (
         <p className="text-sm text-muted">No reviews yet - be the first to share your thoughts.</p>
       ) : (
-        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 sm:pb-0 sm:grid sm:grid-cols-2 sm:overflow-visible scrollbar-none">
-          {reviews.map((r) => (
-            <div key={r._id} className="flex-shrink-0 w-72 sm:w-auto snap-start border border-cream-200 rounded-md p-4 bg-white">
-              <div className="flex items-center gap-2 mb-2">
-                {r.customer?.avatar ? (
-                  <img src={r.customer.avatar} alt={r.customer.fullName} className="w-8 h-8 rounded-full object-cover" />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-cream-200 flex items-center justify-center text-xs text-muted">
-                    {r.customer?.fullName?.[0] || '?'}
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm text-ink">{r.customer?.fullName || 'Anonymous'}</p>
-                  <div className="flex text-gold">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <FiStar key={i} size={11} className={i < r.rating ? 'fill-gold' : 'opacity-25'} />
-                    ))}
+        <>
+          <div
+            ref={scrollRef}
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none scroll-smooth"
+          >
+            {reviews.map((r) => (
+              <div
+                key={r._id}
+                className="flex-shrink-0 w-full xs:w-[calc((100%-1rem)/2)] sm:w-[calc((100%-2.5rem)/3)] md:w-[calc((100%-3.75rem)/4)] lg:w-[calc((100%-5rem)/5)] snap-start border border-cream-200 rounded-md p-4 bg-white"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  {r.customer?.avatar ? (
+                    <img src={r.customer.avatar} alt={r.customer.fullName} className="w-8 h-8 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-cream-200 flex items-center justify-center text-xs text-muted">
+                      {r.customer?.fullName?.[0] || '?'}
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm text-ink">{r.customer?.fullName || 'Anonymous'}</p>
+                    <div className="flex text-gold">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <FiStar key={i} size={11} className={i < r.rating ? 'fill-gold' : 'opacity-25'} />
+                      ))}
+                    </div>
                   </div>
                 </div>
+                <p className="text-sm text-muted">{r.reviewText}</p>
+                {r.image && <img src={r.image} alt="Customer upload" className="mt-3 w-24 h-24 object-cover rounded-md" />}
               </div>
-              <p className="text-sm text-muted">{r.reviewText}</p>
-              {r.image && <img src={r.image} alt="Customer upload" className="mt-3 w-24 h-24 object-cover rounded-md" />}
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+          <SliderProgress scrollRef={scrollRef} total={reviews.length} itemLabel="reviews" />
+        </>
       )}
     </div>
   );

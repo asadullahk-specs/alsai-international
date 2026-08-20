@@ -48,7 +48,7 @@ const CartPreview = ({ onClose }) => {
         </div>
 
         {items.length === 0 ? (
-          <p className="text-sm text-muted text-center py-10 px-5">Your bag is empty.</p>
+          <p className="text-sm text-muted text-center py-10 px-5">Your cart is empty.</p>
         ) : (
           <div className="flex-1 overflow-y-auto">
             {items.map((item) => (

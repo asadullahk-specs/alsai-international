@@ -4,6 +4,7 @@ import { FiStar, FiChevronLeft, FiChevronRight, FiImage, FiUpload, FiX } from 'r
 import { driveImg } from '../../utils/driveImg';
 import { useAuth } from '../../context/AuthContext';
 import publicAxios from '../../api/publicAxios';
+import SliderProgress from '../SliderProgress';
 
 // Cards per page follows the breakpoint (4 desktop / 2 tablet / 1 mobile) but
 // always slides through the full set rather than ever wrapping extra cards
@@ -288,44 +289,47 @@ const Testimonials = ({ testimonials = [] }) => {
       </div>
 
       {testimonials.length > 0 && (
-        <div
-          ref={scrollRef}
-          className="flex gap-5 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none scroll-smooth"
-        >
-          {testimonials.map((t) => (
-            <div
-              key={t._id}
-              className="flex-shrink-0 w-[280px] sm:w-[320px] lg:w-[calc((100%-3.75rem)/4)] snap-start bg-white border border-cream-200 p-5 h-[300px] flex flex-col"
-            >
-              <div className="flex gap-0.5 text-gold mb-2">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <FiStar key={i} size={12} className={i < t.rating ? 'fill-gold' : 'opacity-25'} />
-                ))}
-              </div>
+        <>
+          <div
+            ref={scrollRef}
+            className="flex gap-5 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none scroll-smooth"
+          >
+            {testimonials.map((t) => (
+              <div
+                key={t._id}
+                className="flex-shrink-0 w-full xs:w-[calc((100%-1rem)/2)] sm:w-[calc((100%-2.5rem)/3)] md:w-[calc((100%-3.75rem)/4)] lg:w-[calc((100%-5rem)/5)] snap-start bg-white border border-cream-200 p-4 flex flex-col rounded-md min-h-[260px]"
+              >
+                <div className="flex gap-0.5 text-gold mb-2">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <FiStar key={i} size={12} className={i < t.rating ? 'fill-gold' : 'opacity-25'} />
+                  ))}
+                </div>
 
-              <div className="w-full h-24 bg-cream-100 mb-3 flex-shrink-0 overflow-hidden flex items-center justify-center">
-                {t.reviewImage ? (
-                  <img src={driveImg(t.reviewImage)} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <FiImage size={20} className="text-cream-200" />
-                )}
-              </div>
+                <div className="w-full h-24 bg-cream-100 mb-3 flex-shrink-0 overflow-hidden flex items-center justify-center rounded">
+                  {t.reviewImage ? (
+                    <img src={driveImg(t.reviewImage)} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <FiImage size={20} className="text-cream-200" />
+                  )}
+                </div>
 
-              <p className="text-sm text-ink leading-snug flex-1 overflow-hidden">{t.message}</p>
+                <p className="text-sm text-ink leading-snug flex-1 overflow-hidden">{t.message}</p>
 
-              <div className="flex items-center gap-2 mt-3 flex-shrink-0">
-                {t.customerImage ? (
-                  <img src={driveImg(t.customerImage)} alt={t.customerName} className="w-7 h-7 rounded-full object-cover" />
-                ) : (
-                  <div className="w-7 h-7 rounded-full bg-cream-200 flex items-center justify-center text-xs text-muted">
-                    {t.customerName?.[0]}
-                  </div>
-                )}
-                <span className="text-xs text-ink">{t.customerName}</span>
+                <div className="flex items-center gap-2 mt-3 flex-shrink-0">
+                  {t.customerImage ? (
+                    <img src={driveImg(t.customerImage)} alt={t.customerName} className="w-7 h-7 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-cream-200 flex items-center justify-center text-xs text-muted">
+                      {t.customerName?.[0]}
+                    </div>
+                  )}
+                  <span className="text-xs text-ink">{t.customerName}</span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+          <SliderProgress scrollRef={scrollRef} total={testimonials.length} itemLabel="reviews" />
+        </>
       )}
 
       {user ? (

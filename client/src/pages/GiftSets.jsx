@@ -7,7 +7,7 @@ import usePageTitle from '../hooks/usePageTitle';
 import BrandSpinner from '../components/BrandSpinner';
 
 const GiftSets = () => {
-  usePageTitle('GiftSets');
+  usePageTitle('Gift Sets');
   const [giftSets, setGiftSets] = useState([]);
   const [bannerImage, setBannerImage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -53,7 +53,7 @@ const GiftSets = () => {
         ) : giftSets.length === 0 ? (
           <p className="text-sm text-muted text-center py-24">No gift sets available right now - check back soon.</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 max-480:gap-3">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 max-480:gap-3">
             {giftSets.map((g) => (
               <Link key={g._id} to={`/gift-sets/${g.slug}`} className="group block">
                 <div className="aspect-square rounded-md overflow-hidden bg-cream-100 mb-3 relative">
