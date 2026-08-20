@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { FiSliders, FiChevronDown } from 'react-icons/fi';
+import { FiSliders, FiChevronDown, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import publicAxios from '../../api/publicAxios';
 import ProductCard from '../../components/ProductCard';
 import FilterSidebar from '../../components/shop/FilterSidebar';
@@ -24,6 +24,7 @@ const Shop = () => {
   const [collections, setCollections] = useState([]);
   const [fragranceFamilies, setFragranceFamilies] = useState([]);
   const [giftSets, setGiftSets] = useState([]);
+  const giftSetScrollRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -64,7 +65,7 @@ const Shop = () => {
       setFragranceFamilies(data.data.fragranceFamilies);
       setWebsiteContent(data.data.websiteContent);
     });
-    publicAxios.get('/gift-sets?limit=4').then(({ data }) => setGiftSets(data.data.giftSets));
+    publicAxios.get('/gift-sets?limit=50').then(({ data }) => setGiftSets(data.data.giftSets));
   }, []);
 
   useEffect(() => {
@@ -78,6 +79,31 @@ const Shop = () => {
       .finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.toString()]);
+
+  const nextGiftSet = () => {
+    if (giftSetScrollRef.current) {
+      const card = giftSetScrollRef.current.querySelector(':scope > a');
+      const step = card ? card.offsetWidth + 24 : 300;
+      const maxScroll = giftSetScrollRef.current.scrollWidth - giftSetScrollRef.current.clientWidth;
+      if (giftSetScrollRef.current.scrollLeft >= maxScroll - 5) {
+        giftSetScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        giftSetScrollRef.current.scrollBy({ left: step, behavior: 'smooth' });
+      }
+    }
+  };
+
+  const prevGiftSet = () => {
+    if (giftSetScrollRef.current) {
+      const card = giftSetScrollRef.current.querySelector(':scope > a');
+      const step = card ? card.offsetWidth + 24 : 300;
+      if (giftSetScrollRef.current.scrollLeft <= 5) {
+        giftSetScrollRef.current.scrollTo({ left: giftSetScrollRef.current.scrollWidth, behavior: 'smooth' });
+      } else {
+        giftSetScrollRef.current.scrollBy({ left: -step, behavior: 'smooth' });
+      }
+    }
+  };
 
   const pageButtons = Array.from({ length: Math.min(pagination.totalPages, 6) }, (_, i) => i + 1);
   const rangeStart = products.length ? (pagination.page - 1) * pagination.limit + 1 : 0;
@@ -203,16 +229,43 @@ const Shop = () => {
         <section className="max-w-7xl mx-auto px-4 py-14 border-t border-cream-200">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xs tracking-widest text-ink">— EXPLORE OUR GIFT SETS —</h2>
-            <Link to="/gift-sets" className="text-xs text-brand hover:underline">
-              VIEW ALL →
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link to="/gift-sets" className="text-xs text-brand hover:underline">
+                VIEW ALL →
+              </Link>
+              {giftSets.length > 4 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={prevGiftSet}
+                    aria-label="Previous gift sets"
+                    className="w-8 h-8 border border-cream-200 flex items-center justify-center text-ink hover:border-brand transition-colors"
+                  >
+                    <FiChevronLeft size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextGiftSet}
+                    aria-label="Next gift sets"
+                    className="w-8 h-8 border border-cream-200 flex items-center justify-center text-ink hover:border-brand transition-colors"
+                  >
+                    <FiChevronRight size={14} />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 md:pb-0 md:grid md:grid-cols-4 md:overflow-visible scrollbar-none">
+
+          {/* Gift Sets smooth horizontal slider (all viewports) */}
+          <div
+            ref={giftSetScrollRef}
+            className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-none scroll-smooth"
+          >
             {giftSets.map((g) => (
               <Link
                 key={g._id}
                 to={`/gift-sets/${g.slug}`}
-                className="group flex-shrink-0 max-480:w-[78vw] w-36 sm:w-44 md:w-auto snap-start"
+                className="group flex-shrink-0 max-480:w-[78vw] w-40 sm:w-48 lg:w-[calc((100%-4.5rem)/4)] snap-start block"
               >
                 <div className="aspect-square rounded-md overflow-hidden bg-cream-100 mb-2 relative">
                   {g.mainImage && (
@@ -232,7 +285,7 @@ const Shop = () => {
                     />
                   )}
                 </div>
-                <p className="text-sm text-ink">{g.name}</p>
+                <p className="text-sm text-ink font-medium">{g.name}</p>
                 {g.description && <p className="text-xs text-muted truncate">{g.description}</p>}
               </Link>
             ))}
