@@ -76,7 +76,8 @@ const ProductPage = () => {
     );
   }
 
-  const discount = selectedSize.salePrice ? Math.round((1 - selectedSize.salePrice / selectedSize.price) * 100) : 0;
+  const hasSale = selectedSize.salePrice && Number(selectedSize.salePrice) < Number(selectedSize.price);
+  const discount = hasSale ? Math.round((1 - selectedSize.salePrice / selectedSize.price) * 100) : 0;
   const outOfStock = selectedSize.stock === 0;
   const lowStock = !outOfStock && selectedSize.stock <= (product.lowStockThreshold || 15);
 
@@ -157,8 +158,8 @@ const ProductPage = () => {
           {product.shortDescription && <p className="text-muted text-sm mb-4">{product.shortDescription}</p>}
 
           <div className="flex items-center gap-3 mb-6">
-            <span className="font-serif text-2xl text-ink">{formatPrice(selectedSize.salePrice || selectedSize.price)}</span>
-            {selectedSize.salePrice && (
+            <span className="font-serif text-2xl text-ink">{formatPrice(hasSale ? selectedSize.salePrice : selectedSize.price)}</span>
+            {hasSale && discount > 0 && (
               <>
                 <span className="text-muted line-through text-sm">{formatPrice(selectedSize.price)}</span>
                 <span className="bg-brand/10 text-brand text-xs px-2 py-1 rounded">{discount}% OFF</span>

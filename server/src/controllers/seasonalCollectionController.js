@@ -2,6 +2,7 @@ const SeasonalCollection = require('../models/SeasonalCollection');
 const Product = require('../models/Product');
 const ApiResponse = require('../utils/ApiResponse');
 const asyncHandler = require('../utils/asyncHandler');
+const { applyPromotionsToProducts } = require('../utils/applyPromotions');
 
 // Public "Promotions" listing - active campaigns whose date window includes
 // today, along with the discounted products each campaign applies to.
@@ -27,25 +28,7 @@ exports.listSeasonalCollections = asyncHandler(async (req, res) => {
         products = (c.selectedProducts || []).filter((p) => p && p.isActive && !p.isHidden);
       }
 
-      // Apply the campaign's discountPercent to product size prices so products display
-      // their promo discount badge (e.g. "15% OFF") and strikethrough price on the Promotions page.
-      const promoProducts = products.map((p) => {
-        const prodObj = p.toObject ? p.toObject() : JSON.parse(JSON.stringify(p));
-        if (c.discountPercent > 0) {
-          prodObj.sizes = (prodObj.sizes || []).map((s) => {
-            const price = Number(s.price) || 0;
-            const salePrice = Number(s.salePrice) || price;
-            if (price > 0 && salePrice >= price) {
-              return {
-                ...s,
-                salePrice: Math.round(price * (1 - c.discountPercent / 100)),
-              };
-            }
-            return s;
-          });
-        }
-        return prodObj;
-      });
+      const promoProducts = await applyPromotionsToProducts(products);
 
       return {
         _id: c._id,

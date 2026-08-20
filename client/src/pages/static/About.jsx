@@ -165,11 +165,22 @@ const About = () => {
       {/* Trust-bar stats - distinct light luxury background separated from the dark charcoal footer */}
       {hasStats && (
         <section className="bg-gradient-to-r from-cream-100 via-white to-cream-100 border-t border-b border-cream-200 py-12 sm:py-14">
-          <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-4 gap-y-8 divide-x divide-cream-200">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-0">
             {about.stats.map((s, i) => {
               const Icon = getPageIcon(s.icon);
+              // 2-col layout (small): right border on left column (i%2===0),
+              // bottom border on top row (i<2) → forms a "+" cross in the center.
+              // 4-col layout (sm+): right border between every column except the last.
+              const cellBorder = [
+                i % 2 === 0 ? 'border-r' : '',
+                i < 2 ? 'border-b' : '',
+                'sm:border-b-0',
+                i < 3 ? 'sm:border-r' : 'sm:border-r-0',
+                'border-cream-200',
+              ].filter(Boolean).join(' ');
               return (
-                <div key={i} className="text-center px-3">
+                <div key={i} className={`text-center px-4 py-10 sm:py-8 ${cellBorder}`}>
                   <Icon size={26} className="text-brand mx-auto mb-3" strokeWidth={1.4} />
                   <p className="font-serif text-2xl sm:text-3xl text-ink font-semibold mb-1">{s.value}</p>
                   <p className="text-[11px] sm:text-xs tracking-widest text-muted uppercase font-medium">{s.label}</p>
@@ -177,6 +188,7 @@ const About = () => {
               );
             })}
           </div>
+        </div>
         </section>
       )}
     </div>

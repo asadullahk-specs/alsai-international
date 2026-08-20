@@ -156,12 +156,12 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
               <span className={`text-[8px] sm:text-[9px] tracking-[0.3em] transition-colors duration-300 ${transparent ? 'text-white/70' : 'text-muted'}`}>INTERNATIONAL</span>
             </Link>
 
-            {/* Right-side icons - visible from md (768px) up */}
-            <div className={`hidden md:flex items-center justify-end gap-5 h-full flex-1 transition-colors duration-300 ${transparent ? 'text-white' : 'text-ink'}`}>
+            {/* Right-side icons - always visible on all screen sizes */}
+            <div className={`flex items-center justify-end gap-4 h-full flex-1 transition-colors duration-300 ${transparent ? 'text-white' : 'text-ink'}`}>
               <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search" className="flex items-center justify-center hover:text-brand transition-colors">
                 <FiSearch size={18} />
               </button>
-              <Link to="/wishlist" aria-label="Wishlist" className="flex items-center justify-center hover:text-brand transition-colors">
+              <Link to="/wishlist" aria-label="Wishlist" className="hidden sm:flex items-center justify-center hover:text-brand transition-colors">
                 <FiHeart size={18} />
               </Link>
 
@@ -176,15 +176,15 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
                 <FiUser size={18} />
               </Link>
 
-              {/* Profile - only appears once logged in */}
+              {/* Profile - only appears once logged in, desktop only to save space */}
               {user && (
-                <Link to="/profile" aria-label="Profile" className="flex items-center justify-center hover:text-brand transition-colors">
+                <Link to="/profile" aria-label="Profile" className="hidden md:flex items-center justify-center hover:text-brand transition-colors">
                   <FiUserCheck size={18} />
                 </Link>
               )}
 
               {user && (
-                <button type="button" onClick={handleLogout} aria-label="Logout" className="flex items-center justify-center hover:text-brand transition-colors">
+                <button type="button" onClick={handleLogout} aria-label="Logout" className="hidden md:flex items-center justify-center hover:text-brand transition-colors">
                   <FiLogOut size={18} />
                 </button>
               )}
@@ -202,17 +202,17 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
                   </span>
                 )}
               </button>
-            </div>
 
-            {/* Burger trigger - visible below xl (1280px) */}
-            <button
-              type="button"
-              onClick={() => setMenuOpen(true)}
-              aria-label="Open menu"
-              className={`xl:hidden flex-shrink-0 ml-2 transition-colors duration-300 ${transparent ? 'text-white' : 'text-ink'}`}
-            >
-              <FiMenu size={22} />
-            </button>
+              {/* Burger trigger - visible below xl (1280px) */}
+              <button
+                type="button"
+                onClick={() => setMenuOpen(true)}
+                aria-label="Open menu"
+                className={`xl:hidden flex-shrink-0 transition-colors duration-300 ${transparent ? 'text-white' : 'text-ink'}`}
+              >
+                <FiMenu size={22} />
+              </button>
+            </div>
           </div>
         </nav>
 
@@ -252,27 +252,16 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
                 GIFT SETS
               </Link>
 
-              {/* Below md (768px) these also live here, since the icon row is hidden then */}
-              <div className="md:hidden pt-3 mt-3 border-t border-cream-200 space-y-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    closeMenu();
-                    setSearchOpen(true);
-                  }}
-                  className="flex items-center gap-3 py-2.5 tracking-wide w-full text-left"
-                >
-                  <FiSearch size={16} /> SEARCH
-                </button>
-                <Link to="/wishlist" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide">
+              {/* Mobile-only extras in burger: wishlist (already in header on sm+), profile, logout, cart */}
+              <div className="pt-3 mt-3 border-t border-cream-200 space-y-1">
+                <Link to="/wishlist" onClick={closeMenu} className="sm:hidden flex items-center gap-3 py-2.5 tracking-wide">
                   <FiHeart size={16} /> WISHLIST
                 </Link>
-                <NotificationBell variant="row" />
                 <Link to={user ? '/orders' : '/login'} onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide">
                   <FiUser size={16} /> {user ? 'MY ORDERS' : 'ACCOUNT'}
                 </Link>
                 {user && (
-                  <Link to="/profile" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide">
+                  <Link to="/profile" onClick={closeMenu} className="md:hidden flex items-center gap-3 py-2.5 tracking-wide">
                     <FiUserCheck size={16} /> PROFILE
                   </Link>
                 )}
@@ -287,7 +276,7 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
                   <FiShoppingBag size={16} /> CART {itemCount > 0 && `(${itemCount})`}
                 </button>
                 {user && (
-                  <button type="button" onClick={handleLogout} className="flex items-center gap-3 py-2.5 tracking-wide w-full text-left">
+                  <button type="button" onClick={handleLogout} className="md:hidden flex items-center gap-3 py-2.5 tracking-wide w-full text-left">
                     <FiLogOut size={16} /> LOGOUT
                   </button>
                 )}

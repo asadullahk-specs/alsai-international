@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiX } from 'react-icons/fi';
 import publicAxios from '../api/publicAxios';
 import { formatPrice } from '../utils/formatPrice';
+import { driveImg } from '../utils/driveImg';
 
 const SearchModal = ({ open, onClose }) => {
   const [query, setQuery] = useState('');
@@ -89,7 +90,7 @@ const SearchModal = ({ open, onClose }) => {
                   className="w-full flex items-center gap-3 px-5 py-3 hover:bg-cream-100 transition-colors text-left"
                 >
                   <div className="w-12 h-12 rounded bg-cream-100 overflow-hidden flex-shrink-0">
-                    {p.mainImage && <img src={p.mainImage} alt={p.name} className="w-full h-full object-cover" />}
+                    {p.mainImage && <img src={driveImg(p.mainImage)} alt={p.name} className="w-full h-full object-cover" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-ink truncate">{p.name}</p>

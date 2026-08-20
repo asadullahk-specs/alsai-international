@@ -21,19 +21,10 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
 
   const hasSale = selectedSize.salePrice && Number(selectedSize.salePrice) < Number(selectedSize.price);
   const discount = hasSale ? Math.round((1 - selectedSize.salePrice / selectedSize.price) * 100) : 0;
-  // On pages that specifically surface discounted items (Promotions), a
-  // product's sale badge should win out over Best Seller/New so shoppers
-  // immediately see the offer they came for, rather than a generic tag.
-  const badge =
-    forceDiscountBadge && discount > 0
-      ? `${discount}% OFF`
-      : product.isBestSeller
-        ? 'BEST SELLER'
-        : product.isNewArrival
-          ? 'NEW'
-          : discount > 0
-            ? `${discount}% OFF`
-            : null;
+  // Status badge (BEST SELLER / NEW) and discount badge are independent —
+  // both can show at the same time, stacked in the top-left corner.
+  const statusBadge = product.isBestSeller ? 'BEST SELLER' : product.isNewArrival ? 'NEW' : null;
+  const discountBadge = discount > 0 ? `${discount}% OFF` : null;
   const outOfStock = selectedSize.stock === 0;
 
   const handleAddToCart = () => {
@@ -86,10 +77,19 @@ const ProductCard = ({ product, mediaMode = 'image', forceDiscountBadge = false 
           )}
         </Link>
 
-        {badge && (
-          <span className="absolute top-3 left-3 z-10 bg-charcoal text-white text-[10px] tracking-wide px-2 py-1 rounded">
-            {badge}
-          </span>
+        {(statusBadge || discountBadge) && (
+          <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+            {statusBadge && (
+              <span className="bg-charcoal text-white text-[10px] tracking-wide px-2 py-1 rounded">
+                {statusBadge}
+              </span>
+            )}
+            {discountBadge && (
+              <span className="bg-brand text-white text-[10px] tracking-wide px-2 py-1 rounded">
+                {discountBadge}
+              </span>
+            )}
+          </div>
         )}
 
         <button

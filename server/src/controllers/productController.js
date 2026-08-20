@@ -2,6 +2,7 @@ const Product = require('../models/Product');
 const ApiResponse = require('../utils/ApiResponse');
 const ApiError = require('../utils/ApiError');
 const asyncHandler = require('../utils/asyncHandler');
+const { applyPromotionsToProducts } = require('../utils/applyPromotions');
 
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -62,7 +63,7 @@ exports.listProducts = asyncHandler(async (req, res) => {
   const pageNum = Math.max(Number(page), 1);
   const limitNum = Math.min(Math.max(Number(limit), 1), 48);
 
-  const [products, total] = await Promise.all([
+  const [rawProducts, total] = await Promise.all([
     Product.find(filter)
       .populate('collection', 'name slug')
       .populate('featuredCollection', 'name slug')
@@ -72,6 +73,8 @@ exports.listProducts = asyncHandler(async (req, res) => {
       .limit(limitNum),
     Product.countDocuments(filter),
   ]);
+
+  const products = await applyPromotionsToProducts(rawProducts);
 
   res.status(200).json(
     new ApiResponse(200, {
@@ -87,7 +90,7 @@ exports.listProducts = asyncHandler(async (req, res) => {
 });
 
 exports.getProductBySlug = asyncHandler(async (req, res) => {
-  const product = await Product.findOne({ slug: req.params.slug, isActive: true, isHidden: false })
+  const rawProduct = await Product.findOne({ slug: req.params.slug, isActive: true, isHidden: false })
     .populate('collection', 'name slug')
     .populate('featuredCollection', 'name slug')
     .populate('fragranceFamily', 'name slug')
@@ -97,7 +100,12 @@ exports.getProductBySlug = asyncHandler(async (req, res) => {
       select: 'name slug shortDescription mainImage hoverImage basePrice sizes ratingAverage ratingCount isBestSeller isNewArrival',
     });
 
-  if (!product) throw new ApiError(404, 'Product not found');
+  if (!rawProduct) throw new ApiError(404, 'Product not found');
+
+  const product = await applyPromotionsToProducts(rawProduct);
+  if (product.relatedProducts && product.relatedProducts.length > 0) {
+    product.relatedProducts = await applyPromotionsToProducts(product.relatedProducts);
+  }
 
   res.status(200).json(new ApiResponse(200, { product }));
 });
