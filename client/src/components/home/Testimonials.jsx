@@ -328,7 +328,7 @@ const Testimonials = ({ testimonials = [] }) => {
               </div>
             ))}
           </div>
-          <SliderProgress scrollRef={scrollRef} total={testimonials.length} itemLabel="reviews" />
+          <SliderProgress scrollRef={scrollRef} total={testimonials.length} itemLabel="reviews" maxBreakpoint={false} />
         </>
       )}
 

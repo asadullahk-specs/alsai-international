@@ -33,7 +33,7 @@ const OurStory = ({ story }) => {
           <p className="text-cream-100/95 text-sm leading-relaxed mb-6 drop-shadow-sm">{teaser}</p>
           <Link
             to="/about"
-            className="inline-block border border-cream-200/60 bg-charcoal/40 text-cream-100 text-xs tracking-widest px-6 py-3 hover:border-gold hover:text-gold hover:bg-charcoal/70 transition-all backdrop-blur-sm"
+            className="inline-block bg-white text-ink text-xs tracking-widest px-6 py-3 hover:bg-cream-100 transition-colors font-medium"
           >
             READ OUR STORY
           </Link>

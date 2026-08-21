@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const SliderProgress = ({ scrollRef, total = 0, itemLabel = 'cards' }) => {
+const SliderProgress = ({ scrollRef, total = 0, itemLabel = 'cards', maxBreakpoint = true }) => {
   const [progress, setProgress] = useState({
     current: total,
     remaining: 0,
@@ -61,14 +61,13 @@ const SliderProgress = ({ scrollRef, total = 0, itemLabel = 'cards' }) => {
     };
   }, [scrollRef, total, updateProgress]);
 
-  if (total <= 0) return null;
+  if (total <= 0 || progress.remaining <= 0) return null;
 
   const singular = itemLabel.endsWith('s') ? itemLabel.slice(0, -1) : itemLabel;
   const label = total === 1 ? singular : itemLabel;
-  const maxDots = Math.min(total, 12);
 
   return (
-    <div className="flex flex-col items-center gap-2 mt-6 mb-2 select-none">
+    <div className={`flex flex-col items-center gap-2 mt-6 mb-2 select-none ${maxBreakpoint ? 'lg:hidden' : ''}`}>
       <div className="bg-cream-100/90 border border-cream-200 text-charcoal text-xs font-medium px-4 py-1.5 rounded-full tracking-wide shadow-xs">
         {progress.current} of {total} {label} · {progress.remaining} left to view
       </div>

@@ -249,7 +249,7 @@ const ReviewsSection = ({ productId, ratingAverage, ratingCount }) => {
               </div>
             ))}
           </div>
-          <SliderProgress scrollRef={scrollRef} total={reviews.length} itemLabel="reviews" />
+          <SliderProgress scrollRef={scrollRef} total={reviews.length} itemLabel="reviews" maxBreakpoint={false} />
         </>
       )}
     </div>

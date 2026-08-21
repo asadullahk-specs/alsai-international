@@ -1,32 +1,82 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { driveImg } from '../../utils/driveImg';
 
-// "Our Specialities" always shows the two collections that split the entire
-// catalog - Perfumes and Attars - pulling each card's media straight from the
-// admin-managed Collection record (name, image, optional video), no
-// hardcoding. Unlike the New Arrivals row, these cards intentionally have no
-// hover-image swap - video (when set) is just the primary, static media.
+// "Our Specialities" shows the core catalog collections (Perfumes and Attars).
+// On screens below 480px, it displays 1 card at a time with smooth sliding and
+// dot indicators below. On screens above 480px, it displays 2 cards side by side
+// with no dot indicators.
 const OurSpecialities = ({ collections = [] }) => {
   const perfumes = collections.find((c) => c.slug === 'perfumes');
   const attars = collections.find((c) => c.slug === 'attars');
   const cards = [perfumes, attars].filter(Boolean);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef(null);
+
+  const handleScroll = useCallback(() => {
+    if (!scrollRef.current || cards.length === 0) return;
+    const el = scrollRef.current;
+    const firstCard = el.querySelector(':scope > a');
+    if (!firstCard) return;
+
+    const cardWidth = firstCard.offsetWidth;
+    const style = window.getComputedStyle(el);
+    const gap = parseFloat(style.columnGap || style.gap || '0') || 0;
+    const step = cardWidth + gap;
+
+    if (step <= 0) return;
+    const index = Math.round(el.scrollLeft / step);
+    setActiveIndex(Math.min(cards.length - 1, Math.max(0, index)));
+  }, [cards.length]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    handleScroll();
+
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      el.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [handleScroll]);
+
+  const scrollToCard = (index) => {
+    if (!scrollRef.current) return;
+    const el = scrollRef.current;
+    const firstCard = el.querySelector(':scope > a');
+    if (!firstCard) return;
+
+    const cardWidth = firstCard.offsetWidth;
+    const style = window.getComputedStyle(el);
+    const gap = parseFloat(style.columnGap || style.gap || '0') || 0;
+    const step = cardWidth + gap;
+
+    el.scrollTo({
+      left: index * step,
+      behavior: 'smooth',
+    });
+    setActiveIndex(index);
+  };
 
   if (cards.length === 0) return null;
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-14">
       <h2 className="text-xs tracking-widest text-ink mb-6">— OUR SPECIALITIES —</h2>
-      {/* Below 480px this becomes a one-card-per-view slider, matching the
-          other card rows on the site, instead of a cramped 2-up grid. A real
-          spacer element (not container padding) keeps the left gap intact -
-          padding on the leading edge of a horizontally-scrolling flex
-          container gets clipped by some mobile browsers. */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-4 max-480:flex max-480:gap-4 max-480:overflow-x-auto max-480:snap-x max-480:snap-mandatory max-480:pb-2 scrollbar-none">
+      <div
+        ref={scrollRef}
+        className="grid grid-cols-2 gap-2 sm:gap-4 max-480:flex max-480:gap-0 max-480:overflow-x-auto max-480:snap-x max-480:snap-mandatory max-480:pb-2 scrollbar-none scroll-smooth"
+      >
         {cards.map((c) => (
           <Link
             key={c._id}
             to={`/shop?collection=${c._id}`}
-            className="relative overflow-hidden aspect-[4/3] sm:aspect-[16/10] group bg-cream-100 max-480:flex-shrink-0 max-480:w-[78vw] max-480:snap-start"
+            className="relative overflow-hidden aspect-[4/3] sm:aspect-[16/10] group bg-cream-100 max-480:flex-shrink-0 max-480:w-full max-480:snap-start"
           >
             {c.video ? (
               <video
@@ -53,6 +103,24 @@ const OurSpecialities = ({ collections = [] }) => {
           </Link>
         ))}
       </div>
+
+      {cards.length > 1 && (
+        <div className="max-480:flex hidden justify-center items-center gap-2 mt-4 select-none">
+          {cards.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => scrollToCard(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === activeIndex
+                  ? 'w-6 bg-brand'
+                  : 'w-2 bg-cream-200 hover:bg-cream-300'
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };
