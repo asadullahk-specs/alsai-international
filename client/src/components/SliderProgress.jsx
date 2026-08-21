@@ -61,7 +61,7 @@ const SliderProgress = ({ scrollRef, total = 0, itemLabel = 'cards', maxBreakpoi
     };
   }, [scrollRef, total, updateProgress]);
 
-  if (total <= 0 || progress.remaining <= 0) return null;
+  if (total <= 0) return null;
 
   const singular = itemLabel.endsWith('s') ? itemLabel.slice(0, -1) : itemLabel;
   const label = total === 1 ? singular : itemLabel;

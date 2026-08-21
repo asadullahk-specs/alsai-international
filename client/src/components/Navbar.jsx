@@ -6,9 +6,6 @@ import {
   FiUser,
   FiUserCheck,
   FiShoppingBag,
-  FiGrid,
-  FiTag,
-  FiGift,
   FiChevronDown,
   FiMapPin,
   FiMenu,
@@ -242,29 +239,29 @@ const Navbar = ({ collections = [], fragranceFamilies = [], announcementText, st
             </div>
 
             <nav className="p-5 space-y-1 text-sm text-ink">
-              <Link to="/shop" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide hover:text-brand transition-colors">
-                <FiShoppingBag size={16} /> SHOP
+              <Link to="/shop" onClick={closeMenu} className="block py-2.5 tracking-wide hover:text-brand transition-colors">
+                SHOP
               </Link>
-              <Link to="/shop" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide hover:text-brand transition-colors">
-                <FiGrid size={16} /> COLLECTIONS
+              <Link to="/shop" onClick={closeMenu} className="block py-2.5 tracking-wide hover:text-brand transition-colors">
+                COLLECTIONS
               </Link>
-              <Link to="/promotions" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide hover:text-brand transition-colors">
-                <FiTag size={16} /> PROMOTIONS
+              <Link to="/promotions" onClick={closeMenu} className="block py-2.5 tracking-wide hover:text-brand transition-colors">
+                PROMOTIONS
               </Link>
-              <Link to="/gift-sets" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide hover:text-brand transition-colors">
-                <FiGift size={16} /> GIFT SETS
+              <Link to="/gift-sets" onClick={closeMenu} className="block py-2.5 tracking-wide hover:text-brand transition-colors">
+                GIFT SETS
               </Link>
-              <Link to="/wishlist" onClick={closeMenu} className="flex items-center gap-3 py-2.5 tracking-wide hover:text-brand transition-colors">
-                <FiHeart size={16} /> WISHLIST
+              <Link to="/wishlist" onClick={closeMenu} className="block py-2.5 tracking-wide hover:text-brand transition-colors">
+                WISHLIST
               </Link>
 
               {user && (
                 <>
-                  <Link to="/profile" onClick={closeMenu} className="md:hidden flex items-center gap-3 py-2.5 tracking-wide hover:text-brand transition-colors">
-                    <FiUser size={16} /> PROFILE
+                  <Link to="/profile" onClick={closeMenu} className="md:hidden block py-2.5 tracking-wide hover:text-brand transition-colors">
+                    PROFILE
                   </Link>
-                  <button type="button" onClick={handleLogout} className="md:hidden flex items-center gap-3 py-2.5 tracking-wide w-full text-left hover:text-brand transition-colors">
-                    <FiLogOut size={16} /> LOGOUT
+                  <button type="button" onClick={handleLogout} className="md:hidden block py-2.5 tracking-wide w-full text-left hover:text-brand transition-colors">
+                    LOGOUT
                   </button>
                 </>
               )}
