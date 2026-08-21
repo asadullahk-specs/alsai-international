@@ -70,7 +70,7 @@ const ProductRow = ({ title, products = [], viewAllLink, mediaMode = 'image' }) 
           </div>
         ))}
       </div>
-      <SliderProgress scrollRef={scrollRef} total={products.length} itemLabel="cards" />
+      <SliderProgress scrollRef={scrollRef} total={products.length} itemLabel="products" />
     </section>
   );
 };

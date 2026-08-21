@@ -291,7 +291,7 @@ const Shop = () => {
               </Link>
             ))}
           </div>
-          <SliderProgress scrollRef={giftSetScrollRef} total={giftSets.length} itemLabel="cards" />
+          <SliderProgress scrollRef={giftSetScrollRef} total={giftSets.length} itemLabel="products" />
         </section>
       )}
 

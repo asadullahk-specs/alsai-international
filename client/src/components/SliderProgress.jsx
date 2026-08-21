@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const SliderProgress = ({ scrollRef, total = 0, itemLabel = 'cards', maxBreakpoint = true }) => {
+const SliderProgress = ({ scrollRef, total = 0, itemLabel = 'products', maxBreakpoint = true }) => {
   const [progress, setProgress] = useState({
     current: total,
     remaining: 0,

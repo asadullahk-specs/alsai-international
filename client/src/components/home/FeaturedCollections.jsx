@@ -80,7 +80,7 @@ const FeaturedCollections = ({ collections = [] }) => {
           </Link>
         ))}
       </div>
-      <SliderProgress scrollRef={scrollRef} total={collections.length} itemLabel="cards" />
+      <SliderProgress scrollRef={scrollRef} total={collections.length} itemLabel="products" />
     </section>
   );
 };
